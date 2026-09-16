@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
-    "@prisma/client": "^7.9.1",
+    "@prisma/client": "^7.10.0",
     "dotenv": "^17.4.2",
     "pg": "^8.22.0"
   },
   "devDependencies": {
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.5.1",
     "@types/pg": "^8.20.4",
     "@workspace/typescript-config": "*",
     "prisma": "^7.9.1",

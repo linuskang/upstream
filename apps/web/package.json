@@ -34,14 +34,14 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.5.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/web-push": "^3.6.4",
     "@workspace/eslint-config": "*",
     "@workspace/typescript-config": "*",
-    "eslint": "^9",
+    "eslint": "^10",
     "typescript": "^5"
   }
 }
