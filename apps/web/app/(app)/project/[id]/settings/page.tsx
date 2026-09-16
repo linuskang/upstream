@@ -1,9 +1,8 @@
 "use client"
 
-import axios from "axios"
 import { Button } from "@workspace/ui/components/button"
-import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { notFound, useParams } from "next/navigation"
+import { useState } from "react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,7 +14,7 @@ import {
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import type { Project, RequestLog, Webhook } from "@workspace/contracts"
+import { trpc } from "@/lib/trpc"
 import {
   Table,
   TableBody,
@@ -71,12 +70,35 @@ type RenameProject = {
   name: string
 }
 
-type DeleteProject = {}
+type DeleteProject = Record<string, never>
 
 type CreateWebhook = {
   name: string
   subscription: string
   url: string
+}
+
+type RequestLogItem = {
+  id: string
+  endpoint: string
+  method: string
+  status: number
+  userAgent: string | null
+  requestBody: string | null
+  responseBody: string | null
+  createdAt: string
+}
+
+type WebhookItem = {
+  id: string
+  projectId: string
+  name: string
+  subscription: string
+  url: string
+  enabled: boolean
+  lastTriggered: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 type PaginationPage = number | "ellipsis-start" | "ellipsis-end"
@@ -116,11 +138,21 @@ function getPaginationItems(
 export default function Page() {
   const params = useParams()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [project, setProject] = useState<Project | null>(null)
+  const projectId = String(params.id)
+  const utils = trpc.useUtils()
+  const projectQuery = trpc.project.get.useQuery({ id: projectId })
+  const apiKeysQuery = trpc.apiKey.list.useQuery({ projectId })
+  const auditLogsQuery = trpc.projectSettings.auditLogs.useQuery({ projectId })
+  const requestLogsQuery = trpc.projectSettings.requestLogs.useQuery({ projectId })
+  const webhooksQuery = trpc.webhook.list.useQuery({ projectId })
+
+  const project = projectQuery.data
+  const apiKeys = apiKeysQuery.data ?? []
+  const auditLogs = auditLogsQuery.data ?? []
+  const requestLogs = requestLogsQuery.data ?? []
+  const webhooks = webhooksQuery.data ?? []
 
   const [createApiKey, setCreateApiKey] = useState(false)
-  const [creatingApiKey, setCreatingApiKey] = useState(false)
   const [createdApiKey, setCreatedApiKey] = useState<string | null>(null)
   const [copiedApiKey, setCopiedApiKey] = useState(false)
   const [apiKeySearch, setApiKeySearch] = useState("")
@@ -128,38 +160,23 @@ export default function Page() {
   const [createWebhook, setCreateWebhook] = useState(false)
 
   const [renameProject, setRenameProject] = useState(false)
-  const [renamingProject, setRenamingProject] = useState(false)
-
   const [deleteProject, setDeleteProject] = useState(false)
-  const [deletingProject, setDeletingProject] = useState(false)
 
-  const [deleteApiKey, setDeleteApiKey] = useState(false)
-
-  const [auditLogs, setAuditLogs] = useState<
-    {
-      message: string
-      createdAt: string
-      user: { name: string; image: string | null } | null
-    }[]
-  >([])
+  const [deleteApiKey, setDeleteApiKey] = useState<string | null>(null)
   const [activitySearch, setActivitySearch] = useState("")
   const [activityPage, setActivityPage] = useState(1)
   const ACTIVITY_PER_PAGE = 8
 
-  const [requestLogs, setRequestLogs] = useState<RequestLog[]>([])
   const [requestLogPage, setRequestLogPage] = useState(1)
   const REQUEST_LOGS_PER_PAGE = 5
   const [requestLogSearch, setRequestLogSearch] = useState("")
   const [selectedRequestLog, setSelectedRequestLog] =
-    useState<RequestLog | null>(null)
+    useState<RequestLogItem | null>(null)
   const [requestLogDetailOpen, setRequestLogDetailOpen] = useState(false)
 
-  const [webhooks, setWebhooks] = useState<Webhook[]>([])
   const [webhookSearch, setWebhookSearch] = useState("")
-  const [isCreatingWebhook, setIsCreatingWebhook] = useState(false)
   const [editWebhookOpen, setEditWebhookOpen] = useState(false)
-  const [isEditingWebhook, setIsEditingWebhook] = useState(false)
-  const [editingWebhook, setEditingWebhook] = useState<Webhook | null>(null)
+  const [editingWebhook, setEditingWebhook] = useState<WebhookItem | null>(null)
   const [editWebhookName, setEditWebhookName] = useState("")
   const [editWebhookSubscription, setEditWebhookSubscription] = useState("")
   const [editWebhookUrl, setEditWebhookUrl] = useState("")
@@ -178,96 +195,108 @@ export default function Page() {
     enabled: boolean
   }
 
-  async function getProject() {
-    try {
-      await axios.get("/api/v1/project/" + params.id).then((res) => {
-        setProject(res.data.data)
-      })
-    } catch {
-      toast.error("Something went wrong")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const createApiKeyMutation = trpc.apiKey.create.useMutation({
+    onSuccess: async (result) => {
+      await Promise.all([
+        utils.apiKey.list.invalidate({ projectId }),
+        utils.project.get.invalidate({ id: projectId }),
+        utils.projectSettings.auditLogs.invalidate({ projectId }),
+      ])
+      setCreatedApiKey(result.secret)
+      toast.success("Created api key")
+    },
+    onError: (error) => toast.error(error.message),
+  })
 
-  async function getAuditLogs() {
-    try {
-      const res = await axios.get(`/api/v1/project/${params.id}/logs`)
-      setAuditLogs(res.data.data || [])
-    } catch {
-      toast.error("Something went wrong")
-    }
-  }
+  const deleteApiKeyMutation = trpc.apiKey.delete.useMutation({
+    onSuccess: async () => {
+      await Promise.all([
+        utils.apiKey.list.invalidate({ projectId }),
+        utils.project.get.invalidate({ id: projectId }),
+        utils.projectSettings.auditLogs.invalidate({ projectId }),
+      ])
+      setDeleteApiKey(null)
+      toast.success("API Key deleted")
+    },
+    onError: (error) => toast.error(error.message),
+  })
 
-  async function getRequestLogs() {
-    try {
-      const res = await axios.get(`/api/v1/project/${params.id}/requests`)
-      setRequestLogs(res.data.data || [])
-    } catch {
-      toast.error("Something went wrong")
-    }
-  }
-
-  async function getWebhooks() {
-    try {
-      const res = await axios.get(`/api/v1/project/${params.id}/webhooks`)
-      setWebhooks(res.data.data || [])
-    } catch {
-      toast.error("Something went wrong")
-    }
-  }
-
-  async function handleCreateWebhook(data: CreateWebhookForm) {
-    setIsCreatingWebhook(true)
-    try {
-      const res = await axios.post(
-        `/api/v1/project/${params.id}/webhooks`,
-        data
-      )
-      setWebhooks((prev) => [...prev, res.data.data])
+  const createWebhookMutation = trpc.webhook.create.useMutation({
+    onSuccess: async () => {
+      await Promise.all([
+        utils.webhook.list.invalidate({ projectId }),
+        utils.projectSettings.auditLogs.invalidate({ projectId }),
+      ])
       setCreateWebhook(false)
       toast.success("Webhook created")
-    } catch {
-      toast.error("Something went wrong")
-    } finally {
-      setIsCreatingWebhook(false)
-    }
-  }
+    },
+    onError: (error) => toast.error(error.message),
+  })
 
-  async function updateWebhook(data: EditWebhookForm) {
-    if (!editingWebhook) return
-    setIsEditingWebhook(true)
-    try {
-      const res = await axios.patch(`/api/v1/project/${params.id}/webhooks`, {
-        webhookId: editingWebhook.id,
-        ...data,
-      })
-      setWebhooks((prev) =>
-        prev.map((w) => (w.id === editingWebhook.id ? res.data.data : w))
-      )
+  const updateWebhookMutation = trpc.webhook.update.useMutation({
+    onSuccess: async () => {
+      await Promise.all([
+        utils.webhook.list.invalidate({ projectId }),
+        utils.projectSettings.auditLogs.invalidate({ projectId }),
+      ])
       setEditWebhookOpen(false)
       setEditingWebhook(null)
       toast.success("Webhook updated")
-    } catch {
-      toast.error("Something went wrong")
-    } finally {
-      setIsEditingWebhook(false)
-    }
-  }
+    },
+    onError: (error) => toast.error(error.message),
+  })
 
-  async function deleteWebhook(webhookId: string) {
-    try {
-      await axios.delete(`/api/v1/project/${params.id}/webhooks`, {
-        data: { webhookId },
-      })
-      setWebhooks((prev) => prev.filter((w) => w.id !== webhookId))
+  const deleteWebhookMutation = trpc.webhook.delete.useMutation({
+    onSuccess: async () => {
+      await Promise.all([
+        utils.webhook.list.invalidate({ projectId }),
+        utils.projectSettings.auditLogs.invalidate({ projectId }),
+      ])
       toast.success("Webhook deleted")
-    } catch {
-      toast.error("Something went wrong")
-    }
+    },
+    onError: (error) => toast.error(error.message),
+  })
+
+  const renameProjectMutation = trpc.project.rename.useMutation({
+    onSuccess: async () => {
+      await Promise.all([
+        utils.project.get.invalidate({ id: projectId }),
+        utils.project.list.invalidate(),
+        utils.projectSettings.auditLogs.invalidate({ projectId }),
+      ])
+      setRenameProject(false)
+      toast.success("Project renamed")
+    },
+    onError: (error) => toast.error(error.message),
+  })
+
+  const deleteProjectMutation = trpc.project.delete.useMutation({
+    onSuccess: async () => {
+      await utils.project.list.invalidate()
+      toast.success("Project deleted")
+      await router.replace("/")
+    },
+    onError: (error) => toast.error(error.message),
+  })
+
+  function handleCreateWebhook(data: CreateWebhookForm) {
+    createWebhookMutation.mutate({ projectId, ...data })
   }
 
-  function openEditWebhook(webhook: Webhook) {
+  function updateWebhook(data: EditWebhookForm) {
+    if (!editingWebhook) return
+    updateWebhookMutation.mutate({
+      projectId,
+      webhookId: editingWebhook.id,
+      ...data,
+    })
+  }
+
+  function deleteWebhook(webhookId: string) {
+    deleteWebhookMutation.mutate({ projectId, webhookId })
+  }
+
+  function openEditWebhook(webhook: WebhookItem) {
     setEditingWebhook(webhook)
     setEditWebhookName(webhook.name)
     setEditWebhookSubscription(webhook.subscription)
@@ -285,13 +314,6 @@ export default function Page() {
     }
   }
 
-  useEffect(() => {
-    getProject()
-    getAuditLogs()
-    getRequestLogs()
-    getWebhooks()
-  }, [params.id])
-
   function copyCreatedApiKey() {
     if (createdApiKey) {
       navigator.clipboard.writeText(createdApiKey)
@@ -306,6 +328,40 @@ export default function Page() {
     setCopiedApiKey(false)
   }
 
+  if (
+    projectQuery.isLoading ||
+    apiKeysQuery.isLoading ||
+    auditLogsQuery.isLoading ||
+    requestLogsQuery.isLoading ||
+    webhooksQuery.isLoading
+  ) {
+    return (
+      <div className="flex min-h-svh items-center justify-center py-6">
+        <div className="text-sm text-muted-foreground">Loading...</div>
+      </div>
+    )
+  }
+
+  if (projectQuery.error?.data?.code === "NOT_FOUND") {
+    return notFound()
+  }
+
+  if (
+    projectQuery.isError ||
+    apiKeysQuery.isError ||
+    auditLogsQuery.isError ||
+    requestLogsQuery.isError ||
+    webhooksQuery.isError
+  ) {
+    return (
+      <div className="flex min-h-svh items-center justify-center py-6">
+        <div className="text-sm text-destructive">
+          Unable to load project settings. Please try again.
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-svh flex-col gap-3 py-6">
       <div className="flex flex-col gap-1">
@@ -318,7 +374,7 @@ export default function Page() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink render={<Link href={`/project/${params.id}`} />}>
+              <BreadcrumbLink render={<Link href={`/project/${projectId}`} />}>
                 {project?.name}
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -390,21 +446,8 @@ export default function Page() {
                     </DialogDescription>
                   </DialogHeader>
                   <Form<CreateApiKey>
-                    onSubmit={async (data) => {
-                      setCreatingApiKey(true)
-                      try {
-                        const res = await axios.post(
-                          `/api/v1/project/${params.id}/keys`,
-                          data
-                        )
-                        setCreatedApiKey(res.data.data)
-                        toast.success("Created api key")
-                        getProject()
-                      } catch (error) {
-                        toast.error("Something went wrong")
-                      } finally {
-                        setCreatingApiKey(false)
-                      }
+                    onSubmit={(data) => {
+                      createApiKeyMutation.mutate({ projectId, ...data })
                     }}
                   >
                     <div className="space-y-3">
@@ -416,8 +459,10 @@ export default function Page() {
                       </div>
                       <DialogFooter>
                         <Form.Submit>
-                          <Button disabled={creatingApiKey}>
-                            {creatingApiKey ? "Creating..." : "Create API Key"}
+                          <Button disabled={createApiKeyMutation.isPending}>
+                            {createApiKeyMutation.isPending
+                              ? "Creating..."
+                              : "Create API Key"}
                           </Button>
                         </Form.Submit>
                       </DialogFooter>
@@ -456,7 +501,7 @@ export default function Page() {
             <TableBody>
               {(() => {
                 const filteredApiKeys =
-                  project?.apiKeys.filter((key) =>
+                  apiKeys.filter((key) =>
                     key.name.toLowerCase().includes(apiKeySearch.toLowerCase())
                   ) ?? []
 
@@ -497,8 +542,10 @@ export default function Page() {
                     </TableCell>
                     <TableCell className="w-fit pr-4 pl-4 text-right whitespace-nowrap">
                       <Dialog
-                        open={deleteApiKey}
-                        onOpenChange={setDeleteApiKey}
+                        open={deleteApiKey === key.id}
+                        onOpenChange={(open) =>
+                          setDeleteApiKey(open ? key.id : null)
+                        }
                       >
                         <DialogTrigger
                           render={<Button variant="destructive" size="sm" />}
@@ -516,22 +563,11 @@ export default function Page() {
                           <DialogFooter>
                             <Button
                               variant="primary"
-                              onClick={async () => {
-                                try {
-                                  await axios.delete(
-                                    `/api/v1/project/${params.id}/keys`,
-                                    {
-                                      data: {
-                                        keyId: key.id,
-                                      },
-                                    }
-                                  )
-                                  toast.success("API Key deleted")
-                                  getProject()
-                                  setDeleteApiKey(false)
-                                } catch {
-                                  toast.error("Something went wrong")
-                                }
+                              onClick={() => {
+                                deleteApiKeyMutation.mutate({
+                                  projectId,
+                                  keyId: key.id,
+                                })
                               }}
                             >
                               Confirm Action
@@ -718,21 +754,8 @@ export default function Page() {
                 </DialogDescription>
               </DialogHeader>
               <Form<CreateWebhook>
-                onSubmit={async (data) => {
-                  setIsCreatingWebhook(true)
-                  try {
-                    const res = await axios.post(
-                      `/api/v1/project/${params.id}/webhooks`,
-                      data
-                    )
-                    setWebhooks((prev) => [...prev, res.data.data])
-                    toast.success("Created webhook")
-                  } catch {
-                    toast.error("Something went wrong")
-                  } finally {
-                    setIsCreatingWebhook(false)
-                    setCreateWebhook(false)
-                  }
+                onSubmit={(data) => {
+                  handleCreateWebhook(data)
                 }}
               >
                 <div className="space-y-3">
@@ -756,8 +779,10 @@ export default function Page() {
                   </div>
                   <DialogFooter>
                     <Form.Submit>
-                      <Button disabled={isCreatingWebhook}>
-                        {isCreatingWebhook ? "Creating..." : "Create Webhook"}
+                      <Button disabled={createWebhookMutation.isPending}>
+                        {createWebhookMutation.isPending
+                          ? "Creating..."
+                          : "Create Webhook"}
                       </Button>
                     </Form.Submit>
                   </DialogFooter>
@@ -980,8 +1005,8 @@ export default function Page() {
               </Label>
             </div>
             <DialogFooter>
-              <Button type="submit" disabled={isEditingWebhook}>
-                {isEditingWebhook ? "Saving..." : "Save Changes"}
+              <Button type="submit" disabled={updateWebhookMutation.isPending}>
+                {updateWebhookMutation.isPending ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
           </form>
@@ -1264,18 +1289,8 @@ export default function Page() {
                     </DialogDescription>
                   </DialogHeader>
                   <Form<RenameProject>
-                    onSubmit={async (data) => {
-                      setRenamingProject(true)
-                      try {
-                        await axios.patch("/api/v1/project/" + params.id, data)
-                        toast.success("Project renamed")
-                        getProject()
-                      } catch {
-                        toast.error("Something went wrong")
-                      } finally {
-                        setRenamingProject(false)
-                        setRenameProject(false)
-                      }
+                    onSubmit={(data) => {
+                      renameProjectMutation.mutate({ id: projectId, ...data })
                     }}
                   >
                     <div className="space-y-3">
@@ -1287,8 +1302,10 @@ export default function Page() {
                       </div>
                       <DialogFooter>
                         <Form.Submit>
-                          <Button disabled={renamingProject}>
-                            {renamingProject ? "Renaming..." : "Rename Project"}
+                          <Button disabled={renameProjectMutation.isPending}>
+                            {renameProjectMutation.isPending
+                              ? "Renaming..."
+                              : "Rename Project"}
                           </Button>
                         </Form.Submit>
                       </DialogFooter>
@@ -1320,25 +1337,17 @@ export default function Page() {
                     </DialogDescription>
                   </DialogHeader>
                   <Form<DeleteProject>
-                    onSubmit={async () => {
-                      setDeletingProject(true)
-                      try {
-                        await axios.delete("/api/v1/project/" + params.id)
-                        toast.success("Project deleted")
-                        await router.replace("/")
-                      } catch {
-                        toast.error("Something went wrong")
-                      } finally {
-                        setDeletingProject(false)
-                        setDeleteProject(false)
-                      }
+                    onSubmit={() => {
+                      deleteProjectMutation.mutate({ id: projectId })
                     }}
                   >
                     <div className="space-y-3">
                       <DialogFooter>
                         <Form.Submit>
-                          <Button disabled={deletingProject}>
-                            {deletingProject ? "Deleting..." : "Confirm Action"}
+                          <Button disabled={deleteProjectMutation.isPending}>
+                            {deleteProjectMutation.isPending
+                              ? "Deleting..."
+                              : "Confirm Action"}
                           </Button>
                         </Form.Submit>
                       </DialogFooter>

@@ -2,10 +2,10 @@
 
 import { notFound } from "next/navigation"
 import { useParams, useSearchParams, useRouter } from "next/navigation"
-import { useEffect, useRef, useState, useMemo, useCallback } from "react"
+import { useEffect, useRef, useState, useMemo } from "react"
 import Link from "next/link"
+import { trpc } from "@/lib/trpc"
 
-import type { EventProps } from "@workspace/ui/components/event"
 import { EventsList } from "@workspace/ui/components/event-list"
 import { CategorySelector } from "@workspace/ui/components/event-category"
 import {
@@ -32,13 +32,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
-import { Folder, Search, Loader2, SlidersHorizontal } from "lucide-react"
+import { Search, Loader2, SlidersHorizontal } from "lucide-react"
 
 const EVENTS_PER_PAGE = 20
-
-interface EventItem extends EventProps {
-  id: string
-}
 
 type SearchFilters = {
   id?: string
@@ -85,40 +81,11 @@ function parseSearchQuery(query: string): { filters: SearchFilters } {
   return { filters }
 }
 
-function buildQueryString(
-  category: string,
-  searchQuery: string,
-  page: number,
-  limit: number
-): string {
-  const params = new URLSearchParams()
-  params.set("page", String(page))
-  params.set("limit", String(limit))
-
-  if (category !== "all") {
-    params.set("category", category)
-  }
-
-  const { filters } = parseSearchQuery(searchQuery)
-
-  if (filters.id) params.set("id", filters.id)
-  if (filters.title) params.set("title", filters.title)
-  if (filters.description) params.set("description", filters.description)
-  if (filters.pushNotify) params.set("pushNotify", filters.pushNotify)
-  if (filters.category) params.set("category", filters.category)
-  if (filters.q) params.set("q", filters.q)
-
-  return params.toString()
-}
-
 export default function Page() {
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
-
-  const [project, setProject] = useState<{ name: string } | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [notFoundState, setNotFoundState] = useState(false)
+  const projectId = String(params.id)
 
   const [selectedCategory, setSelectedCategory] = useState(
     searchParams.get("category") || "all"
@@ -131,11 +98,6 @@ export default function Page() {
   )
   const [showSuggestions, setShowSuggestions] = useState(false)
   const initialSyncDone = useRef(false)
-  const paramsRef = useRef(params)
-  const routerRef = useRef(router)
-
-  paramsRef.current = params
-  routerRef.current = router
 
   const FIELD_SUGGESTIONS = [
     { label: "ID", value: "@id=" },
@@ -147,14 +109,6 @@ export default function Page() {
     { label: "Created At", value: "@createdAt=" },
   ]
 
-  const [events, setEvents] = useState<EventItem[]>([])
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
-
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [categories, setCategories] = useState<
-    { name: string; count: number }[]
-  >([])
   const sentinelRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -187,111 +141,66 @@ export default function Page() {
     }
 
     const queryString = newParams.toString()
-    routerRef.current.replace(
-      `/project/${paramsRef.current.id}${queryString ? `?${queryString}` : ""}`,
+    router.replace(
+      `/project/${projectId}${queryString ? `?${queryString}` : ""}`,
       { scroll: false }
     )
-  }, [debouncedQuery, selectedCategory])
+  }, [debouncedQuery, projectId, router, selectedCategory])
 
-  const queryString = useMemo(
-    () =>
-      buildQueryString(selectedCategory, debouncedQuery, 1, EVENTS_PER_PAGE),
-    [selectedCategory, debouncedQuery]
+  
+
+  const filters = useMemo(
+    () => parseSearchQuery(debouncedQuery).filters,
+    [debouncedQuery]
   )
+  const pushNotify: "true" | "false" | undefined =
+    filters.pushNotify === "true" || filters.pushNotify === "false"
+      ? filters.pushNotify
+      : undefined
+  const eventInput = {
+    projectId,
+    limit: EVENTS_PER_PAGE,
+    id: filters.id,
+    title: filters.title,
+    description: filters.description,
+    pushNotify,
+    category:
+      filters.category ??
+      (selectedCategory !== "all" ? selectedCategory : undefined),
+    contextId: filters.contextId,
+    createdAt: filters.createdAt,
+    q: filters.q,
+  }
+  const projectQuery = trpc.project.get.useQuery({ id: projectId })
+  const categoriesQuery = trpc.event.categories.useQuery({ projectId })
+  const eventsQuery = trpc.event.list.useInfiniteQuery(eventInput, {
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  })
 
-  const currentQueryKey = useMemo(
-    () => `${selectedCategory}:${debouncedQuery}`,
-    [selectedCategory, debouncedQuery]
-  )
-
-  const fetchEvents = useCallback(
-    async (pageNum: number, append: boolean) => {
-      const url = `/api/v1/project/${params.id}/events?${buildQueryString(
-        selectedCategory,
-        debouncedQuery,
-        pageNum,
-        EVENTS_PER_PAGE
-      )}`
-      const res = await fetch(url)
-      if (!res.ok) return
-      const data = await res.json()
-      const newEvents = data.data.events ?? []
-      const pagination = data.data.pagination
-
-      setEvents((prev) => (append ? [...prev, ...newEvents] : newEvents))
-      setPage(pagination?.page ?? pageNum)
-      setHasMore((pagination?.page ?? pageNum) < (pagination?.pages ?? pageNum))
-    },
-    [params.id, selectedCategory, debouncedQuery]
-  )
+  const project = projectQuery.data
+  const categories = categoriesQuery.data
+    ? [
+        { name: "all", count: categoriesQuery.data.total },
+        ...categoriesQuery.data.categories,
+      ]
+    : []
+  const events = eventsQuery.data?.pages.flatMap((page) => page.events) ?? []
+  const loadingMore = eventsQuery.isFetchingNextPage
+  const hasMore = Boolean(eventsQuery.hasNextPage)
+  const { fetchNextPage, hasNextPage, isFetchingNextPage } = eventsQuery
 
   useEffect(() => {
-    const fetchInitial = async () => {
-      const [projectRes, eventsRes, categoriesRes] = await Promise.all([
-        fetch(`/api/v1/project/${params.id}`),
-        fetch(`/api/v1/project/${params.id}/events?${queryString}`),
-        fetch(`/api/v1/project/${params.id}/categories`),
-      ])
-
-      if (!projectRes.ok) {
-        setNotFoundState(true)
-        setLoading(false)
-        return
-      }
-
-      const projectData = await projectRes.json()
-      setProject(projectData.data)
-
-      if (eventsRes.ok) {
-        const eventsData = await eventsRes.json()
-        setEvents(eventsData.data.events ?? [])
-        setPage(eventsData.data.pagination?.page ?? 1)
-        setHasMore(
-          (eventsData.data.pagination?.page ?? 1) <
-            (eventsData.data.pagination?.pages ?? 1)
-        )
-      }
-
-      if (categoriesRes.ok) {
-        const categoriesData = await categoriesRes.json()
-        const total = categoriesData.data?.total ?? 0
-        const categoryList = categoriesData.data?.categories ?? []
-        setCategories([{ name: "all", count: total }, ...categoryList])
-      }
-
-      setLoading(false)
-    }
-
-    fetchInitial()
-  }, [params.id])
-
-  useEffect(() => {
-    if (loading) return
-
-    setEvents([])
-    setPage(1)
-    setHasMore(true)
-    setLoadingMore(true)
-
-    fetchEvents(1, false).finally(() => {
-      setLoadingMore(false)
-    })
-  }, [currentQueryKey])
-
-  useEffect(() => {
-    if (!sentinelRef.current || loading || !hasMore || loadingMore) return
-
-    const loadMore = async () => {
-      if (loadingMore || !hasMore) return
-      setLoadingMore(true)
-      await fetchEvents(page + 1, true)
-      setLoadingMore(false)
-    }
+    if (
+      !sentinelRef.current ||
+      !hasNextPage ||
+      isFetchingNextPage
+    )
+      return
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
-          loadMore()
+          void fetchNextPage()
         }
       },
       { rootMargin: "200px" }
@@ -299,9 +208,13 @@ export default function Page() {
 
     observer.observe(sentinelRef.current)
     return () => observer.disconnect()
-  }, [loading, hasMore, loadingMore, page, fetchEvents])
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
-  if (loading) {
+  if (
+    projectQuery.isLoading ||
+    categoriesQuery.isLoading ||
+    eventsQuery.isLoading
+  ) {
     return (
       <div className="flex min-h-svh items-center justify-center py-6">
         <div className="text-sm text-muted-foreground">Loading...</div>
@@ -309,8 +222,18 @@ export default function Page() {
     )
   }
 
-  if (notFoundState) {
+  if (projectQuery.error?.data?.code === "NOT_FOUND") {
     return notFound()
+  }
+
+  if (projectQuery.isError || categoriesQuery.isError || eventsQuery.isError) {
+    return (
+      <div className="flex min-h-svh items-center justify-center py-6">
+        <div className="text-sm text-destructive">
+          Unable to load this project. Please try again.
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -334,7 +257,7 @@ export default function Page() {
 
             <div className="flex items-center gap-2">
               <Button className="w-fit shrink-0" variant="default" size="sm">
-                <Link href={`/project/${params.id}/settings`}>
+                <Link href={`/project/${projectId}/settings`}>
                   Project Settings
                 </Link>
               </Button>
@@ -562,7 +485,7 @@ await ups.events.ingest({
                           </code>{" "}
                           with an API key from{" "}
                           <Link
-                            href={`/project/${params.id}/settings`}
+                            href={`/project/${projectId}/settings`}
                             className="font-medium text-foreground underline underline-offset-2"
                           >
                             Project Settings
