@@ -7,13 +7,11 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 10
-    reviewers:
-      - linusdotmy
     labels:
       - type:dependencies
       - area:config
     commit-message:
-      prefix: 'deps'
+      prefix: "deps"
       include: scope
 
   - package-ecosystem: docker
@@ -21,13 +19,11 @@ updates:
     schedule:
       interval: weekly
       day: monday
-    reviewers:
-      - linusdotmy
     labels:
       - type:dependencies
       - area:docker
     commit-message:
-      prefix: 'docker'
+      prefix: "docker"
       include: scope
 
   - package-ecosystem: github-actions
@@ -35,11 +31,9 @@ updates:
     schedule:
       interval: weekly
       day: monday
-    reviewers:
-      - linusdotmy
     labels:
       - type:dependencies
       - area:ci-cd
     commit-message:
-      prefix: 'ci'
+      prefix: "ci"
       include: scope
