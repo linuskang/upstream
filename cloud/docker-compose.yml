@@ -1,0 +1,51 @@
+services:
+  app:
+    image: ghcr.io/linuskang/upstream:latest
+    container_name: upstream
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      BASE_URL: ${BASE_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_EMAIL_FROM: ${RESEND_EMAIL_FROM}
+
+      CRON_SECRET: ${CRON_SECRET}
+      ALLOW_SIGNUP: ${ALLOW_SIGNUP}
+
+      NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${NEXT_PUBLIC_VAPID_PUBLIC_KEY}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
+      VAPID_EMAIL: ${VAPID_EMAIL}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - upstream
+
+  db:
+    image: postgres:17
+    container_name: upstream-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - upstream:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - upstream
+
+volumes:
+  upstream:
+
+networks:
+  upstream:
+    driver: bridge
