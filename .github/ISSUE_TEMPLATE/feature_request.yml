@@ -26,7 +26,7 @@ body:
     attributes:
       label: Problem Statement
       description: Is your feature request related to a problem? Please describe.
-      placeholder: 'I'm always frustrated when ...'
+      placeholder: 'I am facing an issue where ...'
     validations:
       required: false
 
