@@ -2,11 +2,12 @@ import webpush, { WebPushError } from "web-push"
 import { prisma } from "@workspace/db"
 import { Email } from "@/server/email"
 import { env } from "@/env"
+import { getVapidSubject, getVapidPublicKey } from "@/server/vapid"
 
 function setupWebPush() {
   webpush.setVapidDetails(
-    "mailto:m@linus.id.au",
-    env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    getVapidSubject(),
+    getVapidPublicKey(),
     env.VAPID_PRIVATE_KEY
   )
 }

@@ -133,16 +133,25 @@ export default function Page() {
   }
 
   async function subscribeToPush() {
-    const registration = await navigator.serviceWorker.ready
-    const sub = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-      ),
-    })
-    setSubscription(sub)
-    const serializedSub = JSON.parse(JSON.stringify(sub))
-    await subscribeUser(serializedSub)
+    try {
+      const res = await fetch("/api/vapid-public-key", {
+        cache: "no-store",
+      })
+      if (!res.ok) throw new Error("Failed to fetch VAPID public key")
+
+      const { publicKey } = await res.json()
+      const registration = await navigator.serviceWorker.ready
+      const sub = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey),
+      })
+      setSubscription(sub)
+      const serializedSub = JSON.parse(JSON.stringify(sub))
+      await subscribeUser(serializedSub)
+    } catch (error) {
+      console.error("Failed to subscribe to push:", error)
+      toast.error("Failed to enable push notifications.")
+    }
   }
 
   async function unsubscribeFromPush() {

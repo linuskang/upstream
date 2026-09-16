@@ -6,6 +6,7 @@ export const env = createEnv({
     DATABASE_URL: z.url(),
     BASE_URL: z.url(),
 
+    VAPID_PUBLIC_KEY: z.string().optional(),
     VAPID_PRIVATE_KEY: z.string(),
     VAPID_EMAIL: z.email(),
 
@@ -28,9 +29,7 @@ export const env = createEnv({
 
   clientPrefix: "NEXT_PUBLIC_",
 
-  client: {
-    NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string(),
-  },
+  client: {},
 
   /**
    * What object holds the environment variables at runtime. This is usually

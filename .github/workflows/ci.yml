@@ -96,8 +96,6 @@ jobs:
           BASE_URL: "http://localhost:3000"
           BETTER_AUTH_SECRET: "ci-build-weruiopweur9iowue90ru09weu9ru2903ur9023uru239r-secret-not-for-production"
           BETTER_AUTH_URL: "http://localhost:3000"
-          VAPID_PRIVATE_KEY: "7zYzdJCckMSeVEh31wkuF5yZZY_zu1Y16G7eLbtuEm4"
-          NEXT_PUBLIC_VAPID_PUBLIC_KEY: "BCPa_p_M-CkigwhRXiJnRAVpbKlfayVU6X_O71kkgUG84gCcP4f5xtp-e_74M1p-ftrkkn03Ot4tnblnthC01vk"
           GITHUB_CLIENT_ID: "ci-placeholder"
           GITHUB_CLIENT_SECRET: "ci-placeholder"
           RESEND_API_KEY: "ci-placeholder"
