@@ -19,17 +19,6 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
-ENV BASE_URL="http://localhost:3000"
-ENV BETTER_AUTH_SECRET="oiwehjfiwheiofhweiofhwioehfoiwehifhweiofoihwefihweifhiwehf"
-ENV BETTER_AUTH_URL="http://localhost:3000"
-ENV VAPID_PRIVATE_KEY="privatekey"
-ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY="BCPa_p_M-CkigwhRXiJnRAVpbKlfayVU6X_O71kkgUG84gCcP4f5xtp-e_74M1p-ftrkkn03Ot4tnblnthC01vk"
-ENV GITHUB_CLIENT_ID="ci-placeholder"
-ENV GITHUB_CLIENT_SECRET="ci-placeholder"
-ENV RESEND_API_KEY="ci-placeholder"
-ENV VAPID_EMAIL="noreply@localhost.com"
-ENV RESEND_EMAIL_FROM="noreply@localhost"
 
 WORKDIR /app/packages/db
 RUN npx prisma generate
