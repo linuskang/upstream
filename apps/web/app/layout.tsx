@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans"
 import { RegisterServiceWorker } from "@/components/register-sw"
 import "@workspace/ui/styles/globals.css"
 import { Toaster } from "@workspace/ui/components/sonner"
+import { TRPCProvider } from "@/components/trpc-provider"
 
 export const metadata: Metadata = {
   title: "Upstream",
@@ -47,7 +48,7 @@ export default function RootLayout({
         <RegisterServiceWorker />
         <main className="flex-1">
           <TooltipProvider>
-            {children}
+            <TRPCProvider>{children}</TRPCProvider>
             <Toaster position="top-center" />
           </TooltipProvider>
         </main>

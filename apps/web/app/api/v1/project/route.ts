@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server"
 import { getSession } from "@/server/auth"
 import { Project } from "@/server/project"
-import { plans } from "@/subscription-types"
+import { getPlan } from "@/subscription-types"
 import { prisma } from "@workspace/db"
 import { ApiResponse } from "@/app/api/responses"
 
@@ -53,8 +53,7 @@ export async function POST(request: NextRequest) {
     return ApiResponse.NotFound()
   }
 
-  const userPlan = user.plan as keyof typeof plans
-  const limit = plans[userPlan].maxProjects
+  const limit = getPlan(user.plan).maxProjects
 
   if (projectCount >= limit) {
     return ApiResponse.Forbidden(

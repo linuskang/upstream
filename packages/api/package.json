@@ -1,0 +1,24 @@
+{
+  "name": "@workspace/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./context": "./src/context.ts",
+    "./root": "./src/root.ts",
+    "./subscription-types": "./src/subscription-types.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@trpc/server": "^11.18.0",
+    "@workspace/db": "*",
+    "zod": "^4.6.4"
+  },
+  "devDependencies": {
+    "@workspace/typescript-config": "*",
+    "typescript": "^5"
+  }
+}

@@ -1,19 +1,19 @@
 services:
-  app:
-    image: ghcr.io/linuskang/up:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    env_file: .env
-    restart: unless-stopped
-    depends_on:
-      - db
-    networks:
-      - upstream_net
+  # app:
+  #   image: ghcr.io/linuskang/up:latest
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   env_file: .env
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - upstream_net
   db:
-    image: postgres:17-alpine
+    image: postgres:17
     environment:
       POSTGRES_USER: upstream
       POSTGRES_PASSWORD: upstream

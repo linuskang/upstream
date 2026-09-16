@@ -1,5 +1,5 @@
 import { prisma } from "@workspace/db"
-import { plans } from "@/subscription-types"
+import { getPlan } from "@/subscription-types"
 
 export interface UsageStats {
   plan: string
@@ -109,26 +109,21 @@ export class Usage {
         plan: "Free",
         projects: {
           current: projectCount,
-          limit: plans["FREE"].maxProjects,
+          limit: getPlan("FREE").maxProjects,
         },
         eventsToday: {
           current: eventsToday,
         },
         eventsMonth: {
           current: monthlyUsage?.eventCount ?? 0,
-          limit: plans["FREE"].maxEventsPerMonth,
+          limit: getPlan("FREE").maxEventsPerMonth,
         },
       }
 
-    const plan = user.plan as keyof typeof plans
-    const planConfig = plans[plan]
-
-    const planDisplay = (user?.plan ?? "FREE")
-      .toLowerCase()
-      .replace(/^\w/, (c) => c.toUpperCase())
+    const planConfig = getPlan(user.plan)
 
     return {
-      plan: planDisplay,
+      plan: planConfig.displayName,
       projects: {
         current: projectCount,
         limit: planConfig.maxProjects,

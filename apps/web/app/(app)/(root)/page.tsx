@@ -1,10 +1,10 @@
 "use client"
 
 // Libraries
-import axios from "axios"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { authClient } from "@/client/auth"
+import { trpc } from "@/lib/trpc"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -32,22 +32,6 @@ import {
 import { Card } from "@workspace/ui/components/card"
 
 // Types
-interface Project {
-  id: string
-  name: string
-}
-
-interface Activity {
-  id: string
-  message: string
-  createdAt: string
-  project: Project
-  user: {
-    name: string
-    image: string | null
-  }
-}
-
 function formatActivityDate(value: string) {
   const date = new Date(value)
 
@@ -56,18 +40,6 @@ function formatActivityDate(value: string) {
     month: "2-digit",
     year: "numeric",
   })
-}
-
-interface Usage {
-  plan: string
-  projects: {
-    current: number
-    limit: number
-  }
-  eventsMonth: {
-    current: number
-    limit: number
-  }
 }
 
 type PaginationPage = number | "ellipsis-start" | "ellipsis-end"
@@ -112,54 +84,35 @@ export default function Page() {
   const [activityPage, setActivityPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
 
-  const [activityLoading, setActivityLoading] = useState(true)
-  const [usageLoading, setUsageLoading] = useState(true)
-  const [projectsLoading, setProjectsLoading] = useState(true)
-  const [activities, setActivities] = useState<Activity[]>([])
-  const [projects, setProjects] = useState<Project[]>([])
-  const [usage, setUsage] = useState<Usage>({
-    plan: "Free",
-    projects: {
-      current: 0,
-      limit: 1,
-    },
-    eventsMonth: {
-      current: 0,
-      limit: 100,
-    },
-  })
+  const enabled = Boolean(session) && !isPending
+  const projectsQuery = trpc.project.list.useQuery(undefined, { enabled })
+  const usageQuery = trpc.usage.stats.useQuery(undefined, { enabled })
+  const activityQuery = trpc.account.activity.useQuery(undefined, { enabled })
 
-  useEffect(() => {
-    if (!session) return
+  const projects = projectsQuery.data ?? []
+  const usage = usageQuery.data
+  const activities = activityQuery.data ?? []
+  const isLoading =
+    isPending ||
+    projectsQuery.isLoading ||
+    usageQuery.isLoading ||
+    activityQuery.isLoading
+  const hasError =
+    projectsQuery.isError || usageQuery.isError || activityQuery.isError
 
-    async function fetchUrls() {
-      setProjectsLoading(true)
-      setUsageLoading(true)
-      setActivityLoading(true)
+  if (isLoading) {
+    return null
+  }
 
-      try {
-        await axios.get("/api/v1/project").then((res) => {
-          setProjects(res.data.data)
-        })
-
-        await axios.get("/api/v1/account/usage").then((res) => {
-          setUsage(res.data.data)
-        })
-
-        await axios.get("/api/v1/account/activity").then((res) => {
-          setActivities(res.data.data)
-        })
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setProjectsLoading(false)
-        setUsageLoading(false)
-        setActivityLoading(false)
-      }
-    }
-
-    fetchUrls()
-  }, [session])
+  if (hasError || !usage) {
+    return (
+      <div className="flex min-h-svh items-center justify-center p-6">
+        <p className="text-sm text-destructive">
+          Unable to load your dashboard. Please try again.
+        </p>
+      </div>
+    )
+  }
 
   const filteredProjects = projects.filter((project) =>
     project.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
@@ -174,10 +127,6 @@ export default function Page() {
     (activityPage - 1) * 5,
     activityPage * 5
   )
-
-  if (isPending || projectsLoading || usageLoading || activityLoading) {
-    return null
-  }
 
   return (
     <div className="flex min-h-svh flex-col gap-3 py-6">

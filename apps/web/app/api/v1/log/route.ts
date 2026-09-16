@@ -26,7 +26,7 @@ import {
 } from "@/server/notification"
 
 import { ApiResponse } from "@/app/api/responses"
-import { plans } from "@/subscription-types"
+import { getPlan } from "@/subscription-types"
 
 // Types
 const Payload = z.object({
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
   // Logging
   const usage = await Usage.increment(user.id)
   const body = await req.json()
-  const plan = plans[user.plan]
+  const plan = getPlan(user.plan)
 
   if (usage.eventCount > plan.maxEventsPerMonth) {
     await Usage.decrement(user.id)
