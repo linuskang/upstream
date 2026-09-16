@@ -14,7 +14,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.9.1",
-    "@scalar/api-reference": "^1.67.0",
+    "@scalar/api-reference": "^1.43.17",
     "@scalar/nextjs-api-reference": "^0.11.14",
     "@t3-oss/env-core": "^0.13.11",
     "@workspace/contracts": "*",
@@ -46,7 +46,7 @@
     "@workspace/eslint-config": "*",
     "@workspace/typescript-config": "*",
     "eslint": "^9",
-    "prisma": "^7.9.1",
+    "prisma": "^6.12.0",
     "typescript": "^5"
   }
 }
