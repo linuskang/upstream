@@ -24,7 +24,8 @@ WORKDIR /app/packages/db
 RUN npx prisma generate
 
 WORKDIR /app/apps/web
-RUN npm run build
+ARG SKIP_ENV_VALIDATION=false
+RUN SKIP_ENV_VALIDATION=$SKIP_ENV_VALIDATION npm run build
 
 FROM node:26-alpine AS runner
 WORKDIR /app
