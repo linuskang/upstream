@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
-    "@prisma/client": "^7.9.1",
+    "@prisma/client": "^7.10.0",
     "@scalar/api-reference": "^1.43.17",
     "@scalar/nextjs-api-reference": "^0.11.14",
     "@t3-oss/env-core": "^0.13.11",
