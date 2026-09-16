@@ -41,7 +41,7 @@
     "@types/web-push": "^3.6.4",
     "@workspace/eslint-config": "*",
     "@workspace/typescript-config": "*",
-    "eslint": "^10",
+    "eslint": "^9",
     "typescript": "^5"
   }
 }
