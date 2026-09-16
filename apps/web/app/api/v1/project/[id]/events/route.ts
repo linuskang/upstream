@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server"
-import { prisma } from "@/server/db"
+import { prisma } from "@workspace/db"
 import { ApiResponse } from "@/app/api/responses"
 import { Project } from "@/server/project"
 import { getSession } from "@/server/auth"
-import type { Prisma } from "@/generated/prisma/client"
+import type { Prisma } from "@workspace/db"
 
 export async function GET(
   req: NextRequest,

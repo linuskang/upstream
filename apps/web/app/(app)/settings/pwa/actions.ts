@@ -2,7 +2,7 @@
 
 import { PushSubscription } from 'web-push'
 import { getSession } from '@/server/auth'
-import { prisma } from '@/server/db'
+import { prisma } from '@workspace/db'
 import { sendPushNotification } from '@/server/notification'
 
 export async function subscribeUser(sub: PushSubscription) {

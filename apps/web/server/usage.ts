@@ -1,4 +1,4 @@
-import { prisma } from "@/server/db"
+import { prisma } from "@workspace/db"
 import { plans } from "@/subscription-types"
 
 export interface UsageStats {

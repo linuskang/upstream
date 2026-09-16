@@ -1,0 +1,26 @@
+{
+  "name": "@workspace/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "typecheck": "prisma generate && tsc --noEmit"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.9.1",
+    "dotenv": "^17.4.2",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@types/pg": "^8.20.4",
+    "@workspace/typescript-config": "*",
+    "prisma": "^7.9.1",
+    "typescript": "^5"
+  }
+}

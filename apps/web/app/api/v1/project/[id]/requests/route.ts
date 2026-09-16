@@ -1,4 +1,4 @@
-import { prisma } from "@/server/db"
+import { prisma } from "@workspace/db"
 import { getSession } from "@/server/auth"
 import { ApiResponse } from "@/app/api/responses"
 import { NextRequest } from "next/server"

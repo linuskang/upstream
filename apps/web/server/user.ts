@@ -1,4 +1,4 @@
-import { prisma } from '@/server/db'
+import { prisma } from '@workspace/db'
 
 export class User {
   static async get(id: string) {

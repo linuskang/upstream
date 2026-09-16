@@ -1,5 +1,5 @@
 import { getSession } from "@/server/auth"
-import { prisma } from "@/server/db"
+import { prisma } from "@workspace/db"
 import { ApiResponse } from "@/app/api/responses"
 
 export async function GET() {

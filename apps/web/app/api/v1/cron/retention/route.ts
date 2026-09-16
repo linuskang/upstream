@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server"
-import { prisma } from "@/server/db"
+import { prisma } from "@workspace/db"
 import { env } from "@/env"
 import { plans } from "@/subscription-types"
-import { Plan } from "@/generated/prisma/client"
+import { Plan } from "@workspace/db"
 import { ApiResponse } from "@/app/api/responses"
 
 export async function POST(request: NextRequest) {

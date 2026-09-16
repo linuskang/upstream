@@ -1,4 +1,4 @@
-import { prisma } from "@/server/db"
+import { prisma } from "@workspace/db"
 import crypto from "crypto"
 
 export interface WebhookEventPayload {

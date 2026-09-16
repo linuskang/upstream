@@ -1,5 +1,5 @@
 import webpush, { WebPushError } from 'web-push'
-import { prisma } from '@/server/db'
+import { prisma } from '@workspace/db'
 import { Email } from '@/server/email'
 import { env } from "@/env"
 

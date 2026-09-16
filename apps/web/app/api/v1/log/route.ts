@@ -12,7 +12,7 @@ import { NextRequest } from "next/server"
 import { z } from "zod"
 
 // Utilities
-import { prisma } from "@/server/db"
+import { prisma } from "@workspace/db"
 
 import { Api } from "@/server/api"
 import { Usage } from "@/server/usage"

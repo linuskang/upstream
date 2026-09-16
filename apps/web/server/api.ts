@@ -1,5 +1,5 @@
 import crypto from "crypto"
-import { prisma } from "@/server/db"
+import { prisma } from "@workspace/db"
 
 export class Api {
   static async validateKey(
