@@ -1,6 +1,6 @@
-import webpush, { WebPushError } from 'web-push'
-import { prisma } from '@workspace/db'
-import { Email } from '@/server/email'
+import webpush, { WebPushError } from "web-push"
+import { prisma } from "@workspace/db"
+import { Email } from "@/server/email"
 import { env } from "@/env"
 
 function setupWebPush() {
@@ -28,7 +28,7 @@ export async function sendEmailNotification(
   const user = await prisma.user.findUnique({
     where: {
       id: userId,
-    }
+    },
   })
 
   if (!user) {
@@ -40,12 +40,7 @@ export async function sendEmailNotification(
   }
 
   try {
-    await Email.send(
-      user.email,
-      payload.subject,
-      payload.body,
-      payload.html
-    )
+    await Email.send(user.email, payload.subject, payload.body, payload.html)
   } catch {
     return false
   }
@@ -63,7 +58,7 @@ export async function sendPushNotification(
   const user = await prisma.user.findUnique({
     where: {
       id: userId,
-    }
+    },
   })
 
   if (!user) {
@@ -81,9 +76,9 @@ export async function sendPushNotification(
   const body = JSON.stringify({
     title: payload.title,
     body: payload.body,
-    icon: '/icon.png',
-    badge: '/badge.png',
-    url: payload.url ?? '/'
+    icon: "/icon.png",
+    badge: "/badge.png",
+    url: payload.url ?? "/",
   })
 
   const results = await Promise.allSettled(
@@ -105,7 +100,7 @@ export async function sendPushNotification(
   for (let i = 0; i < results.length; i++) {
     const result = results[i]
     if (!result) continue
-    if (result.status === 'rejected') {
+    if (result.status === "rejected") {
       const subscription = subscriptions[i]
       if (!subscription) continue
       await prisma.pushSubscription.delete({

@@ -25,14 +25,21 @@ export function EventFields({
         const isEmpty = !field.value || field.value.trim() === ""
         return (
           <div key={index} className="flex min-w-0 flex-col">
-            <span className={cn("font-semibold", compact ? "text-[11px]" : "text-sm")}>
+            <span
+              className={cn(
+                "font-semibold",
+                compact ? "text-[11px]" : "text-sm"
+              )}
+            >
               {field.title}
             </span>
             <span
               className={cn(
-                "min-w-0 break-words font-medium",
+                "min-w-0 font-medium break-words",
                 compact ? "text-[11px]" : "text-sm",
-                isEmpty ? "text-muted-foreground/60 italic" : "text-muted-foreground"
+                isEmpty
+                  ? "text-muted-foreground/60 italic"
+                  : "text-muted-foreground"
               )}
             >
               {isEmpty ? "Empty Content" : field.value}
@@ -94,7 +101,11 @@ export function EventActions({
   actions,
   compact = false,
 }: {
-  actions: { title: string; variant: "primary" | "secondary" | "ghost"; url: string }[]
+  actions: {
+    title: string
+    variant: "primary" | "secondary" | "ghost"
+    url: string
+  }[]
   compact?: boolean
 }) {
   return (

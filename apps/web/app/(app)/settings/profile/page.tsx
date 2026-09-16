@@ -82,14 +82,18 @@ export default function Page() {
           >
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <Form.Label name="name" className="font-semibold">Display Name</Form.Label>
+                <Form.Label name="name" className="font-semibold">
+                  Display Name
+                </Form.Label>
                 <Form.Field name="name">
                   <Input placeholder="Your display name" />
                 </Form.Field>
               </div>
 
               <div className="space-y-1.5">
-                <Form.Label name="image" className="font-semibold">Profile Image URL</Form.Label>
+                <Form.Label name="image" className="font-semibold">
+                  Profile Image URL
+                </Form.Label>
                 <Form.Field name="image">
                   <Input placeholder="https://example.com/avatar.png" />
                 </Form.Field>
@@ -111,19 +115,14 @@ export default function Page() {
               )}
 
               <div className="space-y-1.5">
-                <Form.Label name="email" className="font-semibold">Email</Form.Label>
-                <Input
-                  value={session.user.email}
-                  disabled
-                />
+                <Form.Label name="email" className="font-semibold">
+                  Email
+                </Form.Label>
+                <Input value={session.user.email} disabled />
               </div>
 
               <Form.Submit>
-                <Button
-                  size="sm"
-                >
-                  Save Changes
-                </Button>
+                <Button size="sm">Save Changes</Button>
               </Form.Submit>
             </div>
           </Form>

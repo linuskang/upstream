@@ -104,7 +104,10 @@ export const openApiSpec = {
               type: "object",
               properties: {
                 title: { type: "string" },
-                variant: { type: "string", enum: ["primary", "secondary", "ghost"] },
+                variant: {
+                  type: "string",
+                  enum: ["primary", "secondary", "ghost"],
+                },
                 url: { type: "string" },
               },
             },
@@ -141,7 +144,11 @@ export const openApiSpec = {
           subscription: { type: "string" },
           url: { type: "string" },
           enabled: { type: "boolean" },
-          lastTriggered: { type: "string", format: "date-time", nullable: true },
+          lastTriggered: {
+            type: "string",
+            format: "date-time",
+            nullable: true,
+          },
           createdAt: { type: "string", format: "date-time" },
           updatedAt: { type: "string", format: "date-time" },
         },
@@ -220,7 +227,8 @@ export const openApiSpec = {
       post: {
         tags: ["Events"],
         summary: "Ingest an event",
-        description: "Creates a new event for the project associated with the API key.",
+        description:
+          "Creates a new event for the project associated with the API key.",
         security: [{ apiKey: [] }],
         requestBody: {
           required: true,
@@ -254,7 +262,11 @@ export const openApiSpec = {
                       required: ["title", "url"],
                       properties: {
                         title: { type: "string" },
-                        variant: { type: "string", enum: ["primary", "secondary", "ghost"], default: "primary" },
+                        variant: {
+                          type: "string",
+                          enum: ["primary", "secondary", "ghost"],
+                          default: "primary",
+                        },
                         url: { type: "string", format: "uri" },
                       },
                     },
@@ -296,7 +308,8 @@ export const openApiSpec = {
       get: {
         tags: ["Projects"],
         summary: "List projects",
-        description: "Returns a list of projects owned by the authenticated user.",
+        description:
+          "Returns a list of projects owned by the authenticated user.",
         security: [{ cookieAuth: [] }],
         responses: {
           "200": {
@@ -322,7 +335,8 @@ export const openApiSpec = {
       post: {
         tags: ["Projects"],
         summary: "Create a project",
-        description: "Creates a new project. Respects the project quota for the current plan.",
+        description:
+          "Creates a new project. Respects the project quota for the current plan.",
         security: [{ cookieAuth: [] }],
         requestBody: {
           required: true,
@@ -363,7 +377,8 @@ export const openApiSpec = {
       get: {
         tags: ["Projects"],
         summary: "Get project",
-        description: "Returns a project by ID, including API keys and owner details.",
+        description:
+          "Returns a project by ID, including API keys and owner details.",
         security: [{ cookieAuth: [] }],
         responses: {
           "200": {
@@ -434,7 +449,8 @@ export const openApiSpec = {
       get: {
         tags: ["Events"],
         summary: "List events",
-        description: "Returns a paginated list of top-level events for a project. Supports field filters and general search.",
+        description:
+          "Returns a paginated list of top-level events for a project. Supports field filters and general search.",
         security: [{ cookieAuth: [] }],
         parameters: [
           {
@@ -487,13 +503,15 @@ export const openApiSpec = {
             name: "createdAt",
             in: "query",
             schema: { type: "string" },
-            description: "Filter by date. Use YYYY-MM-DD for a full day or ISO timestamp for exact match.",
+            description:
+              "Filter by date. Use YYYY-MM-DD for a full day or ISO timestamp for exact match.",
           },
           {
             name: "q",
             in: "query",
             schema: { type: "string" },
-            description: "General search across title, description and category.",
+            description:
+              "General search across title, description and category.",
           },
         ],
         responses: {
@@ -537,14 +555,17 @@ export const openApiSpec = {
       get: {
         tags: ["Events"],
         summary: "List categories",
-        description: "Returns the total event count and category breakdown for a project.",
+        description:
+          "Returns the total event count and category breakdown for a project.",
         security: [{ cookieAuth: [] }],
         responses: {
           "200": {
             description: "Category list",
             content: {
               "application/json": {
-                schema: apiResponse({ $ref: "#/components/schemas/CategoryList" }),
+                schema: apiResponse({
+                  $ref: "#/components/schemas/CategoryList",
+                }),
               },
             },
           },
@@ -598,7 +619,8 @@ export const openApiSpec = {
         },
         responses: {
           "200": {
-            description: "API key created. The response data contains the plaintext key.",
+            description:
+              "API key created. The response data contains the plaintext key.",
             content: {
               "application/json": {
                 schema: apiResponse({
@@ -843,7 +865,8 @@ export const openApiSpec = {
       get: {
         tags: ["Account"],
         summary: "Account activity",
-        description: "Returns recent activity across all projects owned by the user.",
+        description:
+          "Returns recent activity across all projects owned by the user.",
         security: [{ cookieAuth: [] }],
         responses: {
           "200": {
@@ -864,7 +887,8 @@ export const openApiSpec = {
       post: {
         tags: ["Cron"],
         summary: "Run retention cleanup",
-        description: "Internal cron endpoint. Requires `x-api-key` header matching the `CRON_SECRET` environment variable.",
+        description:
+          "Internal cron endpoint. Requires `x-api-key` header matching the `CRON_SECRET` environment variable.",
         security: [{ apiKey: [] }],
         responses: {
           "200": {

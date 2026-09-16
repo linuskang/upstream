@@ -1,4 +1,3 @@
-
 // curl -X POST https://up.linus.my/api/v1/log \
 // -H "x-api-key: YOUR_API_KEY" \
 // -H "Content-Type: application/json" \
@@ -21,7 +20,10 @@ import { Project } from "@/server/project"
 import { env } from "@/env"
 import { User } from "@/server/user"
 
-import { sendPushNotification, sendEmailNotification } from "@/server/notification"
+import {
+  sendPushNotification,
+  sendEmailNotification,
+} from "@/server/notification"
 
 import { ApiResponse } from "@/app/api/responses"
 import { plans } from "@/subscription-types"
@@ -71,7 +73,7 @@ export async function POST(req: NextRequest) {
   }
 
   const validate: {
-    valid: boolean;
+    valid: boolean
     projectId?: string
   } = await Api.validateKey(apiKey)
 
@@ -106,10 +108,13 @@ export async function POST(req: NextRequest) {
       req.headers.get("user-agent"),
       JSON.stringify(body),
       JSON.stringify({
-        error: "Monthly event quota exceeded. Upgrade your plan to ingest more events.",
+        error:
+          "Monthly event quota exceeded. Upgrade your plan to ingest more events.",
       })
     )
-    return ApiResponse.BadRequest("Monthly event quota exceeded. Upgrade your plan to ingest more events.")
+    return ApiResponse.BadRequest(
+      "Monthly event quota exceeded. Upgrade your plan to ingest more events."
+    )
   }
 
   const parsed = Payload.safeParse(body)
@@ -132,13 +137,17 @@ export async function POST(req: NextRequest) {
 
   const event = parsed.data
 
-  if (event.contextId && event.contextStart && await prisma.event.findFirst({
-    where: {
-      projectId: project.id,
-      contextId: event.contextId,
-      contextStart: true,
-    }
-  })) {
+  if (
+    event.contextId &&
+    event.contextStart &&
+    (await prisma.event.findFirst({
+      where: {
+        projectId: project.id,
+        contextId: event.contextId,
+        contextStart: true,
+      },
+    }))
+  ) {
     await Api.log(
       project.id,
       "/api/v1/log",
@@ -151,7 +160,9 @@ export async function POST(req: NextRequest) {
       })
     )
     await Usage.decrement(user.id) // Undos usage if errored, v0.2.4 improvement
-    return ApiResponse.BadRequest("Context ID already exists for a context start event")
+    return ApiResponse.BadRequest(
+      "Context ID already exists for a context start event"
+    )
   }
 
   if (event.contextStart && !event.contextId) {

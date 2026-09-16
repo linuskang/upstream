@@ -1,7 +1,12 @@
 "use client"
 
 import { cn } from "@workspace/ui/lib/utils"
-import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
 
 export type CategoryProps = {
   name: string
@@ -32,9 +37,7 @@ export function CategorySelector({
               <button
                 key={category.name}
                 type="button"
-                onClick={() =>
-                  onSelectCategory?.(category.name)
-                }
+                onClick={() => onSelectCategory?.(category.name)}
                 className={cn(
                   "flex shrink-0 items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   active
@@ -42,9 +45,7 @@ export function CategorySelector({
                     : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                 )}
               >
-                <span className="capitalize">
-                  {category.name}
-                </span>
+                <span className="capitalize">{category.name}</span>
                 <span
                   className={cn(
                     "ml-2 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",

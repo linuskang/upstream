@@ -12,7 +12,6 @@
     "@workspace/eslint-config": "*",
     "@workspace/typescript-config": "*",
     "prettier": "^3.8.3",
-    "prettier-plugin-tailwindcss": "^0.8.0",
     "turbo": "^2.10.9",
     "typescript": "^5"
   },
@@ -24,9 +23,5 @@
     "apps/*",
     "packages/*",
     "tooling/*"
-  ],
-  "dependencies": {
-    "@workspace/ui": "^0.0.0",
-    "geist": "^1.7.2"
-  }
+  ]
 }

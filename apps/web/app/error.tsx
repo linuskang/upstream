@@ -23,15 +23,11 @@ export default function Error({
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-white">
       <div className="max-w-md space-y-4 text-center">
-        <p className="text-5xl font-bold text-white select-none">
-          Oops
-        </p>
-        <h1 className="-mt-2 text-2xl font-semibold">
-          Something went wrong
-        </h1>
+        <p className="text-5xl font-bold text-white select-none">Oops</p>
+        <h1 className="-mt-2 text-2xl font-semibold">Something went wrong</h1>
         <p className="text-eventcontent/65 text-sm">
-          An unexpected error occurred. If this keeps happening,
-          please contact support.
+          An unexpected error occurred. If this keeps happening, please contact
+          support.
         </p>
 
         <p className="text-eventcontent/40 font-mono text-xs">

@@ -6,7 +6,9 @@ import { ApiResponse } from "@/app/api/responses"
 
 export async function GET(
   request: NextRequest,
-  { params }: {
+  {
+    params,
+  }: {
     params: Promise<{ id: string }>
   }
 ) {
@@ -37,7 +39,9 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: {
+  {
+    params,
+  }: {
     params: Promise<{ id: string }>
   }
 ) {
@@ -80,7 +84,9 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: {
+  {
+    params,
+  }: {
     params: Promise<{ id: string }>
   }
 ) {

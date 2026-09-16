@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server"
 
 export class ApiResponse {
   static BadRequest(message?: string, data?: unknown) {
@@ -12,7 +12,7 @@ export class ApiResponse {
       {
         status: 400,
       }
-    );
+    )
   }
 
   static Unauthorized(message?: string, data?: unknown) {
@@ -26,7 +26,7 @@ export class ApiResponse {
       {
         status: 401,
       }
-    );
+    )
   }
 
   static NotFound(message?: string, data?: unknown) {
@@ -40,7 +40,7 @@ export class ApiResponse {
       {
         status: 404,
       }
-    );
+    )
   }
 
   static InternalServerError(message?: string, data?: unknown) {
@@ -54,7 +54,7 @@ export class ApiResponse {
       {
         status: 500,
       }
-    );
+    )
   }
 
   static Success(message?: string, data?: unknown) {
@@ -68,7 +68,7 @@ export class ApiResponse {
       {
         status: 200,
       }
-    );
+    )
   }
 
   static Forbidden(message?: string, data?: unknown) {
@@ -82,6 +82,6 @@ export class ApiResponse {
       {
         status: 403,
       }
-    );
+    )
   }
 }

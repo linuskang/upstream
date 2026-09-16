@@ -27,16 +27,13 @@ export async function GET(
     return ApiResponse.NotFound("Project not found")
   }
 
-  if (!await Project.isAuthorized(id, session.user.id)) {
+  if (!(await Project.isAuthorized(id, session.user.id))) {
     return ApiResponse.Forbidden("You do not have access to this project")
   }
 
   const search = new URL(req.url)
 
-  const page = Math.max(
-    Number(search.searchParams.get("page") ?? 1),
-    1
-  )
+  const page = Math.max(Number(search.searchParams.get("page") ?? 1), 1)
 
   const limit = Math.min(
     Math.max(Number(search.searchParams.get("limit") ?? 50), 1),
@@ -153,25 +150,23 @@ export async function GET(
 
   const contextEvents = contextIds.length
     ? await prisma.event.findMany({
-      where: {
-        projectId: id,
-        contextId: {
-          in: contextIds,
+        where: {
+          projectId: id,
+          contextId: {
+            in: contextIds,
+          },
+          contextStart: false,
         },
-        contextStart: false,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    })
+        orderBy: {
+          createdAt: "asc",
+        },
+      })
     : []
 
   const formatted = events.map((event) => ({
     ...event,
     events: event.contextId
-      ? contextEvents.filter(
-        (child) => child.contextId === event.contextId
-      )
+      ? contextEvents.filter((child) => child.contextId === event.contextId)
       : undefined,
   }))
 

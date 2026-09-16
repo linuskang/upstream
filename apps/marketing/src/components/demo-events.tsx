@@ -112,5 +112,4 @@ export const DemoEvents: EventProps[] = [
     ],
     createdAt: new Date().toISOString(),
   },
-
 ]

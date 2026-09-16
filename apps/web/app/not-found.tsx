@@ -1,6 +1,11 @@
 import Link from "next/link"
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
 
 export default function NotFound() {
   return (
@@ -13,8 +18,7 @@ export default function NotFound() {
           <div className="flex flex-col gap-2">
             <p className="text-lg font-medium">Page not found</p>
             <p className="text-sm text-muted-foreground">
-              The page you are looking for does not exist or has
-              been moved.
+              The page you are looking for does not exist or has been moved.
             </p>
           </div>
           <Link href="/">

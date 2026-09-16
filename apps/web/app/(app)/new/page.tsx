@@ -106,11 +106,7 @@ export default function Page() {
             </Form.Label>
 
             <Form.Field name="projectName" required>
-              <Input
-                placeholder="My new Project"
-                maxLength={80}
-                autoFocus
-              />
+              <Input placeholder="My new Project" maxLength={80} autoFocus />
             </Form.Field>
 
             <Form.Error
@@ -120,11 +116,7 @@ export default function Page() {
           </CardContent>
 
           <CardFooter className="justify-end gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={creating}
-            >
+            <Button type="button" variant="secondary" disabled={creating}>
               <Link href="/">Cancel</Link>
             </Button>
 

@@ -57,7 +57,9 @@ export async function POST(request: NextRequest) {
   const limit = plans[userPlan].maxProjects
 
   if (projectCount >= limit) {
-    return ApiResponse.Forbidden("Project limit reached. Upgrade your plan to create more projects.")
+    return ApiResponse.Forbidden(
+      "Project limit reached. Upgrade your plan to create more projects."
+    )
   }
 
   const newProject = await Project.create(session.user.id, body.name)

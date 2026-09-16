@@ -145,10 +145,7 @@ export default function Page() {
                   Current Password
                 </Form.Label>
                 <Form.Field name="currentPassword">
-                  <Input
-                    type="password"
-                    placeholder="Enter current password"
-                  />
+                  <Input type="password" placeholder="Enter current password" />
                 </Form.Field>
               </div>
 
@@ -157,10 +154,7 @@ export default function Page() {
                   New Password
                 </Form.Label>
                 <Form.Field name="newPassword">
-                  <Input
-                    type="password"
-                    placeholder="Enter new password"
-                  />
+                  <Input type="password" placeholder="Enter new password" />
                 </Form.Field>
               </div>
 
@@ -180,9 +174,7 @@ export default function Page() {
               </div>
 
               <Form.Submit>
-                <Button size="sm">
-                  Save Changes
-                </Button>
+                <Button size="sm">Save Changes</Button>
               </Form.Submit>
             </div>
           </Form>

@@ -4,13 +4,18 @@ import { useState, useMemo } from "react"
 
 import { Event } from "@workspace/ui/components/event"
 import { EventSearch } from "@workspace/ui/components/event-search"
-import { CategorySelector, CategoryProps } from "@workspace/ui/components/event-category"
+import {
+  CategorySelector,
+  CategoryProps,
+} from "@workspace/ui/components/event-category"
 
 import type { Event as EventType } from "@workspace/contracts"
 
 export default function Page() {
   const [query, setQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>("all")
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
+    "all"
+  )
 
   const events: EventType[] = useMemo(() => {
     const now = new Date()
@@ -18,10 +23,10 @@ export default function Page() {
       {
         id: "test-event",
         title: "daily billing sync started",
-         createdAt: now.toISOString(),
-         pushNotify: true,
-         emailNotify: false,
-         icon: "📄",
+        createdAt: now.toISOString(),
+        pushNotify: true,
+        emailNotify: false,
+        icon: "📄",
         description: "Automated billing sync initiated for the workspace.",
         category: "billing",
         fields: [
@@ -43,10 +48,10 @@ export default function Page() {
           {
             id: "test-event-1",
             title: "processed invoices",
-             createdAt: new Date(now.getTime() + 1200).toISOString(),
-             pushNotify: false,
-             emailNotify: false,
-             icon: "📄",
+            createdAt: new Date(now.getTime() + 1200).toISOString(),
+            pushNotify: false,
+            emailNotify: false,
+            icon: "📄",
             description: "Batch processed all pending invoices.",
             category: "billing",
             fields: [
@@ -60,19 +65,17 @@ export default function Page() {
           {
             id: "test-event-2",
             title: "daily billing sync finished",
-             createdAt: new Date(now.getTime() + 3400).toISOString(),
-             pushNotify: true,
-             emailNotify: false,
-             icon: "✅",
+            createdAt: new Date(now.getTime() + 3400).toISOString(),
+            pushNotify: true,
+            emailNotify: false,
+            icon: "✅",
             description: "Sync completed with a few failures.",
             category: "billing",
             fields: [
               { title: "Succeeded", value: "194" },
               { title: "Failed", value: "4" },
             ],
-            actions: [
-              { title: "Retry", variant: "primary", url: "#" },
-            ],
+            actions: [{ title: "Retry", variant: "primary", url: "#" }],
             data: {
               summary: {
                 succeeded: 194,
@@ -86,19 +89,17 @@ export default function Page() {
       {
         id: "second-event",
         title: "user signed up",
-         createdAt: new Date(now.getTime() - 1000 * 60 * 5).toISOString(),
-         pushNotify: false,
-         emailNotify: false,
-         icon: "🚀",
+        createdAt: new Date(now.getTime() - 1000 * 60 * 5).toISOString(),
+        pushNotify: false,
+        emailNotify: false,
+        icon: "🚀",
         description: "A new user completed the onboarding flow.",
         category: "auth",
         fields: [
           { title: "Email", value: "user@example.com" },
           { title: "Plan", value: "Pro" },
         ],
-        actions: [
-          { title: "View Profile", variant: "secondary", url: "#" },
-        ],
+        actions: [{ title: "View Profile", variant: "secondary", url: "#" }],
         data: { userId: "usr_123", referrer: "twitter" },
       },
     ]
@@ -145,7 +146,8 @@ export default function Page() {
       if (match(event.title)) return true
       if (match(event.description)) return true
       if (match(event.category)) return true
-      if (event.fields?.some((f) => match(f.title) || match(f.value))) return true
+      if (event.fields?.some((f) => match(f.title) || match(f.value)))
+        return true
       if (event.actions?.some((a) => match(a.title))) return true
       if (match(JSON.stringify(event.data))) return true
       return false
@@ -154,7 +156,7 @@ export default function Page() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="text-3xl font-semibold -mb-3">Events</h1>
+      <h1 className="-mb-3 text-3xl font-semibold">Events</h1>
       <div className="flex flex-col gap-2 py-6 sm:flex-row sm:items-start">
         <div className="shrink-0">
           <CategorySelector
@@ -164,7 +166,7 @@ export default function Page() {
           />
         </div>
 
-        <div className="flex flex-col gap-2 w-full min-w-0">
+        <div className="flex w-full min-w-0 flex-col gap-2">
           <EventSearch value={query} onChange={setQuery} />
 
           {filteredEvents.length === 0 ? (

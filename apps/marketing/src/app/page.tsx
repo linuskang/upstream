@@ -79,15 +79,14 @@ export default function Home() {
       <Navbar />
       <section className="relative flex flex-col px-4 pt-20 text-center">
         <div className="mx-auto w-full max-w-2xl space-y-6 px-2 sm:px-0">
-
           <h1 className="text-3xl leading-tight font-bold tracking-tight text-foreground sm:text-5xl">
             Simple and open event logs for your next project.
           </h1>
 
           <p className="mx-auto max-w-lg text-sm text-muted-foreground sm:text-base">
-            Upstream is a simple logging platform for developers.
-            View your events in a beautifully designed dashboard
-            with powerful searching capabilities.
+            Upstream is a simple logging platform for developers. View your
+            events in a beautifully designed dashboard with powerful searching
+            capabilities.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -109,25 +108,33 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mx-auto w-full mt-5 max-w-md sm:mt-12">
+        <div className="mx-auto mt-5 w-full max-w-md sm:mt-12">
           <EventsList events={DemoEvents} />
         </div>
       </section>
 
-      <section className="flex flex-col items-center px-4 py-16 -mt-10 sm:py-24">
+      <section className="-mt-10 flex flex-col items-center px-4 py-16 sm:py-24">
         <div className="max-w-lg space-y-4">
           <p className="text-lg text-muted-foreground">
-            look. <strong>managing your SaSS events in a project is not easy.</strong>{" "}
-            every project needs an logs viewer, searching APIs, ingestion endpoints, SDKs, and analytics. <strong>there are a lot of moving parts.</strong>
+            look.{" "}
+            <strong>managing your SaSS events in a project is not easy.</strong>{" "}
+            every project needs an logs viewer, searching APIs, ingestion
+            endpoints, SDKs, and analytics.{" "}
+            <strong>there are a lot of moving parts.</strong>
           </p>
           <p className="text-lg text-muted-foreground">
-            we&apos;ve all been there before, its a pain to set up and maintain. this is why developers pay for logging platforms.
+            we&apos;ve all been there before, its a pain to set up and maintain.
+            this is why developers pay for logging platforms.
             <br />
             <br />
-            however, most platforms like datadog, seq, signoz, and many others aren&apos;t designed for your critical product events, which need to be viewed at a glance.
+            however, most platforms like datadog, seq, signoz, and many others
+            aren&apos;t designed for your critical product events, which need to
+            be viewed at a glance.
             <br />
             <br />
-            <strong className="text-white">thats why i built this solution.</strong>
+            <strong className="text-white">
+              thats why i built this solution.
+            </strong>
           </p>
         </div>
 
@@ -141,7 +148,8 @@ export default function Home() {
           </pre>
 
           <p className="text-lg text-muted-foreground">
-            8 lines of code, and you can easily start logging critical events to our dashboard. heres what the event looks like.
+            8 lines of code, and you can easily start logging critical events to
+            our dashboard. heres what the event looks like.
           </p>
 
           <Event
@@ -154,18 +162,20 @@ export default function Home() {
           />
 
           <p className="text-lg text-muted-foreground">
-            or, are you selfhosting? no problem, just add the <strong>host</strong> variable to your initialisation function:
+            or, are you selfhosting? no problem, just add the{" "}
+            <strong>host</strong> variable to your initialisation function:
           </p>
 
           <pre className="rounded-lg bg-card p-5 text-sm">
             <code>{`const up = new Upstream({
   apiKey: "YOUR_API_KEY",
   host: "https://your.upstream-instance.com"
-})` }</code>
+})`}</code>
           </pre>
 
           <p className="text-lg text-muted-foreground">
-            need to add more details to the event? no problem. here is the code to add fields, and a description.
+            need to add more details to the event? no problem. here is the code
+            to add fields, and a description.
           </p>
 
           <pre className="rounded-lg bg-card p-5 text-sm">
@@ -197,7 +207,10 @@ export default function Home() {
           />
 
           <p className="text-lg text-muted-foreground">
-            what if you need to trigger workflows or have actions for your events? no problem. Upstream has those features too. Simply add a <strong>category</strong> to the event and setup webhooks in the dashboard.
+            what if you need to trigger workflows or have actions for your
+            events? no problem. Upstream has those features too. Simply add a{" "}
+            <strong>category</strong> to the event and setup webhooks in the
+            dashboard.
           </p>
 
           <p className="text-lg text-muted-foreground">
@@ -215,7 +228,7 @@ export default function Home() {
               {
                 title: "View Google.com",
                 variant: "primary",
-                url: "https://google.com"
+                url: "https://google.com",
               },
               {
                 title: "Go to Github.com",
@@ -226,23 +239,25 @@ export default function Home() {
                 title: "Do nothing",
                 variant: "ghost",
                 url: "#",
-              }
-
+              },
             ]}
             createdAt={new Date().toISOString()}
           />
 
           <p className="text-lg text-muted-foreground">
-            or, do you need to add stack traces to events? do you need push notifications to send important events direct to your phone? Upstream can do that too.
+            or, do you need to add stack traces to events? do you need push
+            notifications to send important events direct to your phone?
+            Upstream can do that too.
           </p>
 
           <pre className="rounded-lg bg-card p-5 text-sm">
-            <code className="overflow-x-auto">
-              {actionsCode}
-            </code>
+            <code className="overflow-x-auto">{actionsCode}</code>
           </pre>
 
-          <p className="text-lg text-muted-foreground">now you have a stack trace inside of an event with push notifications to your devices!</p>
+          <p className="text-lg text-muted-foreground">
+            now you have a stack trace inside of an event with push
+            notifications to your devices!
+          </p>
 
           <Event
             id="4"
@@ -259,23 +274,23 @@ export default function Home() {
                 createdAt: new Date().toISOString(),
                 pushNotify: true,
                 data: {
-                  "test": "This is a test with contextId and data.",
-                  "contextId": "contextId-example-notifications",
-                  "contextStart": true
+                  test: "This is a test with contextId and data.",
+                  contextId: "contextId-example-notifications",
+                  contextStart: true,
                 },
                 actions: [
                   {
                     title: "View",
                     url: "https://upstream.dev",
-                    variant: "primary"
+                    variant: "primary",
                   },
                   {
                     title: "Dismiss",
                     url: "https://upstream.dev",
-                    variant: "secondary"
-                  }
-                ]
-              }
+                    variant: "secondary",
+                  },
+                ],
+              },
             ]}
             emailNotify={false}
           />
@@ -414,76 +429,77 @@ export default function Home() {
             createdAt={new Date().toISOString()}
           />
 
-          <p className="text-lg text-muted-foreground border-t border-border mt-8 pt-6">
-            we are just scratching the surface. Upstream also has features like query APIs, a mobile app with pager and push notification features, and much more.
+          <p className="mt-8 border-t border-border pt-6 text-lg text-muted-foreground">
+            we are just scratching the surface. Upstream also has features like
+            query APIs, a mobile app with pager and push notification features,
+            and much more.
           </p>
 
           <p className="text-lg text-muted-foreground">
-            i also built this to be completely open source, so you can go self-host it if you want.
+            i also built this to be completely open source, so you can go
+            self-host it if you want.
           </p>
 
           <p className="text-lg text-muted-foreground">
             if you want to see more, check out the{" "}
-            <Link href="https://github.com/linuskang/up/tree/v3/apps/playground" className="underline">
+            <Link
+              href="https://github.com/linuskang/up/tree/v3/apps/playground"
+              className="underline"
+            >
               playground
             </Link>{" "}
-            for more information. documentation is coming soon once i finish writing it.
+            for more information. documentation is coming soon once i finish
+            writing it.
           </p>
 
-          <p className="text-lg border-t border-border pt-6 mt-8 text-muted-foreground">
+          <p className="mt-8 border-t border-border pt-6 text-lg text-muted-foreground">
             in case you still have questions:
           </p>
 
-          <Accordion
-            className="mt-5 p-3 max-w-lg border-none bg-card"
-          >
+          <Accordion className="mt-5 max-w-lg border-none bg-card p-3">
             <AccordionItem value="differences" className="border-none">
               <AccordionTrigger className="text-base">
-                What makes this different compared to others like
-                Seq and Datadog?
+                What makes this different compared to others like Seq and
+                Datadog?
               </AccordionTrigger>
               <AccordionContent>
                 <div>
                   <p>
-                    Seq and Datadog are designed for the product
-                    analytics space. They ingest large volumes
-                    of events and provide powerful querying
-                    capabilities & statistics for your
+                    Seq and Datadog are designed for the product analytics
+                    space. They ingest large volumes of events and provide
+                    powerful querying capabilities & statistics for your
                     application.
                   </p>
 
                   <p className="mt-2">
-                    Upstream is designed for critical SaSS events like audit logs, signups, and other important events. We focus on delivering a
-                    beautiful, intuitive experience for viewing
-                    and querying your most important events on
-                    the fly. You can use Upstream for your
-                    product&apos;s audit logs, triggering
+                    Upstream is designed for critical SaSS events like audit
+                    logs, signups, and other important events. We focus on
+                    delivering a beautiful, intuitive experience for viewing and
+                    querying your most important events on the fly. You can use
+                    Upstream for your product&apos;s audit logs, triggering
                     workflows, and logging complex events.
                   </p>
 
                   <p className="mt-2">We have:</p>
                   <ul className="mt-2 list-disc pl-6">
                     <li>
-                      Arguably the better UI for querying events
-                      on the go, especially for mobile.
+                      Arguably the better UI for querying events on the go,
+                      especially for mobile.
+                    </li>
+                    <li>Fully open source. Mod Upstream however you want.</li>
+                    <li>
+                      Actions, workflows, and contexts are our main
+                      differentiators.
                     </li>
                     <li>
-                      Fully open source. Mod Upstream however you want.
-                    </li>
-                    <li>
-                      Actions, workflows, and contexts are our
-                      main differentiators.
-                    </li>
-                    <li>
-                      Built for easy integration with your
-                      apps, no complex setup required.
+                      Built for easy integration with your apps, no complex
+                      setup required.
                     </li>
                   </ul>
                   <p className="mt-2">
-                    Upstream was built to easily view your most
-                    critical logs on the fly, with a expressive
-                    interface. If you don&apos;t need easy
-                    access to important product event logs, Upstream
+                    Upstream was built to easily view your most critical logs on
+                    the fly, with a expressive interface. If you don&apos;t need
+                    easy access to important product event logs, Upstream
                     isn&apos;t for you.
                   </p>
                 </div>
@@ -495,17 +511,17 @@ export default function Home() {
               </AccordionTrigger>
               <AccordionContent>
                 <p>
-                  Because Upstream is still extremely new, we
-                  don&apos;t have any major public customers yet.
+                  Because Upstream is still extremely new, we don&apos;t have
+                  any major public customers yet.
                 </p>
                 <p>
-                  However, I&apos;ve personally been using it in
-                  production for the past couple months because I
-                  got tired of having to carry a laptop around to
-                  check events.
+                  However, I&apos;ve personally been using it in production for
+                  the past couple months because I got tired of having to carry
+                  a laptop around to check events.
                 </p>
                 <p>
-                  Additionally, I am also using it in production for all my personal projects, and its been working great for my usecase.
+                  Additionally, I am also using it in production for all my
+                  personal projects, and its been working great for my usecase.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -515,15 +531,15 @@ export default function Home() {
               </AccordionTrigger>
               <AccordionContent>
                 <p>
-                  We thought of that too! Since Upstream is still
-                  relatively new, we&apos;re currently focused on building up the core features for Upstream first.
-                  For now, we only support Node.js via. npm.
+                  We thought of that too! Since Upstream is still relatively
+                  new, we&apos;re currently focused on building up the core
+                  features for Upstream first. For now, we only support Node.js
+                  via. npm.
                 </p>
 
                 <p className="mt-4">
-                  If your language isn&apos;t supported by our
-                  SDKs, you can still send events using our
-                  Ingestion API. See the{" "}
+                  If your language isn&apos;t supported by our SDKs, you can
+                  still send events using our Ingestion API. See the{" "}
                   <Link href="/docs" className="underline">
                     docs
                   </Link>{" "}
@@ -537,10 +553,10 @@ export default function Home() {
               </AccordionTrigger>
               <AccordionContent>
                 <p>
-                  Yes! Upstream is fully open source, and you can
-                  self-host it if you want. We&apos;re currently
-                  working on a self-hosting guide for Upstream, but
-                  for now, you can check out the github for quick start guides.
+                  Yes! Upstream is fully open source, and you can self-host it
+                  if you want. We&apos;re currently working on a self-hosting
+                  guide for Upstream, but for now, you can check out the github
+                  for quick start guides.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -551,7 +567,10 @@ export default function Home() {
               <AccordionContent>
                 <p>
                   Cool! Register a free account{" "}
-                  <Link href="https://up.linus.my/register" className="underline">
+                  <Link
+                    href="https://up.linus.my/register"
+                    className="underline"
+                  >
                     here
                   </Link>
                   .
@@ -560,11 +579,14 @@ export default function Home() {
             </AccordionItem>
           </Accordion>
 
-          <p className="text-lg text-muted-foreground mt-6">
+          <p className="mt-6 text-lg text-muted-foreground">
             thats it. go try it out!
           </p>
 
-          <Button size="lg" className="w-full gap-2 text-sm font-semibold sm:w-auto">
+          <Button
+            size="lg"
+            className="w-full gap-2 text-sm font-semibold sm:w-auto"
+          >
             <Link href="https://up.linus.my/register" target="_blank">
               Create a free account
             </Link>

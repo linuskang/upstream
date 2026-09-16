@@ -55,12 +55,7 @@ export default function ProjectNavbar() {
       <div className="mx-auto grid max-w-5xl grid-cols-[auto_1fr_auto] items-center gap-2">
         <div className="flex items-center gap-1">
           <Link href="/">
-            <Image
-              src="/logo.png"
-              width={45}
-              height={45}
-              alt="Logo"
-            />
+            <Image src="/logo.png" width={45} height={45} alt="Logo" />
           </Link>
         </div>
 
@@ -72,10 +67,11 @@ export default function ProjectNavbar() {
               <Link href={item.path} key={item.path}>
                 <Button
                   variant="ghost"
-                  className={`rounded-base flex items-center gap-1.5 px-2.5 py-2.5 text-xs font-medium transition-colors ${isActive
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }`}
+                  className={`rounded-base flex items-center gap-1.5 px-2.5 py-2.5 text-xs font-medium transition-colors ${
+                    isActive
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
                 >
                   {Icon && <Icon className="size-5" />}
                   <span

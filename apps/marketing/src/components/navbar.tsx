@@ -8,13 +8,10 @@ import { Github } from "@/components/icons"
 
 async function getGithubStars() {
   try {
-    const response = await fetch(
-      "https://api.github.com/repos/linuskang/up",
-      {
-        headers: { Accept: "application/vnd.github+json" },
-        next: { revalidate: 3600 },
-      }
-    )
+    const response = await fetch("https://api.github.com/repos/linuskang/up", {
+      headers: { Accept: "application/vnd.github+json" },
+      next: { revalidate: 3600 },
+    })
 
     if (!response.ok) return null
 
@@ -68,19 +65,13 @@ export async function Navbar() {
                 Log in
               </Link>
             </Button>
-            <Separator
-              orientation="vertical"
-              className="h-4 self-center!"
-            />
+            <Separator orientation="vertical" className="h-4 self-center!" />
             <Button
               variant="ghost"
               size="sm"
-              className="gap-1.5 text-[11px] font-medium text-muted-foreground hover:bg-transparent hover:text-white -ml-2 sm:px-2 sm:text-xs dark:hover:bg-transparent"
+              className="-ml-2 gap-1.5 text-[11px] font-medium text-muted-foreground hover:bg-transparent hover:text-white sm:px-2 sm:text-xs dark:hover:bg-transparent"
             >
-              <Link
-                target="_blank"
-                href="https://github.com/linuskang/up"
-              >
+              <Link target="_blank" href="https://github.com/linuskang/up">
                 <Github />
               </Link>
             </Button>

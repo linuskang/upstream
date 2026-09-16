@@ -7,9 +7,7 @@ import Link from "next/link"
 
 import type { EventProps } from "@workspace/ui/components/event"
 import { EventsList } from "@workspace/ui/components/event-list"
-import {
-  CategorySelector,
-} from "@workspace/ui/components/event-category"
+import { CategorySelector } from "@workspace/ui/components/event-category"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -196,7 +194,8 @@ export default function Page() {
   }, [debouncedQuery, selectedCategory])
 
   const queryString = useMemo(
-    () => buildQueryString(selectedCategory, debouncedQuery, 1, EVENTS_PER_PAGE),
+    () =>
+      buildQueryString(selectedCategory, debouncedQuery, 1, EVENTS_PER_PAGE),
     [selectedCategory, debouncedQuery]
   )
 
@@ -221,9 +220,7 @@ export default function Page() {
 
       setEvents((prev) => (append ? [...prev, ...newEvents] : newEvents))
       setPage(pagination?.page ?? pageNum)
-      setHasMore(
-        (pagination?.page ?? pageNum) < (pagination?.pages ?? pageNum)
-      )
+      setHasMore((pagination?.page ?? pageNum) < (pagination?.pages ?? pageNum))
     },
     [params.id, selectedCategory, debouncedQuery]
   )
@@ -251,7 +248,7 @@ export default function Page() {
         setPage(eventsData.data.pagination?.page ?? 1)
         setHasMore(
           (eventsData.data.pagination?.page ?? 1) <
-          (eventsData.data.pagination?.pages ?? 1)
+            (eventsData.data.pagination?.pages ?? 1)
         )
       }
 
@@ -259,10 +256,7 @@ export default function Page() {
         const categoriesData = await categoriesRes.json()
         const total = categoriesData.data?.total ?? 0
         const categoryList = categoriesData.data?.categories ?? []
-        setCategories([
-          { name: "all", count: total },
-          ...categoryList,
-        ])
+        setCategories([{ name: "all", count: total }, ...categoryList])
       }
 
       setLoading(false)
@@ -326,15 +320,11 @@ export default function Page() {
           <Breadcrumb>
             <BreadcrumbList className="text-sm">
               <BreadcrumbItem>
-                <BreadcrumbLink href="/">
-                  Projects
-                </BreadcrumbLink>
+                <BreadcrumbLink href="/">Projects</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>
-                  {project?.name ?? "Project"}
-                </BreadcrumbPage>
+                <BreadcrumbPage>{project?.name ?? "Project"}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -343,11 +333,7 @@ export default function Page() {
             <h1 className="text-3xl font-semibold">Events</h1>
 
             <div className="flex items-center gap-2">
-              <Button
-                className="w-fit shrink-0"
-                variant="default"
-                size="sm"
-              >
+              <Button className="w-fit shrink-0" variant="default" size="sm">
                 <Link href={`/project/${params.id}/settings`}>
                   Project Settings
                 </Link>
@@ -366,7 +352,10 @@ export default function Page() {
 
             <div className="flex w-full min-w-0 flex-col gap-2">
               <div className="relative">
-                <Search className="absolute top-1/2 left-3 z-10 size-4 -translate-y-1/2 text-muted-foreground" strokeWidth={3} />
+                <Search
+                  className="absolute top-1/2 left-3 z-10 size-4 -translate-y-1/2 text-muted-foreground"
+                  strokeWidth={3}
+                />
                 <Input
                   ref={searchInputRef}
                   placeholder="Search events..."
@@ -376,10 +365,12 @@ export default function Page() {
                     setShowSuggestions(true)
                   }}
                   onFocus={() => setShowSuggestions(true)}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                  className="!text-md font-base rounded-xl h-10 border-0 !bg-card pr-[10.5rem] sm:pr-12 pl-9 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  onBlur={() =>
+                    setTimeout(() => setShowSuggestions(false), 150)
+                  }
+                  className="!text-md font-base h-10 rounded-xl border-0 !bg-card pr-[10.5rem] pl-9 focus-visible:ring-0 focus-visible:ring-offset-0 sm:pr-12"
                 />
-                <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center gap-1 pr-1">
+                <div className="absolute top-1/2 right-0 flex -translate-y-1/2 items-center gap-1 pr-1">
                   <DropdownMenu>
                     <DropdownMenuTrigger className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-card text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none">
                       <SlidersHorizontal className="size-4" />
@@ -421,20 +412,17 @@ export default function Page() {
                   <div className="sm:hidden">
                     <Select
                       value={selectedCategory}
-                      onValueChange={(value) => value && setSelectedCategory(value)}
+                      onValueChange={(value) =>
+                        value && setSelectedCategory(value)
+                      }
                     >
                       <SelectTrigger className="h-10 w-28 shrink-0 border-0 bg-transparent shadow-none focus:ring-0 focus:ring-offset-0 sm:w-32">
                         <SelectValue placeholder="Category" />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
-                          <SelectItem
-                            key={cat.name}
-                            value={cat.name}
-                          >
-                            <span className="capitalize">
-                              {cat.name}
-                            </span>
+                          <SelectItem key={cat.name} value={cat.name}>
+                            <span className="capitalize">{cat.name}</span>
                             <span className="ml-1 text-muted-foreground">
                               ({cat.count})
                             </span>
@@ -454,9 +442,13 @@ export default function Page() {
                     !lastToken.includes("=") &&
                     !isOnlyAt
                   if (!isTypingFilter) return null
-                  const prefix = (lastToken.slice(1).split("=")[0] ?? "").toLowerCase()
+                  const prefix = (
+                    lastToken.slice(1).split("=")[0] ?? ""
+                  ).toLowerCase()
                   const matches = FIELD_SUGGESTIONS.filter((item) => {
-                    const itemField = (item.value.slice(1).split("=")[0] ?? "").toLowerCase()
+                    const itemField = (
+                      item.value.slice(1).split("=")[0] ?? ""
+                    ).toLowerCase()
                     return itemField.startsWith(prefix)
                   })
                   if (!showSuggestions || matches.length === 0) return null
@@ -482,7 +474,7 @@ export default function Page() {
                               input.setSelectionRange(pos, pos)
                             })
                           }}
-                          className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm text-left hover:bg-accent hover:text-accent-foreground"
+                          className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground"
                         >
                           <span>{item.value}</span>
                           <span className="text-xs text-muted-foreground">
@@ -496,7 +488,7 @@ export default function Page() {
               </div>
               {events.length === 0 && !loadingMore ? (
                 debouncedQuery ? (
-                  <div className="flex min-h-[200px] flex-col items-center gap-2 rounded-lg text-center mt-4">
+                  <div className="mt-4 flex min-h-[200px] flex-col items-center gap-2 rounded-lg text-center">
                     <p className="text-sm font-semibold text-foreground">
                       No results found
                     </p>
@@ -512,7 +504,8 @@ export default function Page() {
                           Getting Started with Event Logging
                         </h3>
                         <p className="text-sm text-muted-foreground">
-                          Post an event to your project endpoint using any HTTP client.
+                          Post an event to your project endpoint using any HTTP
+                          client.
                         </p>
                       </div>
 
@@ -578,7 +571,14 @@ await ups.events.ingest({
                       </div>
 
                       <p className="text-sm text-muted-foreground">
-                        For more information, see the <Link href="https://ups.linuskang.au" className="font-medium text-foreground underline underline-offset-2">documentation</Link>.
+                        For more information, see the{" "}
+                        <Link
+                          href="https://ups.linuskang.au"
+                          className="font-medium text-foreground underline underline-offset-2"
+                        >
+                          documentation
+                        </Link>
+                        .
                       </p>
                     </CardContent>
                   </Card>

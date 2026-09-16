@@ -6,12 +6,7 @@ function ResendClient() {
 }
 
 export class Email {
-  static async send(
-    to: string,
-    subject: string,
-    text: string,
-    html?: string
-  ) {
+  static async send(to: string, subject: string, text: string, html?: string) {
     await ResendClient().emails.send({
       from: env.RESEND_EMAIL_FROM,
       to,

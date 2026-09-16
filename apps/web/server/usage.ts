@@ -104,20 +104,21 @@ export class Usage {
       },
     })
 
-    if (!user) return {
-      plan: "Free",
-      projects: {
-        current: projectCount,
-        limit: plans["FREE"].maxProjects,
-      },
-      eventsToday: {
-        current: eventsToday,
-      },
-      eventsMonth: {
-        current: monthlyUsage?.eventCount ?? 0,
-        limit: plans["FREE"].maxEventsPerMonth,
-      },
-    }
+    if (!user)
+      return {
+        plan: "Free",
+        projects: {
+          current: projectCount,
+          limit: plans["FREE"].maxProjects,
+        },
+        eventsToday: {
+          current: eventsToday,
+        },
+        eventsMonth: {
+          current: monthlyUsage?.eventCount ?? 0,
+          limit: plans["FREE"].maxEventsPerMonth,
+        },
+      }
 
     const plan = user.plan as keyof typeof plans
     const planConfig = plans[plan]

@@ -16,7 +16,12 @@ import {
 } from "@workspace/ui/components/breadcrumb"
 import { Button } from "@workspace/ui/components/button"
 import { Label } from "@workspace/ui/components/label"
-import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@workspace/ui/components/card"
 import { Check } from "lucide-react"
 import type { UsageStats } from "@/server/usage"
 
@@ -28,7 +33,7 @@ export default function Page() {
     fetch("/api/usage")
       .then((r) => r.json())
       .then((data) => setUsage(data))
-      .catch(() => { })
+      .catch(() => {})
   }, [])
 
   if (!session) {
@@ -65,12 +70,9 @@ export default function Page() {
           <div className="flex flex-col gap-4 rounded-lg bg-muted/40 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Free
-                </p>
+                <p className="text-sm font-semibold text-foreground">Free</p>
                 <p className="text-xs text-muted-foreground">
-                  Perfect for small projects to log critical
-                  events
+                  Perfect for small projects to log critical events
                 </p>
               </div>
               {currentPlan === "free" && (
@@ -87,8 +89,7 @@ export default function Page() {
                 <Check className="h-4 w-4" /> 100 events / month
               </li>
               <li className="flex items-center gap-2">
-                <Check className="h-4 w-4" /> 7 days event
-                retention
+                <Check className="h-4 w-4" /> 7 days event retention
               </li>
               <li className="flex items-center gap-2">
                 <Check className="h-4 w-4" /> Analytics
@@ -108,9 +109,7 @@ export default function Page() {
           <div className="mt-3 flex flex-col gap-4 rounded-lg bg-muted/40 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Pro
-                </p>
+                <p className="text-sm font-semibold text-foreground">Pro</p>
                 <p className="text-xs text-muted-foreground">
                   Higher quotas & advanced features
                 </p>
@@ -121,49 +120,40 @@ export default function Page() {
                 </Label>
               ) : (
                 <Button variant="default" size="sm">
-                  <Link href="mailto:up@linus.my">
-                    Contact Sales
-                  </Link>
+                  <Link href="mailto:up@linus.my">Contact Sales</Link>
                 </Button>
               )}
             </div>
             <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
-                <Check className="h-4 w-4" /> Everything in
-                Free, plus:
+                <Check className="h-4 w-4" /> Everything in Free, plus:
               </li>
               <li className="flex items-center gap-2">
                 <Check className="h-4 w-4" /> Up to 100 projects
               </li>
               <li className="flex items-center gap-2">
-                <Check className="h-4 w-4" /> Up to 100,000
-                events / month
+                <Check className="h-4 w-4" /> Up to 100,000 events / month
               </li>
               <li className="flex items-center gap-2">
-                <Check className="h-4 w-4" /> Up to 90 days
-                event retention
+                <Check className="h-4 w-4" /> Up to 90 days event retention
               </li>
             </ul>
           </div>
 
           <p className="mt-4 text-xs text-muted-foreground">
-            Pro plan perks are available to all beta users for free
-            during the beta period. After the beta period, users
-            will need to upgrade to the Pro plan to continue
-            enjoying these perks.
+            Pro plan perks are available to all beta users for free during the
+            beta period. After the beta period, users will need to upgrade to
+            the Pro plan to continue enjoying these perks.
           </p>
 
           <div className="mt-2 text-xs text-muted-foreground">
-            Extra Usage is available to pro plan subscribers who
-            exceed the included quotas:
+            Extra Usage is available to pro plan subscribers who exceed the
+            included quotas:
             <ul className="mt-1 mb-1 list-inside list-disc">
               <li>$2.50 per 1,000 events / month</li>
             </ul>
             To enable extra usage, please go to{" "}
-            <Link
-              href="/settings/billing"
-              className="text-primary underline"
-            >
+            <Link href="/settings/billing" className="text-primary underline">
               Account Billing
             </Link>{" "}
             and enable Extra usage.

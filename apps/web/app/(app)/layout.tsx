@@ -7,7 +7,12 @@ import { redirect, usePathname } from "next/navigation"
 
 // Components
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
 import Navbar from "@/components/homepage-navbar"
 import ProjectNavbar from "@/components/project-navbar"
 
@@ -67,8 +72,8 @@ export default function RootLayout({
           <CardContent className="flex flex-col gap-5">
             <div className="flex flex-col gap-2 text-center">
               <p className="text-sm text-muted-foreground">
-                You need to verify your email address before you
-                can use Upstream.
+                You need to verify your email address before you can use
+                Upstream.
               </p>
               <p className="text-sm text-muted-foreground">
                 We sent a verification link to{" "}

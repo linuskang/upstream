@@ -104,9 +104,7 @@ export default function Page() {
         >
           <div className="flex items-center gap-3">
             <CreditCard className="size-5 text-muted-foreground" />
-            <span className="text-lg font-medium text-foreground">
-              Billing
-            </span>
+            <span className="text-lg font-medium text-foreground">Billing</span>
           </div>
           <ChevronRight className="size-4 text-muted-foreground" />
         </Link>
@@ -128,9 +126,7 @@ export default function Page() {
         >
           <div className="flex items-center gap-3">
             <AppWindow className="size-5 text-muted-foreground" />
-            <span className="text-lg font-medium text-foreground">
-              PWA App
-            </span>
+            <span className="text-lg font-medium text-foreground">PWA App</span>
           </div>
           <ChevronRight className="size-4 text-muted-foreground" />
         </Link>
@@ -139,9 +135,7 @@ export default function Page() {
       <AlertDialog open={open} onOpenChange={setOpen}>
         <div className="flex items-center justify-between rounded-xl bg-card px-4 py-4">
           <AlertDialogTrigger
-            render={
-              <button className="text-sm font-medium text-destructive" />
-            }
+            render={<button className="text-sm font-medium text-destructive" />}
           >
             Sign out
           </AlertDialogTrigger>
@@ -151,15 +145,12 @@ export default function Page() {
           <AlertDialogHeader>
             <AlertDialogTitle>Log out?</AlertDialogTitle>
             <AlertDialogDescription>
-              You’ll be signed out of your account and redirected
-              to login.
+              You’ll be signed out of your account and redirected to login.
             </AlertDialogDescription>
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-0">
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel className="border-0">Cancel</AlertDialogCancel>
 
             <AlertDialogAction
               onClick={async () => {

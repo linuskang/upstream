@@ -129,10 +129,8 @@ type FormFieldProps<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = Omit<UseControllerProps<TFieldValues, TName>, "control"> & {
   children:
-  | React.ReactElement
-  | ((
-    props: FormFieldRenderProps<TFieldValues, TName>
-  ) => React.ReactNode)
+    | React.ReactElement
+    | ((props: FormFieldRenderProps<TFieldValues, TName>) => React.ReactNode)
   override?: FormFieldOverride<TFieldValues, TName>
   required?: boolean | string
 }
@@ -179,12 +177,12 @@ function FormField<
     required === undefined || props.rules?.required !== undefined
       ? props.rules
       : {
-        ...props.rules,
-        required:
-          typeof required === "string"
-            ? required
-            : required && "This field is required",
-      }
+          ...props.rules,
+          required:
+            typeof required === "string"
+              ? required
+              : required && "This field is required",
+        }
   const requiredRule = rules?.required
   const isRequired =
     typeof requiredRule === "object"
@@ -220,9 +218,7 @@ function FormField<
       id: childProps.id ?? getFieldId(id, props.name),
       name: field.name,
       ref: mergeRefs(childProps.ref, field.ref),
-      ...(isRequired
-        ? { "aria-required": true, required: true }
-        : undefined),
+      ...(isRequired ? { "aria-required": true, required: true } : undefined),
       ...override(controller),
     } as NativeControlProps)
   }
@@ -313,9 +309,9 @@ type FormSubmitRenderProps = {
 
 type FormSubmitProps = {
   children:
-  | React.ReactElement
-  | React.ReactNode
-  | ((props: FormSubmitRenderProps) => React.ReactNode)
+    | React.ReactElement
+    | React.ReactNode
+    | ((props: FormSubmitRenderProps) => React.ReactNode)
   disableWhileSubmitting?: boolean
   loading?: boolean
 }
@@ -367,9 +363,9 @@ type FormResetRenderProps = {
 
 type FormResetProps = {
   children:
-  | React.ReactElement
-  | React.ReactNode
-  | ((props: FormResetRenderProps) => React.ReactNode)
+    | React.ReactElement
+    | React.ReactNode
+    | ((props: FormResetRenderProps) => React.ReactNode)
 }
 
 type ResetControlProps = {

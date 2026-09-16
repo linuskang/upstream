@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Upstream"
-  }
+    title: "Upstream",
+  },
 }
 
 export const viewport = {

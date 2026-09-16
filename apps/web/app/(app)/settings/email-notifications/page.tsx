@@ -46,22 +46,30 @@ export default function Page() {
         </Breadcrumb>
       </div>
 
-
       <Card className="p-4">
         <CardHeader className="p-0">
           <CardTitle className="text-lg font-semibold text-white">
-            {session.user.emailNotificationsEnabled
-              ? <CircleCheck className="mr-2 inline-block h-5 w-5 text-success" />
-              : <CircleX className="mr-2 inline-block h-5 w-5 text-destructive" />}
+            {session.user.emailNotificationsEnabled ? (
+              <CircleCheck className="mr-2 inline-block h-5 w-5 text-success" />
+            ) : (
+              <CircleX className="mr-2 inline-block h-5 w-5 text-destructive" />
+            )}
             Email Event Alerts
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0 -mt-3">
+        <CardContent className="-mt-3 p-0">
           <div className="space-y-3">
-            {session.user.emailNotificationsEnabled
-              ? <p className="text-sm text-muted-foreground font-medium">Email alerts are enabled for your account. We recommend keeping them on.</p>
-              : <p className="text-sm text-muted-foreground font-medium">Email alerts are disabled for your account. We recommend keeping them on.</p>
-            }
+            {session.user.emailNotificationsEnabled ? (
+              <p className="text-sm font-medium text-muted-foreground">
+                Email alerts are enabled for your account. We recommend keeping
+                them on.
+              </p>
+            ) : (
+              <p className="text-sm font-medium text-muted-foreground">
+                Email alerts are disabled for your account. We recommend keeping
+                them on.
+              </p>
+            )}
             <Switch
               checked={session.user.emailNotificationsEnabled}
               onCheckedChange={async (checked) => {
@@ -69,11 +77,12 @@ export default function Page() {
                   await authClient.updateUser({
                     emailNotificationsEnabled: checked,
                   })
-                  toast.success(`Email alerts ${checked ? 'enabled' : 'disabled'} for your account.`)
-                }
-                catch (error) {
+                  toast.success(
+                    `Email alerts ${checked ? "enabled" : "disabled"} for your account.`
+                  )
+                } catch (error) {
                   console.error(error)
-                  toast.error('Failed to update email alert settings.')
+                  toast.error("Failed to update email alert settings.")
                 }
               }}
             />

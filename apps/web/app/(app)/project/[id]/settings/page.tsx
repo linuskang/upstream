@@ -4,12 +4,26 @@ import axios from "axios"
 import { Button } from "@workspace/ui/components/button"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@workspace/ui/components/breadcrumb"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@workspace/ui/components/breadcrumb"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import type { Project, RequestLog, Webhook } from "@workspace/contracts"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspace/ui/components/table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
 import { Badge } from "@workspace/ui/components/badge"
 import { Switch } from "@workspace/ui/components/switch"
 import {
@@ -32,7 +46,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@workspace/ui/components/pagination"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@workspace/ui/components/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@workspace/ui/components/dialog"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { Form } from "@workspace/ui/components/form"
@@ -43,7 +65,6 @@ import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
 
 type CreateApiKey = {
   name: string
-
 }
 
 type RenameProject = {
@@ -129,7 +150,8 @@ export default function Page() {
   const [requestLogPage, setRequestLogPage] = useState(1)
   const REQUEST_LOGS_PER_PAGE = 5
   const [requestLogSearch, setRequestLogSearch] = useState("")
-  const [selectedRequestLog, setSelectedRequestLog] = useState<RequestLog | null>(null)
+  const [selectedRequestLog, setSelectedRequestLog] =
+    useState<RequestLog | null>(null)
   const [requestLogDetailOpen, setRequestLogDetailOpen] = useState(false)
 
   const [webhooks, setWebhooks] = useState<Webhook[]>([])
@@ -157,9 +179,8 @@ export default function Page() {
   }
 
   async function getProject() {
-
     try {
-      await axios.get('/api/v1/project/' + params.id).then((res) => {
+      await axios.get("/api/v1/project/" + params.id).then((res) => {
         setProject(res.data.data)
       })
     } catch {
@@ -199,7 +220,10 @@ export default function Page() {
   async function handleCreateWebhook(data: CreateWebhookForm) {
     setIsCreatingWebhook(true)
     try {
-      const res = await axios.post(`/api/v1/project/${params.id}/webhooks`, data)
+      const res = await axios.post(
+        `/api/v1/project/${params.id}/webhooks`,
+        data
+      )
       setWebhooks((prev) => [...prev, res.data.data])
       setCreateWebhook(false)
       toast.success("Webhook created")
@@ -311,7 +335,7 @@ export default function Page() {
       </div>
 
       <div>
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">API Keys</h2>
           <Dialog
             open={createApiKey}
@@ -334,7 +358,8 @@ export default function Page() {
                   <DialogHeader>
                     <DialogTitle>Your API Key</DialogTitle>
                     <DialogDescription>
-                      This is the only time we can show the secret for this API key.
+                      This is the only time we can show the secret for this API
+                      key.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex items-center gap-2 rounded-md bg-black/30 p-3 font-mono text-xs break-all">
@@ -353,9 +378,7 @@ export default function Page() {
                     </Button>
                   </div>
                   <DialogFooter>
-                    <Button onClick={closeCreateApiKeyDialog}>
-                      Got it
-                    </Button>
+                    <Button onClick={closeCreateApiKeyDialog}>Got it</Button>
                   </DialogFooter>
                 </>
               ) : (
@@ -370,7 +393,10 @@ export default function Page() {
                     onSubmit={async (data) => {
                       setCreatingApiKey(true)
                       try {
-                        const res = await axios.post(`/api/v1/project/${params.id}/keys`, data)
+                        const res = await axios.post(
+                          `/api/v1/project/${params.id}/keys`,
+                          data
+                        )
                         setCreatedApiKey(res.data.data)
                         toast.success("Created api key")
                         getProject()
@@ -384,22 +410,14 @@ export default function Page() {
                     <div className="space-y-3">
                       <div className="space-y-2">
                         <Label>Name</Label>
-                        <Form.Field<CreateApiKey>
-                          name="name">
-                          <Input
-                            placeholder="Hello World"
-                            required
-                          />
+                        <Form.Field<CreateApiKey> name="name">
+                          <Input placeholder="Hello World" required />
                         </Form.Field>
                       </div>
                       <DialogFooter>
                         <Form.Submit>
-                          <Button
-                            disabled={creatingApiKey}
-                          >
-                            {creatingApiKey
-                              ? "Creating..."
-                              : "Create API Key"}
+                          <Button disabled={creatingApiKey}>
+                            {creatingApiKey ? "Creating..." : "Create API Key"}
                           </Button>
                         </Form.Submit>
                       </DialogFooter>
@@ -437,9 +455,10 @@ export default function Page() {
             </TableHeader>
             <TableBody>
               {(() => {
-                const filteredApiKeys = project?.apiKeys.filter((key) =>
-                  key.name.toLowerCase().includes(apiKeySearch.toLowerCase())
-                ) ?? []
+                const filteredApiKeys =
+                  project?.apiKeys.filter((key) =>
+                    key.name.toLowerCase().includes(apiKeySearch.toLowerCase())
+                  ) ?? []
 
                 if (filteredApiKeys.length === 0) {
                   return (
@@ -472,10 +491,15 @@ export default function Page() {
                       {new Date(key.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="w-fit pr-4 pl-4 text-right whitespace-nowrap text-muted-foreground">
-                      {key.lastUsed ? new Date(key.lastUsed).toLocaleDateString() : "Never"}
+                      {key.lastUsed
+                        ? new Date(key.lastUsed).toLocaleDateString()
+                        : "Never"}
                     </TableCell>
                     <TableCell className="w-fit pr-4 pl-4 text-right whitespace-nowrap">
-                      <Dialog open={deleteApiKey} onOpenChange={setDeleteApiKey}>
+                      <Dialog
+                        open={deleteApiKey}
+                        onOpenChange={setDeleteApiKey}
+                      >
                         <DialogTrigger
                           render={<Button variant="destructive" size="sm" />}
                         >
@@ -485,7 +509,8 @@ export default function Page() {
                           <DialogHeader>
                             <DialogTitle>Are you sure?</DialogTitle>
                             <DialogDescription>
-                              Are you sure you want to delete this API key? This action cannot be undone.
+                              Are you sure you want to delete this API key? This
+                              action cannot be undone.
                             </DialogDescription>
                           </DialogHeader>
                           <DialogFooter>
@@ -493,16 +518,18 @@ export default function Page() {
                               variant="primary"
                               onClick={async () => {
                                 try {
-                                  await axios.delete(`/api/v1/project/${params.id}/keys`, {
-                                    data: {
-                                      keyId: key.id,
+                                  await axios.delete(
+                                    `/api/v1/project/${params.id}/keys`,
+                                    {
+                                      data: {
+                                        keyId: key.id,
+                                      },
                                     }
-                                  })
+                                  )
                                   toast.success("API Key deleted")
                                   getProject()
                                   setDeleteApiKey(false)
-                                }
-                                catch {
+                                } catch {
                                   toast.error("Something went wrong")
                                 }
                               }}
@@ -522,7 +549,7 @@ export default function Page() {
       </div>
 
       <div>
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">Recent Activity</h2>
         </div>
 
@@ -530,7 +557,9 @@ export default function Page() {
           const filteredAuditLogs = auditLogs.filter((log) =>
             log.message.toLowerCase().includes(activitySearch.toLowerCase())
           )
-          const activityTotalPages = Math.ceil(filteredAuditLogs.length / ACTIVITY_PER_PAGE)
+          const activityTotalPages = Math.ceil(
+            filteredAuditLogs.length / ACTIVITY_PER_PAGE
+          )
           const paginatedAuditLogs = filteredAuditLogs.slice(
             (activityPage - 1) * ACTIVITY_PER_PAGE,
             activityPage * ACTIVITY_PER_PAGE
@@ -633,8 +662,7 @@ export default function Page() {
                     </PaginationItem>
                     {getPaginationItems(activityTotalPages, activityPage).map(
                       (page) =>
-                        page === "ellipsis-start" ||
-                        page === "ellipsis-end" ? (
+                        page === "ellipsis-start" || page === "ellipsis-end" ? (
                           <PaginationItem key={page}>
                             <PaginationEllipsis />
                           </PaginationItem>
@@ -673,7 +701,7 @@ export default function Page() {
       </div>
 
       <div>
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">Webhooks</h2>
 
           <Dialog open={createWebhook} onOpenChange={setCreateWebhook}>
@@ -693,7 +721,10 @@ export default function Page() {
                 onSubmit={async (data) => {
                   setIsCreatingWebhook(true)
                   try {
-                    const res = await axios.post(`/api/v1/project/${params.id}/webhooks`, data)
+                    const res = await axios.post(
+                      `/api/v1/project/${params.id}/webhooks`,
+                      data
+                    )
                     setWebhooks((prev) => [...prev, res.data.data])
                     toast.success("Created webhook")
                   } catch {
@@ -707,45 +738,26 @@ export default function Page() {
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label>Webhook Name</Label>
-                    <Form.Field<CreateWebhook>
-                      name="name"
-                      required
-                    >
-                      <Input
-                        placeholder="My Webhook"
-                      />
+                    <Form.Field<CreateWebhook> name="name" required>
+                      <Input placeholder="My Webhook" />
                     </Form.Field>
                   </div>
                   <div className="space-y-2">
                     <Label>Subscription</Label>
-                    <Form.Field<CreateWebhook>
-                      name="subscription"
-                      required
-                    >
-                      <Input
-                        placeholder="event.created"
-                      />
+                    <Form.Field<CreateWebhook> name="subscription" required>
+                      <Input placeholder="event.created" />
                     </Form.Field>
                   </div>
                   <div className="space-y-2">
                     <Label>Webhook URL</Label>
-                    <Form.Field<CreateWebhook>
-                      name="url"
-                      required
-                    >
-                      <Input
-                        placeholder="https://example.com/webhook"
-                      />
+                    <Form.Field<CreateWebhook> name="url" required>
+                      <Input placeholder="https://example.com/webhook" />
                     </Form.Field>
                   </div>
                   <DialogFooter>
                     <Form.Submit>
-                      <Button
-                        disabled={isCreatingWebhook}
-                      >
-                        {isCreatingWebhook
-                          ? "Creating..."
-                          : "Create Webhook"}
+                      <Button disabled={isCreatingWebhook}>
+                        {isCreatingWebhook ? "Creating..." : "Create Webhook"}
                       </Button>
                     </Form.Submit>
                   </DialogFooter>
@@ -791,7 +803,9 @@ export default function Page() {
             <TableBody>
               {(() => {
                 const filteredWebhooks = webhooks.filter((webhook) =>
-                  webhook.name.toLowerCase().includes(webhookSearch.toLowerCase())
+                  webhook.name
+                    .toLowerCase()
+                    .includes(webhookSearch.toLowerCase())
                 )
 
                 if (filteredWebhooks.length === 0) {
@@ -831,9 +845,7 @@ export default function Page() {
                       <span
                         className={`text-sm font-medium ${webhook.enabled ? "text-green-500" : "text-muted-foreground"}`}
                       >
-                        {webhook.enabled
-                          ? "Enabled"
-                          : "Disabled"}
+                        {webhook.enabled ? "Enabled" : "Disabled"}
                       </span>
                     </TableCell>
                     <TableCell className="w-fit pl-4 whitespace-nowrap text-muted-foreground">
@@ -872,13 +884,12 @@ export default function Page() {
                                 Delete Webhook?
                               </AlertDialogTitle>
                               <AlertDialogDescription>
-                                This will permanently delete the &quot;{webhook.name}&quot; webhook.
+                                This will permanently delete the &quot;
+                                {webhook.name}&quot; webhook.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>
-                                Cancel
-                              </AlertDialogCancel>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
                                 onClick={() => deleteWebhook(webhook.id)}
@@ -910,9 +921,7 @@ export default function Page() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Webhook</DialogTitle>
-            <DialogDescription>
-              Update webhook settings.
-            </DialogDescription>
+            <DialogDescription>Update webhook settings.</DialogDescription>
           </DialogHeader>
           <form
             onSubmit={async (e) => {
@@ -963,20 +972,16 @@ export default function Page() {
                 checked={editWebhookEnabled}
                 onCheckedChange={setEditWebhookEnabled}
               />
-              <Label htmlFor="edit-webhook-enabled" className="text-sm text-muted-foreground">
-                {editWebhookEnabled
-                  ? "Enabled"
-                  : "Disabled"}
+              <Label
+                htmlFor="edit-webhook-enabled"
+                className="text-sm text-muted-foreground"
+              >
+                {editWebhookEnabled ? "Enabled" : "Disabled"}
               </Label>
             </div>
             <DialogFooter>
-              <Button
-                type="submit"
-                disabled={isEditingWebhook}
-              >
-                {isEditingWebhook
-                  ? "Saving..."
-                  : "Save Changes"}
+              <Button type="submit" disabled={isEditingWebhook}>
+                {isEditingWebhook ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
           </form>
@@ -984,7 +989,7 @@ export default function Page() {
       </Dialog>
 
       <div>
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">API Request Logs</h2>
         </div>
 
@@ -996,7 +1001,9 @@ export default function Page() {
             (a, b) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )
-          const requestLogTotalPages = Math.ceil(sortedRequestLogs.length / REQUEST_LOGS_PER_PAGE)
+          const requestLogTotalPages = Math.ceil(
+            sortedRequestLogs.length / REQUEST_LOGS_PER_PAGE
+          )
           const paginatedRequestLogs = sortedRequestLogs.slice(
             (requestLogPage - 1) * REQUEST_LOGS_PER_PAGE,
             requestLogPage * REQUEST_LOGS_PER_PAGE
@@ -1122,8 +1129,7 @@ export default function Page() {
                       requestLogTotalPages,
                       requestLogPage
                     ).map((page) =>
-                      page === "ellipsis-start" ||
-                      page === "ellipsis-end" ? (
+                      page === "ellipsis-start" || page === "ellipsis-end" ? (
                         <PaginationItem key={page}>
                           <PaginationEllipsis />
                         </PaginationItem>
@@ -1169,8 +1175,7 @@ export default function Page() {
           <DialogHeader>
             <DialogTitle>Request Details</DialogTitle>
             <DialogDescription className="break-all">
-              {selectedRequestLog?.method}{" "}
-              {selectedRequestLog?.endpoint}
+              {selectedRequestLog?.method} {selectedRequestLog?.endpoint}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -1229,7 +1234,7 @@ export default function Page() {
       </Dialog>
 
       <div>
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">General Settings</h2>
         </div>
 
@@ -1239,7 +1244,8 @@ export default function Page() {
               <div>
                 <h3 className="text-sm font-semibold">Project Name</h3>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Change the name of your project as it appears across the dashboard.
+                  Change the name of your project as it appears across the
+                  dashboard.
                 </p>
               </div>
 
@@ -1253,14 +1259,15 @@ export default function Page() {
                   <DialogHeader>
                     <DialogTitle>Rename Project</DialogTitle>
                     <DialogDescription>
-                      Change the name of your project as it appears across the dashboard.
+                      Change the name of your project as it appears across the
+                      dashboard.
                     </DialogDescription>
                   </DialogHeader>
                   <Form<RenameProject>
                     onSubmit={async (data) => {
                       setRenamingProject(true)
                       try {
-                        await axios.patch('/api/v1/project/' + params.id, data)
+                        await axios.patch("/api/v1/project/" + params.id, data)
                         toast.success("Project renamed")
                         getProject()
                       } catch {
@@ -1274,23 +1281,14 @@ export default function Page() {
                     <div className="space-y-3">
                       <div className="space-y-2">
                         <Label htmlFor="key-name">Name</Label>
-                        <Form.Field<RenameProject>
-                          name="name"
-                          required
-                        >
-                          <Input
-                            placeholder={project?.name}
-                          />
+                        <Form.Field<RenameProject> name="name" required>
+                          <Input placeholder={project?.name} />
                         </Form.Field>
                       </div>
                       <DialogFooter>
                         <Form.Submit>
-                          <Button
-                            disabled={renamingProject}
-                          >
-                            {renamingProject
-                              ? "Renaming..."
-                              : "Rename Project"}
+                          <Button disabled={renamingProject}>
+                            {renamingProject ? "Renaming..." : "Rename Project"}
                           </Button>
                         </Form.Submit>
                       </DialogFooter>
@@ -1303,8 +1301,7 @@ export default function Page() {
               <div>
                 <h3 className="text-sm font-semibold">Delete Project</h3>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Deleting this project removes API keys and
-                  events permanently.
+                  Deleting this project removes API keys and events permanently.
                 </p>
               </div>
 
@@ -1318,16 +1315,17 @@ export default function Page() {
                   <DialogHeader>
                     <DialogTitle>Are you sure?</DialogTitle>
                     <DialogDescription>
-                      This action cannot be undone. This will permanently delete the project and all associated data.
+                      This action cannot be undone. This will permanently delete
+                      the project and all associated data.
                     </DialogDescription>
                   </DialogHeader>
                   <Form<DeleteProject>
                     onSubmit={async () => {
                       setDeletingProject(true)
                       try {
-                        await axios.delete('/api/v1/project/' + params.id)
+                        await axios.delete("/api/v1/project/" + params.id)
                         toast.success("Project deleted")
-                        await router.replace('/')
+                        await router.replace("/")
                       } catch {
                         toast.error("Something went wrong")
                       } finally {
@@ -1339,12 +1337,8 @@ export default function Page() {
                     <div className="space-y-3">
                       <DialogFooter>
                         <Form.Submit>
-                          <Button
-                            disabled={deletingProject}
-                          >
-                            {deletingProject
-                              ? "Deleting..."
-                              : "Confirm Action"}
+                          <Button disabled={deletingProject}>
+                            {deletingProject ? "Deleting..." : "Confirm Action"}
                           </Button>
                         </Form.Submit>
                       </DialogFooter>
@@ -1356,6 +1350,6 @@ export default function Page() {
           </CardContent>
         </Card>
       </div>
-    </div >
+    </div>
   )
 }

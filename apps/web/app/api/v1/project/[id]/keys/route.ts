@@ -6,7 +6,9 @@ import { ApiResponse } from "@/app/api/responses"
 
 export async function GET(
   request: NextRequest,
-  { params }: {
+  {
+    params,
+  }: {
     params: Promise<{ id: string }>
   }
 ) {
@@ -115,7 +117,7 @@ export async function DELETE(
     return ApiResponse.BadRequest()
   }
 
-  if (!await Project.isAuthorized(id, session.user.id)) {
+  if (!(await Project.isAuthorized(id, session.user.id))) {
     return ApiResponse.Forbidden("You do not have access to this project")
   }
 

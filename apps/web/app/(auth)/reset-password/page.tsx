@@ -62,9 +62,7 @@ function ResetPasswordContent() {
             setSuccess(false)
 
             if (!token) {
-              setAuthError(
-                "This reset link is invalid or missing its token."
-              )
+              setAuthError("This reset link is invalid or missing its token.")
               return
             }
 
@@ -74,9 +72,7 @@ function ResetPasswordContent() {
             })
 
             if (error) {
-              setAuthError(
-                error.message || "Something went wrong"
-              )
+              setAuthError(error.message || "Something went wrong")
               return
             }
 
@@ -121,8 +117,7 @@ function ResetPasswordContent() {
               required
               rules={{
                 validate: (value: string, values: ResetPasswordForm) =>
-                  value === values.password ||
-                  "Passwords do not match",
+                  value === values.password || "Passwords do not match",
               }}
             >
               <Input

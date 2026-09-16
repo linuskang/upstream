@@ -28,7 +28,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@workspace/ui/components/breadcrumb"
-import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@workspace/ui/components/card"
 import type { Project, RequestLog } from "@workspace/contracts"
 
 const chartConfig = {
@@ -109,9 +114,8 @@ export default function AnalyticsPage() {
     const startOfWeek = new Date(now)
     startOfWeek.setDate(now.getDate() - ((dayOfWeek + 6) % 7))
     startOfWeek.setHours(0, 0, 0, 0)
-    return requestLogs.filter(
-      (log) => new Date(log.createdAt) >= startOfWeek
-    ).length
+    return requestLogs.filter((log) => new Date(log.createdAt) >= startOfWeek)
+      .length
   }, [requestLogs])
 
   const methodData = useMemo(() => {
@@ -154,9 +158,7 @@ export default function AnalyticsPage() {
     return (
       <main>
         <div className="flex min-h-svh flex-col gap-3 py-6">
-          <p className="text-muted-foreground">
-            Loading analytics...
-          </p>
+          <p className="text-muted-foreground">Loading analytics...</p>
         </div>
       </main>
     )
@@ -169,9 +171,7 @@ export default function AnalyticsPage() {
           <Breadcrumb>
             <BreadcrumbList className="text-sm">
               <BreadcrumbItem>
-                <BreadcrumbLink href="/">
-                  Projects
-                </BreadcrumbLink>
+                <BreadcrumbLink href="/">Projects</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
@@ -200,8 +200,7 @@ export default function AnalyticsPage() {
                 Weekly Requests
               </p>
               <p className="text-xl font-bold text-foreground">
-                {requestsThisWeek}{" "}
-                <span className="text-sm">requests</span>
+                {requestsThisWeek} <span className="text-sm">requests</span>
               </p>
             </div>
             <div className="rounded-lg bg-muted/40 p-3">
@@ -211,14 +210,12 @@ export default function AnalyticsPage() {
               <p className="text-xl font-bold text-foreground">
                 {requestLogs.length > 0
                   ? `${(
-                    (requestLogs.filter(
-                      (log) =>
-                        log.status >= 200 &&
-                        log.status < 300
-                    ).length /
-                      requestLogs.length) *
-                    100
-                  ).toFixed(2)}%`
+                      (requestLogs.filter(
+                        (log) => log.status >= 200 && log.status < 300
+                      ).length /
+                        requestLogs.length) *
+                      100
+                    ).toFixed(2)}%`
                   : "N/A"}
               </p>
             </div>
@@ -229,14 +226,12 @@ export default function AnalyticsPage() {
               <p className="text-xl font-bold text-foreground">
                 {requestLogs.length > 0
                   ? `${(
-                    (requestLogs.filter(
-                      (log) =>
-                        log.status < 200 ||
-                        log.status >= 300
-                    ).length /
-                      requestLogs.length) *
-                    100
-                  ).toFixed(2)}%`
+                      (requestLogs.filter(
+                        (log) => log.status < 200 || log.status >= 300
+                      ).length /
+                        requestLogs.length) *
+                      100
+                    ).toFixed(2)}%`
                   : "N/A"}
               </p>
             </div>
@@ -245,9 +240,7 @@ export default function AnalyticsPage() {
 
         <Card className="ring-0">
           <CardHeader>
-            <CardTitle className="font-semibold">
-              Requests Over Time
-            </CardTitle>
+            <CardTitle className="font-semibold">Requests Over Time</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer
@@ -273,14 +266,8 @@ export default function AnalyticsPage() {
                     })
                   }}
                 />
-                <YAxis
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                />
-                <ChartTooltip
-                  content={<ChartTooltipContent />}
-                />
+                <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar
                   dataKey="requests"
                   fill="var(--color-requests)"
@@ -293,9 +280,7 @@ export default function AnalyticsPage() {
 
         <Card className="ring-0">
           <CardHeader>
-            <CardTitle className="font-semibold">
-              Requests by Method
-            </CardTitle>
+            <CardTitle className="font-semibold">Requests by Method</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer
@@ -314,19 +299,9 @@ export default function AnalyticsPage() {
                   tickMargin={10}
                   axisLine={false}
                 />
-                <YAxis
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                />
-                <ChartTooltip
-                  content={<ChartTooltipContent />}
-                />
-                <Bar
-                  dataKey="count"
-                  fill="var(--color-count)"
-                  radius={4}
-                />
+                <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="count" fill="var(--color-count)" radius={4} />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -334,9 +309,7 @@ export default function AnalyticsPage() {
 
         <Card className="ring-0">
           <CardHeader className="items-center pb-4">
-            <CardTitle className="font-semibold">
-              Top Endpoints
-            </CardTitle>
+            <CardTitle className="font-semibold">Top Endpoints</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <ChartContainer
@@ -357,10 +330,7 @@ export default function AnalyticsPage() {
                   labelLine={false}
                 >
                   {endpointData.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={`var(--chart-${(i % 5) + 1})`}
-                    />
+                    <Cell key={i} fill={`var(--chart-${(i % 5) + 1})`} />
                   ))}
                 </Pie>
                 <ChartLegend content={<ChartLegendContent />} />
@@ -371,9 +341,7 @@ export default function AnalyticsPage() {
 
         <Card className="ring-0">
           <CardHeader className="items-center pb-4">
-            <CardTitle className="font-semibold">
-              Status Distribution
-            </CardTitle>
+            <CardTitle className="font-semibold">Status Distribution</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <ChartContainer
@@ -394,10 +362,7 @@ export default function AnalyticsPage() {
                   labelLine={false}
                 >
                   {statusData.map((entry, i) => (
-                    <Cell
-                      key={i}
-                      fill={`var(--color-${entry.status})`}
-                    />
+                    <Cell key={i} fill={`var(--color-${entry.status})`} />
                   ))}
                 </Pie>
                 <ChartLegend content={<ChartLegendContent />} />

@@ -11,7 +11,11 @@ export interface EventContext {
   description?: string | null
   category?: string | null
   fields?: { title: string; value: string }[]
-  actions?: { title: string; variant: "primary" | "secondary" | "ghost"; url: string }[]
+  actions?: {
+    title: string
+    variant: "primary" | "secondary" | "ghost"
+    url: string
+  }[]
   data?: unknown
   contextId?: string | null
   contextStart?: boolean
@@ -54,7 +58,7 @@ export class UpstreamError extends Error {
 }
 
 class EventsSDK {
-  constructor(private readonly config: Configuration) { }
+  constructor(private readonly config: Configuration) {}
 
   async ingest(event: EventContext): Promise<IngestedEvent> {
     const upsHost = `${this.config.host ?? "https://up.linus.my"}`

@@ -6,7 +6,9 @@ import { ApiResponse } from "@/app/api/responses"
 
 export async function GET(
   request: NextRequest,
-  { params }: {
+  {
+    params,
+  }: {
     params: Promise<{
       id: string
     }>
@@ -66,7 +68,9 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: {
+  {
+    params,
+  }: {
     params: Promise<{
       id: string
     }>
@@ -103,12 +107,16 @@ export async function PATCH(
   await Project.rename(id, body.name)
   await Project.log(id, session.user.id, `Renamed project to ${body.name}`)
 
-  return ApiResponse.Success("Renamed project from " + project.name + " to " + body.name)
+  return ApiResponse.Success(
+    "Renamed project from " + project.name + " to " + body.name
+  )
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: {
+  {
+    params,
+  }: {
     params: Promise<{
       id: string
     }>

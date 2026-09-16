@@ -5,7 +5,9 @@ import { ApiResponse } from "@/app/api/responses"
 
 export async function GET(
   request: NextRequest,
-  { params, }: {
+  {
+    params,
+  }: {
     params: Promise<{ id: string }>
   }
 ) {

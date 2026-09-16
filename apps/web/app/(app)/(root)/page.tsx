@@ -217,9 +217,7 @@ export default function Page() {
             <p className="text-sm font-semibold text-muted-foreground">
               Account Plan
             </p>
-            <p className="text-xl font-bold text-foreground">
-              {usage.plan}
-            </p>
+            <p className="text-xl font-bold text-foreground">{usage.plan}</p>
           </Card>
         </div>
       </div>
@@ -247,9 +245,8 @@ export default function Page() {
                 No Projects Yet
               </p>
               <p className="max-w-sm text-xs text-muted-foreground">
-                You haven&apos;t created any projects yet. Get
-                started by creating your first project to start
-                tracking events.
+                You haven&apos;t created any projects yet. Get started by
+                creating your first project to start tracking events.
               </p>
             </div>
             <a
@@ -307,11 +304,7 @@ export default function Page() {
                       <TableRow
                         key={project.id}
                         className="cursor-pointer border-border/40 transition-colors hover:bg-accent/50"
-                        onClick={() =>
-                          router.push(
-                            `/project/${project.id}`
-                          )
-                        }
+                        onClick={() => router.push(`/project/${project.id}`)}
                       >
                         <TableCell className="w-fit pl-4 font-medium whitespace-nowrap text-foreground">
                           {project.name}
@@ -320,18 +313,8 @@ export default function Page() {
                           <div className="flex items-center gap-2">
                             <div className="relative size-6 overflow-hidden rounded-sm border border-border/60 bg-secondary">
                               <Image
-                                src={
-                                  session
-                                    ?.user
-                                    .image ||
-                                  ""
-                                }
-                                alt={
-                                  session
-                                    ?.user
-                                    .name ||
-                                  "Avatar"
-                                }
+                                src={session?.user.image || ""}
+                                alt={session?.user.name || "Avatar"}
                                 width={24}
                                 height={24}
                                 unoptimized
@@ -348,9 +331,7 @@ export default function Page() {
                             variant="secondary"
                             onClick={(e) => {
                               e.stopPropagation()
-                              router.push(
-                                `/project/${project.id}/settings`
-                              )
+                              router.push(`/project/${project.id}/settings`)
                             }}
                           >
                             Manage
@@ -368,11 +349,7 @@ export default function Page() {
                 <PaginationContent className="justify-center">
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() =>
-                        setCurrentPage((p) =>
-                          Math.max(1, p - 1)
-                        )
-                      }
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       className={
                         currentPage === 1
                           ? "pointer-events-none opacity-50"
@@ -381,8 +358,7 @@ export default function Page() {
                     />
                   </PaginationItem>
                   {getPaginationItems(totalPages, currentPage).map((page) =>
-                    page === "ellipsis-start" ||
-                    page === "ellipsis-end" ? (
+                    page === "ellipsis-start" || page === "ellipsis-end" ? (
                       <PaginationItem key={page}>
                         <PaginationEllipsis />
                       </PaginationItem>
@@ -390,9 +366,7 @@ export default function Page() {
                       <PaginationItem key={page}>
                         <PaginationLink
                           isActive={page === currentPage}
-                          onClick={() =>
-                            setCurrentPage(page)
-                          }
+                          onClick={() => setCurrentPage(page)}
                           className="cursor-pointer border-0"
                         >
                           {page}
@@ -403,9 +377,7 @@ export default function Page() {
                   <PaginationItem>
                     <PaginationNext
                       onClick={() =>
-                        setCurrentPage((p) =>
-                          Math.min(totalPages, p + 1)
-                        )
+                        setCurrentPage((p) => Math.min(totalPages, p + 1))
                       }
                       className={
                         currentPage === totalPages
@@ -433,12 +405,8 @@ export default function Page() {
                 <TableHead className="pl-4 text-muted-foreground">
                   Activity
                 </TableHead>
-                <TableHead className="text-muted-foreground">
-                  Project
-                </TableHead>
-                <TableHead className="text-muted-foreground">
-                  User
-                </TableHead>
+                <TableHead className="text-muted-foreground">Project</TableHead>
+                <TableHead className="text-muted-foreground">User</TableHead>
                 <TableHead className="pr-4 text-right text-muted-foreground">
                   Date
                 </TableHead>
@@ -460,9 +428,7 @@ export default function Page() {
                     key={activity.id}
                     className="cursor-pointer border-border/40 transition-colors hover:bg-accent/50"
                     onClick={() =>
-                      router.push(
-                        `/project/${activity.project.id}/settings`
-                      )
+                      router.push(`/project/${activity.project.id}/settings`)
                     }
                   >
                     <TableCell className="max-w-80 pl-4">
@@ -477,10 +443,7 @@ export default function Page() {
                       <div className="flex items-center gap-2">
                         <div className="relative size-6 overflow-hidden rounded-sm border border-border/60 bg-secondary">
                           <Image
-                            src={
-                              activity.user
-                                .image || ""
-                            }
+                            src={activity.user.image || ""}
                             alt={activity.user.name}
                             width={24}
                             height={24}
@@ -494,9 +457,7 @@ export default function Page() {
                       </div>
                     </TableCell>
                     <TableCell className="pr-4 text-right whitespace-nowrap text-muted-foreground">
-                      {formatActivityDate(
-                        activity.createdAt
-                      )}
+                      {formatActivityDate(activity.createdAt)}
                     </TableCell>
                   </TableRow>
                 ))
@@ -511,9 +472,7 @@ export default function Page() {
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() =>
-                    setActivityPage((page) =>
-                      Math.max(1, page - 1)
-                    )
+                    setActivityPage((page) => Math.max(1, page - 1))
                   }
                   className={
                     activityPage === 1
@@ -522,34 +481,29 @@ export default function Page() {
                   }
                 />
               </PaginationItem>
-              {getPaginationItems(
-                activityTotalPages,
-                activityPage
-              ).map((page) =>
-                page === "ellipsis-start" || page === "ellipsis-end" ? (
-                  <PaginationItem key={page}>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                ) : (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      isActive={page === activityPage}
-                      onClick={() => setActivityPage(page)}
-                      className="cursor-pointer border-0"
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
+              {getPaginationItems(activityTotalPages, activityPage).map(
+                (page) =>
+                  page === "ellipsis-start" || page === "ellipsis-end" ? (
+                    <PaginationItem key={page}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        isActive={page === activityPage}
+                        onClick={() => setActivityPage(page)}
+                        className="cursor-pointer border-0"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
               )}
               <PaginationItem>
                 <PaginationNext
                   onClick={() =>
                     setActivityPage((page) =>
-                      Math.min(
-                        activityTotalPages,
-                        page + 1
-                      )
+                      Math.min(activityTotalPages, page + 1)
                     )
                   }
                   className={

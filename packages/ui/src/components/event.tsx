@@ -2,8 +2,17 @@
 
 import { useState } from "react"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
-import { EventActions, EventData, EventFields } from "@workspace/ui/components/event-parts"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
+import {
+  EventActions,
+  EventData,
+  EventFields,
+} from "@workspace/ui/components/event-parts"
 import { CompactEventTimeline } from "@workspace/ui/components/event-timeline"
 import { cn } from "@workspace/ui/lib/utils"
 import { ChevronDown, ChevronUp } from "lucide-react"
@@ -109,12 +118,14 @@ export function Event({
       <CardContent
         className={cn(
           "grid p-0 pl-[3.25rem] transition-all duration-300 ease-out",
-          open ? "mt-3 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0"
+          open
+            ? "mt-3 grid-rows-[1fr] opacity-100"
+            : "mt-0 grid-rows-[0fr] opacity-0"
         )}
       >
         <div className="min-h-0 overflow-hidden">
           {description && (
-            <div className="text-sm leading-relaxed break-words font-medium whitespace-pre-wrap text-muted-foreground">
+            <div className="text-sm leading-relaxed font-medium break-words whitespace-pre-wrap text-muted-foreground">
               {description}
             </div>
           )}

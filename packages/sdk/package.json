@@ -20,6 +20,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "format": "prettier --config ../../tooling/prettier/index.js --write \"src/**/*.{ts,tsx}\"",
     "prepack": "npm run build",
     "typecheck": "tsc --noEmit"
   },
