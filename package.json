@@ -1,6 +1,5 @@
 {
-  "name": "ups",
-  "version": "0.0.1",
+  "name": "upstream",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -23,7 +22,8 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "tooling/*"
   ],
   "dependencies": {
     "@workspace/ui": "^0.0.0",
