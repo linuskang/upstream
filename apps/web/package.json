@@ -23,7 +23,6 @@
     "@workspace/contracts": "*",
     "@workspace/db": "*",
     "@workspace/ui": "*",
-    "axios": "^1.20.0",
     "better-auth": "^1.6.26",
     "geist": "^1.7.2",
     "lucide-react": "^1.45.0",

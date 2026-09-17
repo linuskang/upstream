@@ -3,7 +3,6 @@
 // Libraries
 import { authClient } from "@/client/auth"
 import Link from "next/link"
-import { useEffect, useState } from "react"
 
 // Components
 import {
@@ -23,24 +22,31 @@ import {
   CardContent,
 } from "@workspace/ui/components/card"
 import { Check } from "lucide-react"
-import type { UsageStats } from "@/server/usage"
+import { trpc } from "@/lib/trpc"
 
 export default function Page() {
   const { data: session } = authClient.useSession()
-  const [usage, setUsage] = useState<UsageStats | null>(null)
-
-  useEffect(() => {
-    fetch("/api/usage")
-      .then((r) => r.json())
-      .then((data) => setUsage(data))
-      .catch(() => {})
-  }, [])
+  const usageQuery = trpc.usage.stats.useQuery(undefined, {
+    enabled: Boolean(session),
+  })
 
   if (!session) {
     return null
   }
 
-  const currentPlan = (usage?.plan ?? "Free").toLowerCase()
+  if (usageQuery.isLoading) {
+    return <div className="p-6 text-sm text-muted-foreground">Loading...</div>
+  }
+
+  if (usageQuery.isError || !usageQuery.data) {
+    return (
+      <div className="p-6 text-sm text-destructive">
+        Unable to load billing information.
+      </div>
+    )
+  }
+
+  const currentPlan = usageQuery.data.plan.toLowerCase()
 
   return (
     <div className="flex min-h-svh flex-col gap-8 py-6">

@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 import { useParams } from "next/navigation"
+import { notFound } from "next/navigation"
 import {
   Bar,
   BarChart,
@@ -34,7 +35,7 @@ import {
   CardTitle,
   CardContent,
 } from "@workspace/ui/components/card"
-import type { Project, RequestLog } from "@workspace/contracts"
+import { trpc } from "@/lib/trpc"
 
 const chartConfig = {
   requests: {
@@ -52,25 +53,16 @@ const STATUS_RANGE_COLORS = [
 
 export default function AnalyticsPage() {
   const params = useParams()
-  const [project, setProject] = useState<Project | null>(null)
-  const [requestLogs, setRequestLogs] = useState<RequestLog[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const [projectRes, logsRes] = await Promise.all([
-        fetch(`/api/v1/project/${params.id}`),
-        fetch(`/api/v1/project/${params.id}/requests`),
-      ])
-      if (!projectRes.ok || !logsRes.ok) return
-      const projectData = await projectRes.json()
-      const logsData = await logsRes.json()
-      setProject(projectData.data)
-      setRequestLogs(logsData.data)
-      setLoading(false)
-    }
-    fetchData()
-  }, [params.id])
+  const projectId = String(params.id)
+  const projectQuery = trpc.project.get.useQuery({ id: projectId })
+  const requestLogsQuery = trpc.projectSettings.requestLogs.useQuery({
+    projectId,
+  })
+  const project = projectQuery.data
+  const requestLogs = useMemo(
+    () => requestLogsQuery.data ?? [],
+    [requestLogsQuery.data]
+  )
 
   const chartData = useMemo(() => {
     const map = new Map<string, number>()
@@ -154,11 +146,25 @@ export default function AnalyticsPage() {
     return config
   }, [endpointData])
 
-  if (loading) {
+  if (projectQuery.isLoading || requestLogsQuery.isLoading) {
     return (
       <main>
         <div className="flex min-h-svh flex-col gap-3 py-6">
           <p className="text-muted-foreground">Loading analytics...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (projectQuery.error?.data?.code === "NOT_FOUND") return notFound()
+
+  if (projectQuery.isError || requestLogsQuery.isError) {
+    return (
+      <main>
+        <div className="flex min-h-svh items-center justify-center py-6">
+          <p className="text-sm text-destructive">
+            Unable to load analytics. Please try again.
+          </p>
         </div>
       </main>
     )
@@ -175,7 +181,7 @@ export default function AnalyticsPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href={`/project/${params.id}`}>
+                  <BreadcrumbLink href={`/project/${projectId}`}>
                   {project?.name}
                 </BreadcrumbLink>
               </BreadcrumbItem>

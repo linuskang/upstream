@@ -1,4 +1,4 @@
-import webpush, { WebPushError } from "web-push"
+import webpush from "web-push"
 import { prisma } from "@workspace/db"
 import { Email } from "@/server/email"
 import { env } from "@/env"
@@ -97,7 +97,6 @@ export async function sendPushNotification(
     )
   )
 
-  let removed = 0
   for (let i = 0; i < results.length; i++) {
     const result = results[i]
     if (!result) continue
@@ -107,7 +106,6 @@ export async function sendPushNotification(
       await prisma.pushSubscription.delete({
         where: { endpoint: subscription.endpoint },
       })
-      removed++
     }
   }
 
