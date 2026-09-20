@@ -1,0 +1,12 @@
+{
+  "name": "@uplabs/cli",
+  "version": "0.0.1-alpha.1",
+  "description": "CLI for managing your Upstream projects in the terminal",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module"
+}
