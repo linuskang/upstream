@@ -580,7 +580,7 @@ export default function Page() {
                             </DialogHeader>
                             <DialogFooter>
                               <Button
-                                variant="primary"
+                                variant="default"
                                 onClick={() => {
                                   deleteApiKeyMutation.mutate({
                                     projectId,

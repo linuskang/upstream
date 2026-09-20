@@ -1,6 +1,7 @@
 import type { PrismaClient } from "@workspace/db"
 import { betterAuth } from "better-auth"
 import { APIError, createAuthMiddleware } from "better-auth/api"
+import { lastLoginMethod } from "better-auth/plugins"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 
 export type AuthEnvironment = {
@@ -123,5 +124,8 @@ export function createAuth({
         },
       },
     },
+    plugins: [
+      lastLoginMethod()
+    ]
   })
 }

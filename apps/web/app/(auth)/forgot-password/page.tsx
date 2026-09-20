@@ -102,7 +102,7 @@ export default function Page() {
 
             <Form.Submit>
               {({ isSubmitting }) => (
-                <Button variant="primary" className="mt-4 h-8 w-full">
+                <Button variant="default" className="mt-4 h-8 w-full">
                   {isSubmitting ? "Sending..." : "Send reset link"}
                 </Button>
               )}

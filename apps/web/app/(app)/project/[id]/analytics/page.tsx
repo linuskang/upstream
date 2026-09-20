@@ -264,7 +264,7 @@ export default function AnalyticsPage() {
                   tickLine={false}
                   tickMargin={10}
                   axisLine={false}
-                  tickFormatter={(value) => {
+                  tickFormatter={(value: string) => {
                     const d = new Date(value)
                     return d.toLocaleDateString("en-US", {
                       month: "short",

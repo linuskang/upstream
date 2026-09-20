@@ -153,7 +153,7 @@ function ResetPasswordContent() {
 
           <Form.Submit>
             <Button
-              variant="primary"
+              variant="default"
               className="mt-4 h-8 w-full"
               disabled={!token || success}
             >

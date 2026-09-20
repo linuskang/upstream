@@ -274,7 +274,7 @@ export default function Page() {
           <h2 className="text-sm font-semibold text-foreground">
             Your Projects
           </h2>
-          <Button variant="primary">
+          <Button variant="default">
             <Link href="/new">Create Project</Link>
           </Button>
         </div>

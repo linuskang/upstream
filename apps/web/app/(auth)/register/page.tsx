@@ -78,7 +78,7 @@ function RegisterContent() {
 
         <CardContent className="space-y-5 p-3">
           <Button
-            variant="primary"
+            variant="default"
             className="flex w-full items-center justify-center gap-2"
             onClick={async () => {
               await authClient.signIn.social({
@@ -211,7 +211,7 @@ function RegisterContent() {
             )}
 
             <Form.Submit>
-              <Button variant="primary" className="mt-4 h-8 w-full">
+              <Button variant="default" className="mt-4 h-8 w-full">
                 Create account
               </Button>
             </Form.Submit>

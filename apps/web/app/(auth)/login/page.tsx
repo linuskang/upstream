@@ -74,7 +74,7 @@ function LoginContent() {
 
         <CardContent className="space-y-5 p-3">
           <Button
-            variant="primary"
+            variant="default"
             className="flex w-full items-center justify-center gap-2"
             onClick={async () => {
               await authClient.signIn.social({
@@ -147,7 +147,7 @@ function LoginContent() {
 
             <div className="flex flex-col gap-2">
               <Form.Submit>
-                <Button variant="primary" className="mt-2 h-8 w-full">
+                <Button variant="default" className="mt-2 h-8 w-full">
                   Log in
                 </Button>
               </Form.Submit>

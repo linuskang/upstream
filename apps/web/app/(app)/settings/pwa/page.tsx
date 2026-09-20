@@ -196,7 +196,7 @@ export default function Page() {
             </p>
 
             <Button
-              variant="primary"
+              variant="default"
               onClick={installApp}
               disabled={!installPrompt}
               className="mt-4"
@@ -270,12 +270,12 @@ export default function Page() {
                   <Button variant="secondary" onClick={sendTestNotification}>
                     Send Test Notification
                   </Button>
-                  <Button variant="primary" onClick={unsubscribeFromPush}>
+                  <Button variant="default" onClick={unsubscribeFromPush}>
                     Disallow Push Notifications
                   </Button>
                 </>
               ) : (
-                <Button variant="primary" onClick={subscribeToPush}>
+                <Button variant="default" onClick={subscribeToPush}>
                   Allow Push Notifications
                 </Button>
               )}

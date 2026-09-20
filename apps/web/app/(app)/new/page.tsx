@@ -118,7 +118,7 @@ export default function Page() {
             </Button>
 
             <Form.Submit>
-              <Button variant="primary">
+              <Button variant="default">
                 {createProject.isPending ? "Waiting..." : "Create Project"}
               </Button>
             </Form.Submit>
