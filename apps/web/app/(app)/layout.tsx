@@ -1,15 +1,14 @@
 "use client"
 
 // Libraries
-import { Suspense } from "react"
+import { useEffect } from "react"
 import Link from "next/link"
 import { authClient } from "@/client/auth"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 // Components
 import Navbar from "@/components/homepage-navbar"
 import ProjectNavbar from "@/components/project-navbar"
-import { AuthRedirect } from "./auth-redirect"
 
 export default function RootLayout({
   children,
@@ -18,7 +17,15 @@ export default function RootLayout({
 }>) {
   const { data: session, isPending } = authClient.useSession()
   const pathname = usePathname()
+  const router = useRouter()
   const isProjectRoute = pathname.startsWith("/project/")
+
+  useEffect(() => {
+    if (isPending || session) return
+
+    const currentUrl = `${window.location.pathname}${window.location.search}`
+    router.replace(`/auth/sign-in?redirectTo=${encodeURIComponent(currentUrl)}`)
+  }, [isPending, session, router])
 
   if (isPending) {
     return (
@@ -28,13 +35,13 @@ export default function RootLayout({
     )
   }
 
+  if (!session) {
+    return null
+  }
+
   return (
     <>
-      <Suspense fallback={null}>
-        <AuthRedirect enabled={Boolean(session)} />
-      </Suspense>
-
-      {session && !session.user.emailVerified && <EmailVerificationBanner />}
+      {!session.user.emailVerified && <EmailVerificationBanner />}
 
       {isProjectRoute ? <ProjectNavbar /> : <Navbar />}
       <div className="mx-auto w-full max-w-2xl px-4">{children}</div>

@@ -1,6 +1,7 @@
 "use client"
 
 import { authClient } from "@/client/auth"
+import { getAuthRedirectUri } from "@/lib/auth-redirect"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -18,7 +19,7 @@ export default function Page() {
 
   useEffect(() => {
     if (!isPending && session) {
-      router.push("/dashboard")
+      router.replace(getAuthRedirectUri())
     }
   }, [isPending, session, router])
 
@@ -52,7 +53,7 @@ export default function Page() {
               password: values.password,
             }, {
               onSuccess: () => {
-                router.push("/dashboard")
+                router.replace(getAuthRedirectUri())
               },
 
               onError: (ctx) => {
@@ -166,6 +167,7 @@ export default function Page() {
             onClick={() =>
               authClient.signIn.social({
                 provider: "github",
+                callbackURL: getAuthRedirectUri(),
               })
             }
           >
@@ -178,6 +180,7 @@ export default function Page() {
             onClick={() =>
               authClient.signIn.social({
                 provider: "google",
+                callbackURL: getAuthRedirectUri(),
               })
             }
           >
