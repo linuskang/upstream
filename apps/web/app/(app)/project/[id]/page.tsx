@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation"
 import { useParams, useSearchParams, useRouter } from "next/navigation"
-import { useEffect, useRef, useState, useMemo } from "react"
+import { Suspense, useEffect, useRef, useState, useMemo } from "react"
 import Link from "next/link"
 import { trpc } from "@/lib/trpc"
 
@@ -82,6 +82,20 @@ function parseSearchQuery(query: string): { filters: SearchFilters } {
 }
 
 export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-svh items-center justify-center py-6">
+          <div className="text-sm text-muted-foreground">Loading...</div>
+        </div>
+      }
+    >
+      <ProjectPageContent />
+    </Suspense>
+  )
+}
+
+function ProjectPageContent() {
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()

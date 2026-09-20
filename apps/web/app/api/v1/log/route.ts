@@ -18,7 +18,6 @@ import { Usage } from "@/server/usage"
 import { Project } from "@/server/project"
 
 import { env } from "@/env"
-import { User } from "@/server/user"
 
 import {
   sendPushNotification,
@@ -64,6 +63,15 @@ const Payload = z.object({
   emailNotify: z.boolean().default(false),
 })
 
+async function getProjectOwner(projectId: string) {
+  const ownerMember = await prisma.projectMember.findFirst({
+    where: { projectId, role: "OWNER" },
+    include: { user: true },
+  })
+
+  return ownerMember?.user ?? null
+}
+
 export async function POST(req: NextRequest) {
   // Pre-flight checks
   const apiKey = req.headers.get("x-api-key")
@@ -87,7 +95,7 @@ export async function POST(req: NextRequest) {
     return ApiResponse.NotFound("Project not found")
   }
 
-  const user = await User.get(project.ownerId)
+  const user = await getProjectOwner(project.id)
 
   if (!user) {
     return ApiResponse.NotFound("User not found")

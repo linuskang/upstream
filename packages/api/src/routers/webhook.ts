@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server"
 import type { PrismaClient } from "@workspace/db"
 import { z } from "zod"
 import { router, protectedProcedure } from "../trpc"
+import { requireProjectAccess } from "../permissions"
 
 const webhookInput = z.object({
   name: z.string().trim().min(1).max(80),
@@ -13,7 +14,7 @@ export const webhookRouter = router({
   list: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
       const webhooks = await ctx.db.webhook.findMany({
         where: { projectId: input.projectId },
         orderBy: { createdAt: "desc" },
@@ -24,7 +25,7 @@ export const webhookRouter = router({
   create: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }).and(webhookInput))
     .mutation(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
       const webhook = await ctx.db.webhook.create({
         data: {
           projectId: input.projectId,
@@ -47,7 +48,7 @@ export const webhookRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
       const webhook = await ctx.db.webhook.findFirst({
         where: { id: input.webhookId, projectId: input.projectId },
       })
@@ -69,7 +70,7 @@ export const webhookRouter = router({
   delete: protectedProcedure
     .input(z.object({ projectId: z.string().uuid(), webhookId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
       const webhook = await ctx.db.webhook.findFirst({
         where: { id: input.webhookId, projectId: input.projectId },
         select: { name: true },
@@ -99,14 +100,6 @@ function serializeWebhook(webhook: {
     createdAt: webhook.createdAt.toISOString(),
     updatedAt: webhook.updatedAt.toISOString(),
   }
-}
-
-async function assertProjectAccess(db: PrismaClient, projectId: string, userId: string) {
-  const project = await db.project.findFirst({
-    where: { id: projectId, ownerId: userId },
-    select: { id: true },
-  })
-  if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" })
 }
 
 async function log(db: PrismaClient, projectId: string, userId: string, message: string) {

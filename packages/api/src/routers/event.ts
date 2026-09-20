@@ -2,6 +2,7 @@ import type { Prisma, PrismaClient } from "@workspace/db"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { router, protectedProcedure } from "../trpc"
+import { requireProjectAccess } from "../permissions"
 
 export type DashboardEvent = {
   id: string
@@ -67,7 +68,7 @@ export const eventRouter = router({
         .extend(eventFilters.shape)
     )
     .query(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
 
       const fieldConditions: Prisma.EventWhereInput[] = []
 
@@ -177,7 +178,7 @@ export const eventRouter = router({
   categories: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
 
       const [total, grouped] = await Promise.all([
         ctx.db.event.count({ where: { projectId: input.projectId } }),
@@ -197,21 +198,6 @@ export const eventRouter = router({
       }
     }),
 })
-
-async function assertProjectAccess(
-  db: PrismaClient,
-  projectId: string,
-  userId: string
-) {
-  const project = await db.project.findFirst({
-    where: { id: projectId, ownerId: userId },
-    select: { id: true },
-  })
-
-  if (!project) {
-    throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" })
-  }
-}
 
 function serializeEvent(
   event: RawEvent,

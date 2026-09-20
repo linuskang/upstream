@@ -1,13 +1,13 @@
 import { TRPCError } from "@trpc/server"
-import type { PrismaClient } from "@workspace/db"
 import { z } from "zod"
 import { router, protectedProcedure } from "../trpc"
+import { requireProjectAccess } from "../permissions"
 
 export const projectSettingsRouter = router({
   auditLogs: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
       const logs = await ctx.db.auditLog.findMany({
         where: { projectId: input.projectId },
         orderBy: { createdAt: "desc" },
@@ -24,7 +24,7 @@ export const projectSettingsRouter = router({
   requestLogs: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
       const logs = await ctx.db.requestLog.findMany({
         where: { projectId: input.projectId },
         orderBy: { createdAt: "desc" },
@@ -41,12 +41,4 @@ export const projectSettingsRouter = router({
 function stringifyBody(body: unknown) {
   if (body === null || body === undefined) return null
   return typeof body === "string" ? body : JSON.stringify(body)
-}
-
-async function assertProjectAccess(db: PrismaClient, projectId: string, userId: string) {
-  const project = await db.project.findFirst({
-    where: { id: projectId, ownerId: userId },
-    select: { id: true },
-  })
-  if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" })
 }

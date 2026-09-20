@@ -5,7 +5,11 @@ export const accountRouter = router({
     const activities = await ctx.db.auditLog.findMany({
       where: {
         project: {
-          ownerId: ctx.session.user.id,
+          members: {
+            some: {
+              userId: ctx.session.user.id,
+            },
+          },
         },
       },
       orderBy: {

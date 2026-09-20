@@ -28,39 +28,88 @@ enum Plan {
   PRO
 }
 
+enum ProjectMemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum ProjectInvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
 model User {
-  id                       String             @id
-  name                     String
-  email                    String
-  emailVerified            Boolean            @default(false)
-  image                    String?
-  pushNotificationsEnabled Boolean            @default(true)
-  emailNotificationsEnabled Boolean @default(true)
-  plan                     Plan               @default(FREE)
-  createdAt                DateTime           @default(now())
-  updatedAt                DateTime           @updatedAt
-  sessions                 Session[]
-  accounts                 Account[]
-  projects                 Project[]
-  apiKeys                  ApiKey[]
-  userUsages               UserUsage[]
-  auditLogs                AuditLog[]
-  pushSubscriptions        PushSubscription[]
+  id                        String             @id
+  name                      String
+  email                     String
+  emailVerified             Boolean            @default(false)
+  image                     String?
+  pushNotificationsEnabled  Boolean            @default(true)
+  emailNotificationsEnabled Boolean            @default(true)
+  plan                      Plan               @default(FREE)
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+  sessions                  Session[]
+  accounts                  Account[]
+  projectMembers            ProjectMember[]
+  sentInvitations           ProjectInvitation[] @relation("SentInvitations")
+  apiKeys                   ApiKey[]
+  userUsages                UserUsage[]
+  auditLogs                 AuditLog[]
+  pushSubscriptions         PushSubscription[]
 
   @@unique([email])
   @@map("user")
 }
 
 model Project {
-  id          String       @id @default(uuid())
+  id          String            @id @default(uuid())
   name        String
-  ownerId     String
-  owner       User         @relation(fields: [ownerId], references: [id])
+  members     ProjectMember[]
+  invitations ProjectInvitation[]
   apiKeys     ApiKey[]
   events      Event[]
   auditLogs   AuditLog[]
   requestLogs RequestLog[]
   webhooks    Webhook[]
+}
+
+model ProjectMember {
+  id        String            @id @default(uuid())
+  projectId String
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      ProjectMemberRole
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@unique([projectId, userId])
+  @@index([userId])
+  @@index([projectId])
+  @@map("project_member")
+}
+
+model ProjectInvitation {
+  id          String                @id @default(uuid())
+  projectId   String
+  project     Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  email       String
+  role        ProjectMemberRole
+  token       String                @unique
+  status      ProjectInvitationStatus @default(PENDING)
+  invitedById String
+  invitedBy   User                  @relation("SentInvitations", fields: [invitedById], references: [id], onDelete: Cascade)
+  expiresAt   DateTime
+  createdAt   DateTime              @default(now())
+  acceptedAt  DateTime?
+
+  @@index([projectId])
+  @@index([token])
+  @@map("project_invitation")
 }
 
 model Webhook {
@@ -141,7 +190,7 @@ model Event {
   contextId    String?
   createdAt    DateTime @default(now())
   pushNotify   Boolean  @default(false)
-  emailNotify  Boolean @default(false)
+  emailNotify  Boolean  @default(false)
   projectId    String
   project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 

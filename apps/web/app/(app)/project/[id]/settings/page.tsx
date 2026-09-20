@@ -61,6 +61,8 @@ import { SearchBar } from "@workspace/ui/components/search-bar"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { Copy, Check } from "lucide-react"
 import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
+import { authClient } from "@/client/auth"
+import { ProjectMembers } from "@/components/project-members"
 
 type CreateApiKey = {
   name: string
@@ -140,11 +142,15 @@ export default function Page() {
   const router = useRouter()
   const projectId = String(params.id)
   const utils = trpc.useUtils()
+  const { data: session } = authClient.useSession()
   const projectQuery = trpc.project.get.useQuery({ id: projectId })
   const apiKeysQuery = trpc.apiKey.list.useQuery({ projectId })
   const auditLogsQuery = trpc.projectSettings.auditLogs.useQuery({ projectId })
   const requestLogsQuery = trpc.projectSettings.requestLogs.useQuery({ projectId })
   const webhooksQuery = trpc.webhook.list.useQuery({ projectId })
+  const usageQuery = trpc.usage.stats.useQuery(undefined, {
+    enabled: Boolean(session),
+  })
 
   const project = projectQuery.data
   const apiKeys = apiKeysQuery.data ?? []
@@ -333,7 +339,9 @@ export default function Page() {
     apiKeysQuery.isLoading ||
     auditLogsQuery.isLoading ||
     requestLogsQuery.isLoading ||
-    webhooksQuery.isLoading
+    webhooksQuery.isLoading ||
+    usageQuery.isLoading ||
+    !session
   ) {
     return (
       <div className="flex min-h-svh items-center justify-center py-6">
@@ -351,7 +359,8 @@ export default function Page() {
     apiKeysQuery.isError ||
     auditLogsQuery.isError ||
     requestLogsQuery.isError ||
-    webhooksQuery.isError
+    webhooksQuery.isError ||
+    usageQuery.isError
   ) {
     return (
       <div className="flex min-h-svh items-center justify-center py-6">
@@ -361,6 +370,12 @@ export default function Page() {
       </div>
     )
   }
+
+  const currentUserRole = project?.members.find(
+    (member) => member.user.id === session.user.id
+  )?.role ?? "MEMBER"
+  const canEdit = currentUserRole === "OWNER" || currentUserRole === "ADMIN"
+  const memberLimit = usageQuery.data?.membersPerProject.limit ?? 3
 
   return (
     <div className="flex min-h-svh flex-col gap-3 py-6">
@@ -393,21 +408,22 @@ export default function Page() {
       <div>
         <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">API Keys</h2>
-          <Dialog
-            open={createApiKey}
-            onOpenChange={(open) => {
-              setCreateApiKey(open)
-              if (!open) {
-                setCreatedApiKey(null)
-                setCopiedApiKey(false)
-              }
-            }}
-          >
-            <DialogTrigger
-              render={<Button className="cursor-pointer" size="sm" />}
+          {canEdit && (
+            <Dialog
+              open={createApiKey}
+              onOpenChange={(open) => {
+                setCreateApiKey(open)
+                if (!open) {
+                  setCreatedApiKey(null)
+                  setCopiedApiKey(false)
+                }
+              }}
             >
-              Create API Key
-            </DialogTrigger>
+              <DialogTrigger
+                render={<Button className="cursor-pointer" size="sm" />}
+              >
+                Create API Key
+              </DialogTrigger>
             <DialogContent>
               {createdApiKey ? (
                 <>
@@ -472,6 +488,7 @@ export default function Page() {
               )}
             </DialogContent>
           </Dialog>
+          )}
         </div>
 
         <SearchBar
@@ -541,40 +558,42 @@ export default function Page() {
                         : "Never"}
                     </TableCell>
                     <TableCell className="w-fit pr-4 pl-4 text-right whitespace-nowrap">
-                      <Dialog
-                        open={deleteApiKey === key.id}
-                        onOpenChange={(open) =>
-                          setDeleteApiKey(open ? key.id : null)
-                        }
-                      >
-                        <DialogTrigger
-                          render={<Button variant="destructive" size="sm" />}
+                      {canEdit && (
+                        <Dialog
+                          open={deleteApiKey === key.id}
+                          onOpenChange={(open) =>
+                            setDeleteApiKey(open ? key.id : null)
+                          }
                         >
-                          Delete
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Are you sure?</DialogTitle>
-                            <DialogDescription>
-                              Are you sure you want to delete this API key? This
-                              action cannot be undone.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter>
-                            <Button
-                              variant="primary"
-                              onClick={() => {
-                                deleteApiKeyMutation.mutate({
-                                  projectId,
-                                  keyId: key.id,
-                                })
-                              }}
-                            >
-                              Confirm Action
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                          <DialogTrigger
+                            render={<Button variant="destructive" size="sm" />}
+                          >
+                            Delete
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Are you sure?</DialogTitle>
+                              <DialogDescription>
+                                Are you sure you want to delete this API key? This
+                                action cannot be undone.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                              <Button
+                                variant="primary"
+                                onClick={() => {
+                                  deleteApiKeyMutation.mutate({
+                                    projectId,
+                                    keyId: key.id,
+                                  })
+                                }}
+                              >
+                                Confirm Action
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))
@@ -740,12 +759,13 @@ export default function Page() {
         <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">Webhooks</h2>
 
-          <Dialog open={createWebhook} onOpenChange={setCreateWebhook}>
-            <DialogTrigger
-              render={<Button className="cursor-pointer" size="sm" />}
-            >
-              Create Webhook
-            </DialogTrigger>
+          {canEdit && (
+            <Dialog open={createWebhook} onOpenChange={setCreateWebhook}>
+              <DialogTrigger
+                render={<Button className="cursor-pointer" size="sm" />}
+              >
+                Create Webhook
+              </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Create Webhook</DialogTitle>
@@ -790,6 +810,7 @@ export default function Page() {
               </Form>
             </DialogContent>
           </Dialog>
+          )}
         </div>
 
         <SearchBar
@@ -883,26 +904,28 @@ export default function Page() {
                     </TableCell>
                     <TableCell className="w-fit pr-4 pl-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="h-7 text-xs"
-                          onClick={() => openEditWebhook(webhook)}
-                        >
-                          Edit
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger
-                            render={
-                              <Button
-                                variant="destructive"
-                                size="sm"
-                                className="h-7 text-xs"
-                              />
-                            }
-                          >
-                            Delete
-                          </AlertDialogTrigger>
+                        {canEdit && (
+                          <>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="h-7 text-xs"
+                              onClick={() => openEditWebhook(webhook)}
+                            >
+                              Edit
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger
+                                render={
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    className="h-7 text-xs"
+                                  />
+                                }
+                              >
+                                Delete
+                              </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
@@ -924,6 +947,8 @@ export default function Page() {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
+                          </>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -934,84 +959,86 @@ export default function Page() {
         </div>
       </div>
 
-      <Dialog
-        open={editWebhookOpen}
-        onOpenChange={(open) => {
-          setEditWebhookOpen(open)
-          if (!open) {
-            setEditingWebhook(null)
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Webhook</DialogTitle>
-            <DialogDescription>Update webhook settings.</DialogDescription>
-          </DialogHeader>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault()
-              await updateWebhook({
-                name: editWebhookName,
-                subscription: editWebhookSubscription,
-                url: editWebhookUrl,
-                enabled: editWebhookEnabled,
-              })
-            }}
-            className="space-y-3"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="edit-webhook-name">Name</Label>
-              <Input
-                id="edit-webhook-name"
-                value={editWebhookName}
-                onChange={(e) => setEditWebhookName(e.target.value)}
-                placeholder="My Webhook"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-webhook-subscription">Subscription</Label>
-              <Input
-                id="edit-webhook-subscription"
-                value={editWebhookSubscription}
-                onChange={(e) => setEditWebhookSubscription(e.target.value)}
-                placeholder="event.created"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-webhook-url">URL</Label>
-              <Input
-                id="edit-webhook-url"
-                value={editWebhookUrl}
-                onChange={(e) => setEditWebhookUrl(e.target.value)}
-                placeholder="https://example.com/webhook"
-                type="url"
-                required
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch
-                id="edit-webhook-enabled"
-                checked={editWebhookEnabled}
-                onCheckedChange={setEditWebhookEnabled}
-              />
-              <Label
-                htmlFor="edit-webhook-enabled"
-                className="text-sm text-muted-foreground"
-              >
-                {editWebhookEnabled ? "Enabled" : "Disabled"}
-              </Label>
-            </div>
-            <DialogFooter>
-              <Button type="submit" disabled={updateWebhookMutation.isPending}>
-                {updateWebhookMutation.isPending ? "Saving..." : "Save Changes"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {canEdit && (
+        <Dialog
+          open={editWebhookOpen}
+          onOpenChange={(open) => {
+            setEditWebhookOpen(open)
+            if (!open) {
+              setEditingWebhook(null)
+            }
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Webhook</DialogTitle>
+              <DialogDescription>Update webhook settings.</DialogDescription>
+            </DialogHeader>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault()
+                await updateWebhook({
+                  name: editWebhookName,
+                  subscription: editWebhookSubscription,
+                  url: editWebhookUrl,
+                  enabled: editWebhookEnabled,
+                })
+              }}
+              className="space-y-3"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="edit-webhook-name">Name</Label>
+                <Input
+                  id="edit-webhook-name"
+                  value={editWebhookName}
+                  onChange={(e) => setEditWebhookName(e.target.value)}
+                  placeholder="My Webhook"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-webhook-subscription">Subscription</Label>
+                <Input
+                  id="edit-webhook-subscription"
+                  value={editWebhookSubscription}
+                  onChange={(e) => setEditWebhookSubscription(e.target.value)}
+                  placeholder="event.created"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-webhook-url">URL</Label>
+                <Input
+                  id="edit-webhook-url"
+                  value={editWebhookUrl}
+                  onChange={(e) => setEditWebhookUrl(e.target.value)}
+                  placeholder="https://example.com/webhook"
+                  type="url"
+                  required
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="edit-webhook-enabled"
+                  checked={editWebhookEnabled}
+                  onCheckedChange={setEditWebhookEnabled}
+                />
+                <Label
+                  htmlFor="edit-webhook-enabled"
+                  className="text-sm text-muted-foreground"
+                >
+                  {editWebhookEnabled ? "Enabled" : "Disabled"}
+                </Label>
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={updateWebhookMutation.isPending}>
+                  {updateWebhookMutation.isPending ? "Saving..." : "Save Changes"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
 
       <div>
         <div className="mb-2 flex items-center justify-between gap-2">
@@ -1258,107 +1285,116 @@ export default function Page() {
         </DialogContent>
       </Dialog>
 
-      <div>
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold">General Settings</h2>
-        </div>
+      <ProjectMembers
+        projectId={projectId}
+        currentUserId={session.user.id}
+        currentUserRole={currentUserRole}
+        memberLimit={memberLimit}
+      />
 
-        <Card>
-          <CardContent>
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-semibold">Project Name</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Change the name of your project as it appears across the
-                  dashboard.
-                </p>
-              </div>
+      {currentUserRole === "OWNER" && (
+        <div>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <h2 className="text-lg font-semibold">General Settings</h2>
+          </div>
 
-              <Dialog open={renameProject} onOpenChange={setRenameProject}>
-                <DialogTrigger
-                  render={<Button variant="secondary" size="sm" />}
-                >
-                  Rename
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Rename Project</DialogTitle>
-                    <DialogDescription>
-                      Change the name of your project as it appears across the
-                      dashboard.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <Form<RenameProject>
-                    onSubmit={(data) => {
-                      renameProjectMutation.mutate({ id: projectId, ...data })
-                    }}
+          <Card>
+            <CardContent>
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold">Project Name</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Change the name of your project as it appears across the
+                    dashboard.
+                  </p>
+                </div>
+
+                <Dialog open={renameProject} onOpenChange={setRenameProject}>
+                  <DialogTrigger
+                    render={<Button variant="secondary" size="sm" />}
                   >
-                    <div className="space-y-3">
-                      <div className="space-y-2">
-                        <Label htmlFor="key-name">Name</Label>
-                        <Form.Field<RenameProject> name="name" required>
-                          <Input placeholder={project?.name} />
-                        </Form.Field>
+                    Rename
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Rename Project</DialogTitle>
+                      <DialogDescription>
+                        Change the name of your project as it appears across the
+                        dashboard.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form<RenameProject>
+                      onSubmit={(data) => {
+                        renameProjectMutation.mutate({ id: projectId, ...data })
+                      }}
+                    >
+                      <div className="space-y-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="key-name">Name</Label>
+                          <Form.Field<RenameProject> name="name" required>
+                            <Input placeholder={project?.name} />
+                          </Form.Field>
+                        </div>
+                        <DialogFooter>
+                          <Form.Submit>
+                            <Button disabled={renameProjectMutation.isPending}>
+                              {renameProjectMutation.isPending
+                                ? "Renaming..."
+                                : "Rename Project"}
+                            </Button>
+                          </Form.Submit>
+                        </DialogFooter>
                       </div>
-                      <DialogFooter>
-                        <Form.Submit>
-                          <Button disabled={renameProjectMutation.isPending}>
-                            {renameProjectMutation.isPending
-                              ? "Renaming..."
-                              : "Rename Project"}
-                          </Button>
-                        </Form.Submit>
-                      </DialogFooter>
-                    </div>
-                  </Form>
-                </DialogContent>
-              </Dialog>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-semibold">Delete Project</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Deleting this project removes API keys and events permanently.
-                </p>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
               </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold">Delete Project</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Deleting this project removes API keys and events permanently.
+                  </p>
+                </div>
 
-              <Dialog open={deleteProject} onOpenChange={setDeleteProject}>
-                <DialogTrigger
-                  render={<Button variant="destructive" size="sm" />}
-                >
-                  Delete
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Are you sure?</DialogTitle>
-                    <DialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      the project and all associated data.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <Form<DeleteProject>
-                    onSubmit={() => {
-                      deleteProjectMutation.mutate({ id: projectId })
-                    }}
+                <Dialog open={deleteProject} onOpenChange={setDeleteProject}>
+                  <DialogTrigger
+                    render={<Button variant="destructive" size="sm" />}
                   >
-                    <div className="space-y-3">
-                      <DialogFooter>
-                        <Form.Submit>
-                          <Button disabled={deleteProjectMutation.isPending}>
-                            {deleteProjectMutation.isPending
-                              ? "Deleting..."
-                              : "Confirm Action"}
-                          </Button>
-                        </Form.Submit>
-                      </DialogFooter>
-                    </div>
-                  </Form>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                    Delete
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Are you sure?</DialogTitle>
+                      <DialogDescription>
+                        This action cannot be undone. This will permanently delete
+                        the project and all associated data.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form<DeleteProject>
+                      onSubmit={() => {
+                        deleteProjectMutation.mutate({ id: projectId })
+                      }}
+                    >
+                      <div className="space-y-3">
+                        <DialogFooter>
+                          <Form.Submit>
+                            <Button disabled={deleteProjectMutation.isPending}>
+                              {deleteProjectMutation.isPending
+                                ? "Deleting..."
+                                : "Confirm Action"}
+                            </Button>
+                          </Form.Submit>
+                        </DialogFooter>
+                      </div>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

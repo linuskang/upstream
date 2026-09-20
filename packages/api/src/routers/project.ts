@@ -1,18 +1,37 @@
 import { z } from "zod"
 import { TRPCError } from "@trpc/server"
-import type { PrismaClient } from "@workspace/db"
 import { getPlan } from "../subscription-types"
 import { router, protectedProcedure } from "../trpc"
+import { requireProjectAccess } from "../permissions"
 
 export const projectRouter = router({
   list: protectedProcedure.query(({ ctx }) => {
     return ctx.db.project.findMany({
       where: {
-        ownerId: ctx.session.user.id,
+        members: {
+          some: {
+            userId: ctx.session.user.id,
+          },
+        },
       },
       select: {
         id: true,
         name: true,
+        members: {
+          where: {
+            role: "OWNER",
+          },
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
       },
     })
   }),
@@ -26,7 +45,16 @@ export const projectRouter = router({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id
       const [projectCount, user] = await Promise.all([
-        ctx.db.project.count({ where: { ownerId: userId } }),
+        ctx.db.project.count({
+          where: {
+            members: {
+              some: {
+                userId,
+                role: "OWNER",
+              },
+            },
+          },
+        }),
         ctx.db.user.findUnique({
           where: { id: userId },
           select: { plan: true },
@@ -47,7 +75,12 @@ export const projectRouter = router({
       const project = await ctx.db.project.create({
         data: {
           name: input.name,
-          ownerId: userId,
+          members: {
+            create: {
+              userId,
+              role: "OWNER",
+            },
+          },
         },
         select: {
           id: true,
@@ -69,20 +102,28 @@ export const projectRouter = router({
   get: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      const project = await ctx.db.project.findFirst({
+      const userId = ctx.session.user.id
+      await requireProjectAccess(ctx.db, input.id, userId, "VIEW")
+
+      const project = await ctx.db.project.findUnique({
         where: {
           id: input.id,
-          ownerId: ctx.session.user.id,
         },
         select: {
           id: true,
           name: true,
-          owner: {
+          members: {
             select: {
               id: true,
-              name: true,
-              email: true,
-              image: true,
+              role: true,
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  image: true,
+                },
+              },
             },
           },
           apiKeys: {
@@ -127,8 +168,10 @@ export const projectRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const project = await ctx.db.project.findFirst({
-        where: { id: input.id, ownerId: ctx.session.user.id },
+      await requireProjectAccess(ctx.db, input.id, ctx.session.user.id, "OWNER")
+
+      const project = await ctx.db.project.findUnique({
+        where: { id: input.id },
         select: { name: true },
       })
 
@@ -154,8 +197,10 @@ export const projectRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const project = await ctx.db.project.findFirst({
-        where: { id: input.id, ownerId: ctx.session.user.id },
+      await requireProjectAccess(ctx.db, input.id, ctx.session.user.id, "OWNER")
+
+      const project = await ctx.db.project.findUnique({
+        where: { id: input.id },
         select: { id: true },
       })
 

@@ -1,8 +1,9 @@
 "use client"
 
 // Libraries
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { authClient } from "@/client/auth"
 
 // Components
@@ -27,7 +28,30 @@ type LoginForm = {
 }
 
 export default function Page() {
+  return (
+    <Suspense fallback={<LoginSkeleton />}>
+      <LoginContent />
+    </Suspense>
+  )
+}
+
+function LoginSkeleton() {
+  return (
+    <div className="relative isolate flex min-h-svh items-center justify-center overflow-hidden px-4 py-20">
+      <div className={styles.background} aria-hidden="true" />
+      <Card className="relative z-10 w-full max-w-sm gap-5 bg-card-2 p-5 ring-0 backdrop-blur-xl">
+        <CardContent className="flex items-center justify-center py-10">
+          <div className="text-sm text-muted-foreground">Loading...</div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function LoginContent() {
   const [authError, setAuthError] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get("redirectTo") ?? "/"
 
   return (
     <div className="relative isolate flex min-h-svh items-center justify-center overflow-hidden px-4 py-20">
@@ -55,6 +79,7 @@ export default function Page() {
             onClick={async () => {
               await authClient.signIn.social({
                 provider: "github",
+                callbackURL: redirectTo,
               })
             }}
           >
@@ -66,7 +91,7 @@ export default function Page() {
               const { error } = await authClient.signIn.email({
                 email: data.email,
                 password: data.password,
-                callbackURL: "/",
+                callbackURL: redirectTo,
               })
 
               if (error) {
@@ -85,7 +110,7 @@ export default function Page() {
                 <Form.Label<LoginForm> name="email">Your email</Form.Label>
 
                 <Link
-                  href="/register"
+                  href={`/register${redirectTo !== "/" ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ""}`}
                   className="flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:underline"
                 >
                   <CircleQuestionMark className="size-3.5" />

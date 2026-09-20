@@ -3,6 +3,7 @@ import type { PrismaClient } from "@workspace/db"
 import crypto from "node:crypto"
 import { z } from "zod"
 import { router, protectedProcedure } from "../trpc"
+import { requireProjectAccess } from "../permissions"
 
 const apiKeyFields = {
   id: true,
@@ -24,7 +25,7 @@ export const apiKeyRouter = router({
   list: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
       const keys = await ctx.db.apiKey.findMany({
         where: { projectId: input.projectId },
         select: apiKeyFields,
@@ -36,7 +37,7 @@ export const apiKeyRouter = router({
   create: protectedProcedure
     .input(z.object({ projectId: z.string().uuid(), name: z.string().trim().min(1).max(80) }))
     .mutation(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
       const secret = `up_${crypto.randomUUID().replace(/-/g, "")}`
       const key = await ctx.db.apiKey.create({
         data: {
@@ -60,7 +61,7 @@ export const apiKeyRouter = router({
   delete: protectedProcedure
     .input(z.object({ projectId: z.string().uuid(), keyId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      await assertProjectAccess(ctx.db, input.projectId, ctx.session.user.id)
+      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
       const key = await ctx.db.apiKey.findFirst({
         where: { id: input.keyId, projectId: input.projectId },
         select: { name: true },
@@ -85,12 +86,4 @@ function serializeApiKey<T extends { createdAt: Date; lastUsed: Date | null }>(k
     createdAt: key.createdAt.toISOString(),
     lastUsed: key.lastUsed?.toISOString() ?? null,
   }
-}
-
-async function assertProjectAccess(db: PrismaClient, projectId: string, userId: string) {
-  const project = await db.project.findFirst({
-    where: { id: projectId, ownerId: userId },
-    select: { id: true },
-  })
-  if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" })
 }

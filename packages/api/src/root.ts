@@ -6,6 +6,7 @@ import { eventRouter } from "./routers/event"
 import { apiKeyRouter } from "./routers/api-key"
 import { webhookRouter } from "./routers/webhook"
 import { projectSettingsRouter } from "./routers/project-settings"
+import { projectMemberRouter } from "./routers/project-member"
 
 export const appRouter = router({
   account: accountRouter,
@@ -15,6 +16,7 @@ export const appRouter = router({
   apiKey: apiKeyRouter,
   webhook: webhookRouter,
   projectSettings: projectSettingsRouter,
+  projectMember: projectMemberRouter,
 })
 
 export type AppRouter = typeof appRouter

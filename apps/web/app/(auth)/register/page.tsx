@@ -1,10 +1,10 @@
 "use client"
 
 // Libraries
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { authClient } from "@/client/auth"
 
@@ -31,7 +31,30 @@ type RegisterForm = {
 }
 
 export default function Page() {
+  return (
+    <Suspense fallback={<RegisterSkeleton />}>
+      <RegisterContent />
+    </Suspense>
+  )
+}
+
+function RegisterSkeleton() {
+  return (
+    <div className="relative isolate flex min-h-svh items-center justify-center overflow-hidden px-4 py-8">
+      <div className={styles.background} aria-hidden="true" />
+      <Card className="relative z-10 w-full max-w-sm gap-5 bg-card-2 p-5 ring-0 backdrop-blur-xl">
+        <CardContent className="flex items-center justify-center py-10">
+          <div className="text-sm text-muted-foreground">Loading...</div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function RegisterContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get("redirectTo") ?? "/"
   const [authError, setAuthError] = useState<string | null>(null)
 
   return (
@@ -60,6 +83,7 @@ export default function Page() {
             onClick={async () => {
               await authClient.signIn.social({
                 provider: "github",
+                callbackURL: redirectTo,
               })
             }}
           >
@@ -83,6 +107,7 @@ export default function Page() {
                 name: data.name,
                 email: data.email,
                 password: data.password,
+                callbackURL: redirectTo,
               })
 
               if (error) {
@@ -93,7 +118,9 @@ export default function Page() {
               toast.success(
                 "Account created. Check your email to verify your account."
               )
-              router.push("/login")
+              router.push(
+                `/login${redirectTo !== "/" ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ""}`
+              )
             }}
           >
             <div className="mb-2">
@@ -190,7 +217,7 @@ export default function Page() {
             </Form.Submit>
 
             <Link
-              href="/login"
+              href={`/login${redirectTo !== "/" ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ""}`}
               className="mt-2 flex items-center justify-center gap-1 text-xs font-semibold text-muted-foreground hover:underline"
             >
               Already have an account?

@@ -5,12 +5,14 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { authClient } from "@/client/auth"
 import { trpc } from "@/lib/trpc"
+import { toast } from "sonner"
 import Link from "next/link"
 import Image from "next/image"
 
 // Components
-import { Folder, ArrowUpRight, Search } from "lucide-react"
+import { Folder, ArrowUpRight, Search, Loader2 } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
+import { Badge } from "@workspace/ui/components/badge"
 import { Input } from "@workspace/ui/components/input"
 import {
   Table,
@@ -88,17 +90,46 @@ export default function Page() {
   const projectsQuery = trpc.project.list.useQuery(undefined, { enabled })
   const usageQuery = trpc.usage.stats.useQuery(undefined, { enabled })
   const activityQuery = trpc.account.activity.useQuery(undefined, { enabled })
+  const invitesQuery = trpc.projectMember.myInvites.useQuery(undefined, { enabled })
+
+  const utils = trpc.useUtils()
+
+  const acceptInviteMutation = trpc.projectMember.acceptInvite.useMutation({
+    onSuccess: async (result) => {
+      await Promise.all([
+        utils.projectMember.myInvites.invalidate(),
+        utils.project.list.invalidate(),
+        utils.usage.stats.invalidate(),
+        utils.account.activity.invalidate(),
+      ])
+      router.push(`/project/${result.projectId}`)
+    },
+    onError: (error) => toast.error(error.message),
+  })
+
+  const declineInviteMutation = trpc.projectMember.declineInvite.useMutation({
+    onSuccess: async () => {
+      await utils.projectMember.myInvites.invalidate()
+      toast.success("Invitation declined")
+    },
+    onError: (error) => toast.error(error.message),
+  })
 
   const projects = projectsQuery.data ?? []
   const usage = usageQuery.data
   const activities = activityQuery.data ?? []
+  const invites = invitesQuery.data ?? []
   const isLoading =
     isPending ||
     projectsQuery.isLoading ||
     usageQuery.isLoading ||
-    activityQuery.isLoading
+    activityQuery.isLoading ||
+    invitesQuery.isLoading
   const hasError =
-    projectsQuery.isError || usageQuery.isError || activityQuery.isError
+    projectsQuery.isError ||
+    usageQuery.isError ||
+    activityQuery.isError ||
+    invitesQuery.isError
 
   if (isLoading) {
     return null
@@ -143,9 +174,9 @@ export default function Page() {
               Your Projects
             </p>
             <p className="text-xl font-bold text-foreground">
-              {usage.projects.current}{" "}
+              {usage.ownedProjects.current}{" "}
               <span className="text-sm font-normal text-muted-foreground">
-                / {usage.projects.limit}
+                / {usage.ownedProjects.limit}
               </span>
             </p>
           </Card>
@@ -170,6 +201,73 @@ export default function Page() {
           </Card>
         </div>
       </div>
+
+      {invites.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h2 className="text-sm font-semibold text-foreground">
+            Pending Invitations
+          </h2>
+
+          <div className="grid gap-2">
+            {invites.map((invite) => (
+              <Card key={invite.id} className="p-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col gap-0.5">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground">
+                        {invite.project.name}
+                      </span>
+                      <Badge variant="secondary">{invite.role}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Invited by {invite.invitedBy.name} ({invite.invitedBy.email})
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Expires {new Date(invite.expiresAt).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={
+                        acceptInviteMutation.isPending ||
+                        declineInviteMutation.isPending
+                      }
+                      onClick={() =>
+                        declineInviteMutation.mutate({ token: invite.token })
+                      }
+                    >
+                      {declineInviteMutation.isPending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        "Decline"
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      disabled={
+                        acceptInviteMutation.isPending ||
+                        declineInviteMutation.isPending
+                      }
+                      onClick={() =>
+                        acceptInviteMutation.mutate({ token: invite.token })
+                      }
+                    >
+                      {acceptInviteMutation.isPending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        "Accept"
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
@@ -262,8 +360,8 @@ export default function Page() {
                           <div className="flex items-center gap-2">
                             <div className="relative size-6 overflow-hidden rounded-sm border border-border/60 bg-secondary">
                               <Image
-                                src={session?.user.image || ""}
-                                alt={session?.user.name || "Avatar"}
+                                src={project.members[0]?.user.image || ""}
+                                alt={project.members[0]?.user.name || "Avatar"}
                                 width={24}
                                 height={24}
                                 unoptimized
@@ -271,7 +369,7 @@ export default function Page() {
                               />
                             </div>
                             <span className="text-sm text-muted-foreground">
-                              {session?.user.name}
+                              {project.members[0]?.user.name}
                             </span>
                           </div>
                         </TableCell>

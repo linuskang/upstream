@@ -31,8 +31,13 @@ export async function POST(request: NextRequest) {
     const eventResult = await prisma.event.deleteMany({
       where: {
         project: {
-          owner: {
-            plan: planKey.toUpperCase() as Plan,
+          members: {
+            some: {
+              role: "OWNER",
+              user: {
+                plan: planKey.toUpperCase() as Plan,
+              },
+            },
           },
         },
         createdAt: {
@@ -44,8 +49,13 @@ export async function POST(request: NextRequest) {
     const auditLogResult = await prisma.auditLog.deleteMany({
       where: {
         project: {
-          owner: {
-            plan: planKey.toUpperCase() as Plan,
+          members: {
+            some: {
+              role: "OWNER",
+              user: {
+                plan: planKey.toUpperCase() as Plan,
+              },
+            },
           },
         },
         createdAt: {
@@ -57,8 +67,13 @@ export async function POST(request: NextRequest) {
     const requestLogResult = await prisma.requestLog.deleteMany({
       where: {
         project: {
-          owner: {
-            plan: planKey.toUpperCase() as Plan,
+          members: {
+            some: {
+              role: "OWNER",
+              user: {
+                plan: planKey.toUpperCase() as Plan,
+              },
+            },
           },
         },
         createdAt: {

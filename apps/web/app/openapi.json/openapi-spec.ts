@@ -60,7 +60,17 @@ export const openApiSpec = {
         properties: {
           id: { type: "string" },
           name: { type: "string" },
-          owner: user,
+          members: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                role: { type: "string", enum: ["OWNER", "ADMIN", "MEMBER"] },
+                user: user,
+              },
+            },
+          },
           apiKeys: {
             type: "array",
             items: { $ref: "#/components/schemas/ApiKey" },
