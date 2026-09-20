@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
+import { cn } from "cn"
 
-import { cn } from "@workspace/ui/lib/utils"
 import { Button } from "@workspace/ui/components/button"
 
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
@@ -85,7 +85,7 @@ function AlertDialogFooter({
     <div
       data-slot="alert-dialog-footer"
       className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t border-foreground/5 bg-muted/50 p-3 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
+        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
         className
       )}
       {...props}

@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "cn"
 import { Check, Copy } from "lucide-react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"

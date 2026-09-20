@@ -1,30 +1,19 @@
 import * as React from "react"
+import { Input as InputPrimitive } from "@base-ui/react/input"
+import { cn } from "cn"
 
-import { cn } from "@workspace/ui/lib/utils"
-
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
-    return (
-      <input
-        type={type}
-        ref={ref}
-        data-slot="input"
-        className={cn(
-          "h-7 w-full min-w-0 rounded-md border border-border bg-input px-2 py-0.5 text-sm outline-none",
-          "transition-[box-shadow,border-color,background-color] duration-100 ease-out",
-          "placeholder:font-semibold placeholder:text-muted-foreground",
-          "focus-visible:ring-2 focus-visible:ring-ring/80 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          "aria-invalid:border-destructive",
-          "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-          "file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-xs/relaxed file:font-medium file:text-foreground",
-          "dark:bg-input",
-          className
-        )}
-        {...props}
-      />
-    )
-  }
-)
-Input.displayName = "Input"
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+  return (
+    <InputPrimitive
+      type={type}
+      data-slot="input"
+      className={cn(
+        "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-[box-shadow,border-color,background-color] duration-100 ease-out outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/80 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/40 aria-invalid:ring-offset-2 aria-invalid:ring-offset-background md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50",
+        className
+      )}
+      {...props}
+    />
+  )
+}
 
 export { Input }

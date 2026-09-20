@@ -14,7 +14,7 @@ import {
   EventFields,
 } from "@workspace/ui/components/event-parts"
 import { CompactEventTimeline } from "@workspace/ui/components/event-timeline"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "cn"
 import { ChevronDown, ChevronUp } from "lucide-react"
 
 import type { Event } from "@workspace/contracts"
