@@ -12,6 +12,7 @@ export async function createTRPCContext(): Promise<ApiContext> {
       ? {
           user: {
             id: session.user.id,
+            emailVerified: session.user.emailVerified,
           },
         }
       : null,

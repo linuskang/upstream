@@ -8,7 +8,7 @@ import { Email } from "@/server/email"
 export const auth = createAuth({
   db: prisma,
   env,
-  sendEmail: (to, subject, text) => Email.send(to, subject, text),
+  sendEmail: (to, subject, text, html) => Email.send(to, subject, text, html),
 })
 
 export async function getSession() {

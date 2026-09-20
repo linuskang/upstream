@@ -3,6 +3,7 @@ import type { PrismaClient } from "@workspace/db"
 export interface ApiSession {
   user: {
     id: string
+    emailVerified: boolean
   }
 }
 

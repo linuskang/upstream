@@ -79,12 +79,13 @@ export default function Page() {
                 },
 
                 onError: (ctx) => {
+                  setPending(false)
                   setError(ctx.error.message)
                 },
 
                 onRequest: () => {
                   setPending(true)
-                }
+                },
               })
             }}
           >
