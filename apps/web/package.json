@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --config ../../tooling/prettier/index.js --write \"**/*.{ts,tsx}\"",
+    "generate-api-spec": "tsx scripts/generate-api-spec.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

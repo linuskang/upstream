@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "generate-api-spec": "tsx apps/web/scripts/generate-api-spec.ts",
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck"
@@ -12,6 +13,7 @@
     "@workspace/eslint-config": "*",
     "@workspace/typescript-config": "*",
     "prettier": "^3.8.3",
+    "tsx": "^4.23.13",
     "turbo": "^2.10.9",
     "typescript": "^5"
   },

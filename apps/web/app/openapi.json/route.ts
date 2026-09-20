@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
-import { openApiSpec } from "./openapi-spec"
+import { buildOpenApiSpec } from "@/lib/openapi"
+
+export const dynamic = "force-dynamic"
 
 export async function GET() {
-  return NextResponse.json(openApiSpec)
+  return NextResponse.json(buildOpenApiSpec())
 }

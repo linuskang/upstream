@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
-import { Download, ExternalLink, Settings, LogOut } from "lucide-react"
+import { Download, Settings, LogOut } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 

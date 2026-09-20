@@ -44,7 +44,19 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/server ./apps/web/.next/server
 COPY --from=builder --chown=nextjs:nodejs /app/packages/db/generated ./packages/db/generated
 COPY --from=builder --chown=nextjs:nodejs /app/packages/db/prisma ./packages/db/prisma
+COPY --from=builder --chown=nextjs:nodejs /app/packages/db/prisma.config.ts ./packages/db/prisma.config.ts
+
+# Next.js' standalone output strips package.json files from node_modules, but Prisma's
+# config loader needs the full `dotenv` package. Copy the complete dependency from deps.
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules/dotenv ./node_modules/dotenv
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/entrypoint.sh ./entrypoint.sh
+
+# Install the Prisma CLI globally so migrations can run at startup.
+# It is only a dev dependency, so it is not included in Next.js' standalone output.
+COPY --from=builder /app/packages/db/package.json /tmp/db-package.json
+RUN PRISMA_VERSION=$(node -p "require('/tmp/db-package.json').devDependencies.prisma") && \
+    npm install -g prisma@${PRISMA_VERSION} && \
+    rm /tmp/db-package.json
 
 RUN sed -i 's/\r$//' ./entrypoint.sh && chmod +x ./entrypoint.sh
 
