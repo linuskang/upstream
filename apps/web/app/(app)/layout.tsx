@@ -4,11 +4,10 @@
 import { useEffect } from "react"
 import Link from "next/link"
 import { authClient } from "@/client/auth"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 // Components
-import Navbar from "@/components/homepage-navbar"
-import ProjectNavbar from "@/components/project-navbar"
+import { SidebarInsetLayout } from "@/components/sidebar"
 
 export default function RootLayout({
   children,
@@ -16,9 +15,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const { data: session, isPending } = authClient.useSession()
-  const pathname = usePathname()
   const router = useRouter()
-  const isProjectRoute = pathname.startsWith("/project/")
 
   useEffect(() => {
     if (isPending || session) return
@@ -43,8 +40,9 @@ export default function RootLayout({
     <>
       {!session.user.emailVerified && <EmailVerificationBanner />}
 
-      {isProjectRoute ? <ProjectNavbar /> : <Navbar />}
-      <div className="mx-auto w-full max-w-2xl px-4">{children}</div>
+      <SidebarInsetLayout>
+        <div className="mx-auto w-full max-w-4xl px-4">{children}</div>
+      </SidebarInsetLayout>
     </>
   )
 }
