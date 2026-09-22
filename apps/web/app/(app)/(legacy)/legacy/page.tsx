@@ -360,8 +360,8 @@ export default function Page() {
                           <div className="flex items-center gap-2">
                             <div className="relative size-6 overflow-hidden rounded-sm border border-border/60 bg-secondary">
                               <Image
-                                src={project.members[0]?.user.image || ""}
-                                alt={project.members[0]?.user.name || "Avatar"}
+                                src={project.owner?.image || ""}
+                                alt={project.owner?.name || "Avatar"}
                                 width={24}
                                 height={24}
                                 unoptimized
@@ -369,7 +369,7 @@ export default function Page() {
                               />
                             </div>
                             <span className="text-sm text-muted-foreground">
-                              {project.members[0]?.user.name}
+                              {project.owner?.name}
                             </span>
                           </div>
                         </TableCell>
