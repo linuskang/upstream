@@ -6,6 +6,13 @@ import { usePathname } from "next/navigation"
 import { authClient } from "@/client/auth"
 import { trpc } from "@/lib/trpc"
 import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
+import { Form } from "@workspace/ui/components/form"
+import { Dialog, DialogContent, DialogTrigger } from "@workspace/ui/components/dialog"
+import { Input } from "@workspace/ui/components/input"
+import { Button } from "@workspace/ui/components/button"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 // Components
 import {
@@ -57,13 +64,7 @@ export function SidebarInsetLayout({
           </SidebarGroup>
           <SidebarGroup>
             <SidebarGroupLabel>Projects</SidebarGroupLabel>
-            <SidebarGroupAction className="text-muted-foreground"
-              type="button"
-              aria-label="Add project"
-              title="Add project"
-            >
-              <Plus />
-            </SidebarGroupAction>
+            <CreateProjectPopup />
             <SidebarGroupContent>
               <ProjectNavMenu />
             </SidebarGroupContent>
@@ -142,5 +143,75 @@ function NavMenu({ items }: { items: NavLink[] }) {
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
+  )
+}
+
+type CreateProjectForm = {
+  projectName: string
+}
+
+function CreateProjectPopup() {
+  const router = useRouter()
+  const utils = trpc.useUtils()
+  const [open, setOpen] = useState(false)
+
+  const createProject = trpc.project.create.useMutation({
+    onSuccess: async (project) => {
+      await utils.project.list.invalidate()
+
+      setOpen(false)
+      toast.success("Project created successfully")
+      router.push(`/project/${project.id}`)
+    },
+
+    onError: (error) => {
+      toast.error(error.message)
+      console.error(error)
+    }
+  })
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger
+        render={
+          <SidebarGroupAction
+            className="text-muted-foreground"
+            aria-label="Add project"
+            title="Add project"
+          />
+        }
+      >
+        <Plus />
+      </DialogTrigger>
+
+      <DialogContent className="w-full max-w-md gap-1">
+        <h1 className="text-lg font-semibold">
+          Create a new project
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Add a new project to start logging events
+        </p>
+
+        <div className="mt-4">
+          <Form<CreateProjectForm>
+            onSubmit={(values: CreateProjectForm) => {
+              createProject.mutate({ name: values.projectName })
+            }}
+          >
+            <Form.Field name="projectName" required>
+              <Input placeholder="Project name" disabled={createProject.isPending} />
+            </Form.Field>
+
+            <Form.Error className="mt-2 text-sm text-destructive" name="projectName" />
+
+            <Form.Submit>
+              <Button className="mt-4" variant="primary" disabled={createProject.isPending}>
+                Create Project
+              </Button>
+            </Form.Submit>
+          </Form>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
