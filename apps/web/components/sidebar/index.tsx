@@ -3,6 +3,7 @@
 // Libraries
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { authClient } from "@/client/auth"
 
 // Components
 import {
@@ -21,51 +22,28 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@workspace/ui/components/sidebar"
-import { NavUser } from "@/components/sidebar-user"
-import { TeamSwitcher } from "@/components/sidebar-header"
-import { Plus, Logs, Settings, House } from "lucide-react"
-
-// Types
-interface Project {
-  owner: string
-  project: string
-  href: string
-}
-
-interface NavLink {
-  label: string
-  href: string
-  icon: React.ReactNode
-}
-
-const general: NavLink[] = [
-  { label: "Dashboard", href: "/", icon: <House /> },
-]
-
-const projects: Project[] = [
-  { owner: "linus", project: "my-project", href: "/1" },
-  { owner: "linus", project: "my-project", href: "/2" },
-  { owner: "linus", project: "my-project", href: "/3" },
-  { owner: "linus", project: "my-project", href: "/4" },
-  { owner: "linus", project: "my-project", href: "/5" },
-]
-
-const teamLinks: NavLink[] = [
-  { label: "Audit Logs", href: "/team/manage-projects", icon: <Logs /> },
-  { label: "Settings", href: "/team/settings", icon: <Settings /> },
-]
+import Image from "next/image"
+import { NavUser } from "@/components/sidebar/footer"
+import { Plus } from "lucide-react"
+import { general, projects, Project, NavLink } from "@/components/sidebar/links"
 
 export function SidebarInsetLayout({
   children,
   className,
 }: React.PropsWithChildren<{ className?: string }>) {
+  const { data: session } = authClient.useSession()
+  if (!session) return null
+
   return (
     <SidebarProvider>
       <Sidebar variant="inset" collapsible="offcanvas" className="p-1">
         <SidebarHeader className="flex h-16 w-full flex-row items-center">
-          <TeamSwitcher
-            teams={["Linus's Team", "Acme Team"]}
-            defaultTeam="Linus's Team"
+          <Image
+            src="/icon-nobg.svg"
+            alt="Upstream"
+            width={40}
+            height={40}
+            priority
           />
         </SidebarHeader>
 
@@ -88,16 +66,10 @@ export function SidebarInsetLayout({
                <ProjectNavMenu items={projects} />
             </SidebarGroupContent>
           </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>Team</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <NavMenu items={teamLinks} />
-            </SidebarGroupContent>
-          </SidebarGroup>
         </SidebarContent>
 
         <SidebarFooter className="p-2">
-          <NavUser user={{ name: "John Doe", email: "john.doe@example.com", avatar: "/avatar.jpg" }} />
+          <NavUser user={{ name: session.user.name, email: session.user.email, avatar: session.user.image! }} />
         </SidebarFooter>
       </Sidebar>
 

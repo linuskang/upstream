@@ -1,16 +1,17 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
-  CreditCard,
+  BookOpen,
+  Home,
   LogOut,
+  Settings,
   Sparkles,
 } from "lucide-react"
 
+import { Github } from "@/components/icons"
+
 import {
   Avatar,
-  AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/avatar"
 import {
@@ -29,6 +30,9 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar"
 
+import { authClient } from "@/client/auth"
+import { useRouter } from "next/navigation"
+
 export function NavUser({
   user,
 }: {
@@ -39,6 +43,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
 
   return (
     <SidebarMenu>
@@ -52,14 +57,13 @@ export function NavUser({
               />
             }
           >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-              </div>
+            <Avatar className="h-8 w-8">
+              <AvatarImage className="rounded-md" src={user.avatar} alt={user.name} />
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{user.name}</span>
+              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
@@ -70,9 +74,8 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage className="rounded-md" src={user.avatar} alt={user.name} />
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium text-primary">{user.name}</span>
@@ -83,31 +86,36 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
               <DropdownMenuItem>
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/settings")}>
+                <Settings />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem variant="destructive" onClick={() => authClient.signOut()}>
+                <LogOut />
+                Sign Out
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuLabel>Resources</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => router.push("https://github.com/linuskang/upstream")}>
+                <Github />
+                GitHub
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
+              <DropdownMenuItem onClick={() => router.push("/")}>
+                <Home />
+                Homepage
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+              <DropdownMenuItem onClick={() => router.push("/docs")}>
+                <BookOpen />
+                Docs
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

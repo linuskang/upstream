@@ -46,7 +46,7 @@ model User {
   name                      String
   email                     String
   emailVerified             Boolean            @default(false)
-  image                     String?
+  image                     String
   pushNotificationsEnabled  Boolean            @default(true)
   emailNotificationsEnabled Boolean            @default(true)
   plan                      Plan               @default(FREE)
@@ -62,7 +62,6 @@ model User {
   pushSubscriptions         PushSubscription[]
 
   @@unique([email])
-  @@map("user")
 }
 
 model Project {
@@ -90,7 +89,6 @@ model ProjectMember {
   @@unique([projectId, userId])
   @@index([userId])
   @@index([projectId])
-  @@map("project_member")
 }
 
 model ProjectInvitation {
@@ -109,7 +107,6 @@ model ProjectInvitation {
 
   @@index([projectId])
   @@index([token])
-  @@map("project_invitation")
 }
 
 model Webhook {
@@ -211,7 +208,6 @@ model Session {
 
   @@unique([token])
   @@index([userId])
-  @@map("session")
 }
 
 model Account {
@@ -231,7 +227,6 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@index([userId])
-  @@map("account")
 }
 
 model Verification {
@@ -243,7 +238,6 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@index([identifier])
-  @@map("verification")
 }
 
 model PushSubscription {
@@ -257,5 +251,4 @@ model PushSubscription {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
-  @@map("push_subscription")
 }
