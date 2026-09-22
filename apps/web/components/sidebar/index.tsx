@@ -4,6 +4,8 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { authClient } from "@/client/auth"
+import { trpc } from "@/lib/trpc"
+import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
 
 // Components
 import {
@@ -25,7 +27,7 @@ import {
 import Image from "next/image"
 import { NavUser } from "@/components/sidebar/footer"
 import { Plus } from "lucide-react"
-import { general, projects, Project, NavLink } from "@/components/sidebar/links"
+import { general, NavLink } from "@/components/sidebar/links"
 
 export function SidebarInsetLayout({
   children,
@@ -63,7 +65,7 @@ export function SidebarInsetLayout({
               <Plus />
             </SidebarGroupAction>
             <SidebarGroupContent>
-               <ProjectNavMenu items={projects} />
+              <ProjectNavMenu />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
@@ -89,25 +91,30 @@ export function SidebarInsetLayout({
   )
 }
 
-function ProjectNavMenu({ items }: { items: Project[] }) {
+function ProjectNavMenu() {
   const pathname = usePathname()
+
+  const { data: projects } = trpc.project.list.useQuery()
 
   return (
     <SidebarMenu>
-      {items.map((item) => {
-        const isActive = pathname === item.href
+      {projects?.map((p) => {
+        const isActive = pathname === `/project/${p.id}`
 
         return (
-          <SidebarMenuItem key={item.href}>
+          <SidebarMenuItem key={p.id}>
             <SidebarMenuButton
-              render={<Link href={item.href} />}
+              render={<Link href={`/project/${p.id}`} />}
               isActive={isActive}
-              tooltip={`${item.owner}/${item.project}`}
+              tooltip={`${p.owner?.name}/${p.name}`}
             >
               <span className="flex min-w-0 items-center gap-1">
-                <span className="truncate text-muted-foreground">{item.owner}</span>
+                <Avatar className="h-5 w-5">
+                  <AvatarImage className="rounded-sm" src={p.owner?.image ?? ""} alt={p.owner?.name ?? ""} />
+                </Avatar>
+                <span className="truncate text-muted-foreground ml-1">{p.owner?.name}</span>
                 <span className="text-muted-foreground">/</span>
-                <span className="truncate">{item.project}</span>
+                <span className="truncate">{p.name}</span>
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -1,10 +1,6 @@
-import { House } from "lucide-react"
+"use client"
 
-export interface Project {
-  owner: string
-  project: string
-  href: string
-}
+import { House } from "lucide-react"
 
 export interface NavLink {
   label: string
@@ -14,12 +10,4 @@ export interface NavLink {
 
 export const general: NavLink[] = [
   { label: "Dashboard", href: "/dashboard", icon: <House /> },
-]
-
-export const projects: Project[] = [
-  { owner: "linus", project: "my-project", href: "/1" },
-  { owner: "linus", project: "my-project", href: "/2" },
-  { owner: "linus", project: "my-project", href: "/3" },
-  { owner: "linus", project: "my-project", href: "/4" },
-  { owner: "linus", project: "my-project", href: "/5" },
 ]

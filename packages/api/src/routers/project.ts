@@ -5,8 +5,8 @@ import { router, protectedProcedure } from "../trpc"
 import { requireProjectAccess } from "../permissions"
 
 export const projectRouter = router({
-  list: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.project.findMany({
+  list: protectedProcedure.query(async ({ ctx }) => {
+    const projects = await ctx.db.project.findMany({
       where: {
         members: {
           some: {
@@ -18,10 +18,8 @@ export const projectRouter = router({
         id: true,
         name: true,
         members: {
-          where: {
-            role: "OWNER",
-          },
           select: {
+            role: true,
             user: {
               select: {
                 id: true,
@@ -33,6 +31,26 @@ export const projectRouter = router({
           },
         },
       },
+    })
+
+    return projects.map((project) => {
+      const owner = project.members.find((member) => member.role === "OWNER")
+
+      return {
+        ...project,
+        members: project.members.map((member) => ({
+          ...member.user,
+          role: member.role,
+        })),
+        owner: owner
+          ? {
+              id: owner.user.id,
+              name: owner.user.name,
+              email: owner.user.email,
+              image: owner.user.image,
+            }
+          : null,
+      }
     })
   }),
 
