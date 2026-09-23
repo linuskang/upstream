@@ -45,7 +45,7 @@ up.events.ingest({
 
 ## Running locally for development
 
-Pretty straightforward. Heres how:
+Pretty straightforward:
 
 1. ``git clone https://github.com/linuskang/up && cd up``
 
@@ -119,8 +119,7 @@ networks:
     driver: bridge
 ```
 
-
-Run ``docker compose up -d`` and access at port ``3000`` to create your account. By default, the first account created will receive full administrative privileges to the instance.
+Run ``docker compose up -d`` and access Upstream at port ``3000`` to create your account. By default, the first account created will receive full administrative privileges on the instance.
 
 ## Some notes
 
@@ -128,11 +127,7 @@ We are very very early in this project. Expect bugs.
 
 We are not accepting contributions yet.
 
-Documentation lives in [apps/docs](/apps/docs) and can be deployed as a standalone Fumadocs site.
-
-### If you REALLY want to contibute still...
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or PR. We use vouch to organise trust levels in this repository.
+Documentation on the SDK, CLI, and API don't currently exist, however you can access the Scalar API reference [here](https://up.linus.my/api/docs)
 
 ## AI Declaration
 
