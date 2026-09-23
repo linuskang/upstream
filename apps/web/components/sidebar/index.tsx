@@ -7,12 +7,22 @@ import { authClient } from "@/client/auth"
 import { trpc } from "@/lib/trpc"
 import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
 import { Form } from "@workspace/ui/components/form"
-import { Dialog, DialogContent, DialogTrigger } from "@workspace/ui/components/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@workspace/ui/components/dialog"
 import { Input } from "@workspace/ui/components/input"
 import { Button } from "@workspace/ui/components/button"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  type ReactNode,
+} from "react"
 
 // Components
 import {
@@ -36,11 +46,35 @@ import { NavUser } from "@/components/sidebar/footer"
 import { Plus } from "lucide-react"
 import { general, NavLink } from "@/components/sidebar/links"
 
+type SidebarHeaderContextValue = {
+  setHeader: (header: ReactNode) => void
+}
+
+const SidebarHeaderContext = createContext<SidebarHeaderContextValue | null>(
+  null
+)
+
+export function useSidebarHeader() {
+  const context = useContext(SidebarHeaderContext)
+
+  if (!context) {
+    throw new Error("useSidebarHeader must be used inside SidebarInsetLayout")
+  }
+
+  return context
+}
+
 export function SidebarInsetLayout({
   children,
   className,
 }: React.PropsWithChildren<{ className?: string }>) {
   const { data: session } = authClient.useSession()
+  const [header, setHeaderState] = useState<ReactNode>(null)
+  const setHeader = useCallback(
+    (nextHeader: ReactNode) => setHeaderState(() => nextHeader),
+    []
+  )
+
   if (!session) return null
 
   return (
@@ -72,22 +106,30 @@ export function SidebarInsetLayout({
         </SidebarContent>
 
         <SidebarFooter className="p-2">
-          <NavUser user={{ name: session.user.name, email: session.user.email, avatar: session.user.image! }} />
+          <NavUser
+            user={{
+              name: session.user.name,
+              email: session.user.email,
+              avatar: session.user.image!,
+            }}
+          />
         </SidebarFooter>
       </Sidebar>
 
-      <SidebarInset
-        className={`min-h-0 overflow-hidden border border-border md:h-[calc(100svh-1rem)] md:peer-data-[variant=inset]:peer-data-[state=collapsed]:m-0 md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0 md:peer-data-[variant=inset]:peer-data-[state=collapsed]:h-svh md:peer-data-[variant=inset]:peer-data-[state=collapsed]:rounded-none ${className ?? ""}`}
-      >
-        <header className="flex h-10 shrink-0 items-center gap-2 border-b border-border bg-sidebar">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-          </div>
-        </header>
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          {children}
-        </div>
-      </SidebarInset>
+      <SidebarHeaderContext.Provider value={{ setHeader }}>
+        <SidebarInset
+          className={`min-h-0 overflow-hidden border border-border md:h-[calc(100svh-1rem)] md:peer-data-[variant=inset]:peer-data-[state=collapsed]:m-0 md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0 md:peer-data-[variant=inset]:peer-data-[state=collapsed]:h-svh md:peer-data-[variant=inset]:peer-data-[state=collapsed]:rounded-none ${className ?? ""}`}
+        >
+          {header ?? (
+            <header className="flex h-10 shrink-0 items-center gap-2 border-b border-border bg-sidebar">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger className="-ml-1" />
+              </div>
+            </header>
+          )}
+          <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
+        </SidebarInset>
+      </SidebarHeaderContext.Provider>
     </SidebarProvider>
   )
 }
@@ -111,9 +153,15 @@ function ProjectNavMenu() {
             >
               <span className="flex min-w-0 items-center gap-1">
                 <Avatar className="h-5 w-5">
-                  <AvatarImage className="rounded-sm" src={p.owner?.image ?? ""} alt={p.owner?.name ?? ""} />
+                  <AvatarImage
+                    className="rounded-sm"
+                    src={p.owner?.image ?? ""}
+                    alt={p.owner?.name ?? ""}
+                  />
                 </Avatar>
-                <span className="truncate text-muted-foreground ml-1">{p.owner?.name}</span>
+                <span className="ml-1 truncate text-muted-foreground">
+                  {p.owner?.name}
+                </span>
                 <span className="text-muted-foreground">/</span>
                 <span className="truncate">{p.name}</span>
               </span>
@@ -167,7 +215,7 @@ function CreateProjectPopup() {
     onError: (error) => {
       toast.error(error.message)
       console.error(error)
-    }
+    },
   })
 
   return (
@@ -185,9 +233,7 @@ function CreateProjectPopup() {
       </DialogTrigger>
 
       <DialogContent className="w-full max-w-md gap-1">
-        <h1 className="text-lg font-semibold">
-          Create a new project
-        </h1>
+        <h1 className="text-lg font-semibold">Create a new project</h1>
         <p className="text-sm text-muted-foreground">
           Add a new project to start logging events
         </p>
@@ -199,13 +245,23 @@ function CreateProjectPopup() {
             }}
           >
             <Form.Field name="projectName" required>
-              <Input placeholder="Project name" disabled={createProject.isPending} />
+              <Input
+                placeholder="Project name"
+                disabled={createProject.isPending}
+              />
             </Form.Field>
 
-            <Form.Error className="mt-2 text-sm text-destructive" name="projectName" />
+            <Form.Error
+              className="mt-2 text-sm text-destructive"
+              name="projectName"
+            />
 
             <Form.Submit>
-              <Button className="mt-4" variant="primary" disabled={createProject.isPending}>
+              <Button
+                className="mt-4"
+                variant="primary"
+                disabled={createProject.isPending}
+              >
                 Create Project
               </Button>
             </Form.Submit>
