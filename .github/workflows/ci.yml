@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [v3]
   pull_request:
-    branches: [main, master]
+    branches: [v3]
   workflow_dispatch:
 
 concurrency:
