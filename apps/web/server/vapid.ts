@@ -1,5 +1,5 @@
 import crypto from "node:crypto"
-import { env } from "@/env"
+import { env } from "@workspace/env"
 
 function pad(buffer: Buffer, length: number) {
   if (buffer.length >= length) return buffer

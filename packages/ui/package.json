@@ -38,8 +38,8 @@
     "@types/node": "^26.5.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@workspace/eslint-config": "*",
-    "@workspace/typescript-config": "*",
+    "@workspace/eslint": "*",
+    "@workspace/typescript": "*",
     "eslint": "^9",
     "tailwindcss": "^4",
     "typescript": "^5"

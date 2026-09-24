@@ -1,0 +1,13 @@
+{
+  "name": "@workspace/env",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "type": "module",
+  "dependencies": {
+    "@t3-oss/env-core": "^0.13.11",
+    "dotenv": "^16.0.3",
+    "zod": "^4.6.5"
+  }
+}

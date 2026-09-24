@@ -2,7 +2,7 @@ import { createAuth } from "@workspace/auth/server"
 import { prisma } from "@workspace/db"
 import { headers } from "next/headers"
 
-import { env } from "@/env"
+import { env } from "@workspace/env"
 import { Email } from "@/server/email"
 
 export const auth = createAuth({

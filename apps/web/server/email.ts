@@ -1,5 +1,5 @@
 import { Resend } from "resend"
-import { env } from "@/env"
+import { env } from "@workspace/env"
 
 function ResendClient() {
   return new Resend(env.RESEND_API_KEY)

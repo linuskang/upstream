@@ -25,6 +25,7 @@
       "pattern": "tooling/*/"
     }
   ],
+  "prettier.configPath": "./tooling/prettier/index.js",
   "prettier.ignorePath": ".gitignore",
   "tailwindCSS.experimental.classRegex": [
     [
@@ -42,8 +43,5 @@
     "next/router.d.ts",
     "next/dist/client/router.d.ts"
   ],
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

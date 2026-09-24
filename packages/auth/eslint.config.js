@@ -1,3 +1,3 @@
-import { config } from "@workspace/eslint-config/base"
+import { config } from "@workspace/eslint/base"
 
 export default config

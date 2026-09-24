@@ -18,8 +18,8 @@
     "better-auth": "^1.6.26"
   },
   "devDependencies": {
-    "@workspace/eslint-config": "*",
-    "@workspace/typescript-config": "*",
+    "@workspace/eslint": "*",
+    "@workspace/typescript": "*",
     "eslint": "^9",
     "typescript": "^5"
   }

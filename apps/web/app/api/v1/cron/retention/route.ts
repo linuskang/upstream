@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@workspace/db"
-import { env } from "@/env"
+import { env } from "@workspace/env"
 import { plans } from "@/subscription-types"
 import { Plan } from "@workspace/db"
 import { ApiResponse } from "@/app/api/responses"

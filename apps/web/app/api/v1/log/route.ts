@@ -16,7 +16,7 @@ import { Api } from "@/server/api"
 import { Usage } from "@/server/usage"
 import { Project } from "@/server/project"
 
-import { env } from "@/env"
+import { env } from "@workspace/env"
 
 import {
   sendPushNotification,

@@ -1,7 +1,7 @@
 import webpush from "web-push"
 import { prisma } from "@workspace/db"
 import { Email } from "@/server/email"
-import { env } from "@/env"
+import { env } from "@workspace/env"
 import { getVapidSubject, getVapidPublicKey } from "@/server/vapid"
 
 function setupWebPush() {
