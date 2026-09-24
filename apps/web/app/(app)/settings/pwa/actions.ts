@@ -1,12 +1,13 @@
 "use server"
 
 import { PushSubscription } from "web-push"
-import { getSession } from "@/server/auth"
+import { auth } from "@workspace/auth/server"
 import { prisma } from "@workspace/db"
+import { headers } from "next/headers"
 import { sendPushNotification } from "@/server/notification"
 
 export async function subscribeUser(sub: PushSubscription) {
-  const session = await getSession()
+  const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user?.id) {
     throw new Error("Not authenticated")
   }
@@ -26,7 +27,7 @@ export async function subscribeUser(sub: PushSubscription) {
 }
 
 export async function unsubscribeUser(endpoint: string) {
-  const session = await getSession()
+  const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user?.id) {
     throw new Error("Not authenticated")
   }
@@ -42,7 +43,7 @@ export async function unsubscribeUser(endpoint: string) {
 }
 
 export async function sendNotificationToMe(message: string) {
-  const session = await getSession()
+  const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user?.id) {
     throw new Error("Not authenticated")
   }

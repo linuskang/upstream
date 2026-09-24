@@ -3,7 +3,7 @@
 // Libraries
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { trpc } from "@/lib/trpc"
 import { toast } from "sonner"
 import Link from "next/link"

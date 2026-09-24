@@ -1,7 +1,7 @@
 "use client"
 
 // Libraries
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import Link from "next/link"

@@ -3,7 +3,7 @@
 // Libraries
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { trpc } from "@/lib/trpc"
 import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
 import { Form } from "@workspace/ui/components/form"

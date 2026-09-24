@@ -1,6 +1,6 @@
 "use client"
 
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { getAuthRedirectUri } from "@/lib/auth-redirect"
 import Image from "next/image"
 import { useRouter } from "next/navigation"

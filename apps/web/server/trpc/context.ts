@@ -1,10 +1,11 @@
 import type { ApiContext } from "@workspace/api/context"
+import { auth } from "@workspace/auth/server"
 import { prisma } from "@workspace/db"
-import { getSession } from "@/server/auth"
-import { Email } from "@/server/email"
+import { Email } from "@workspace/email"
+import { headers } from "next/headers"
 
 export async function createTRPCContext(): Promise<ApiContext> {
-  const session = await getSession()
+  const session = await auth.api.getSession({ headers: await headers() })
 
   return {
     db: prisma,

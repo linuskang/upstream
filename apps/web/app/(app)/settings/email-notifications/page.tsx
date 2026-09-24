@@ -3,7 +3,7 @@
 // Libraries
 import Link from "next/link"
 import { toast } from "sonner"
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 
 // Components
 import {

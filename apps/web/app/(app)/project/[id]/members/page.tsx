@@ -5,7 +5,7 @@ import { useParams } from "next/navigation"
 import { trpc } from "@/lib/trpc"
 import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
 import { Button } from "@workspace/ui/components/button"
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { InviteMemberPopup } from "./invite"
 import {
   Table,

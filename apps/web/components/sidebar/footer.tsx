@@ -30,7 +30,7 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar"
 
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { useRouter } from "next/navigation"
 
 export function NavUser({

@@ -1,7 +1,7 @@
 "use client"
 
 // Libraries
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import Link from "next/link"
 
 // Components

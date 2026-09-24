@@ -61,7 +61,7 @@ import { SearchBar } from "@workspace/ui/components/search-bar"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { Copy, Check } from "lucide-react"
 import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { ProjectMembers } from "@/components/project-members"
 
 type CreateApiKey = {

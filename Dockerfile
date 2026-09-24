@@ -7,6 +7,8 @@ COPY package.json package-lock.json* ./
 COPY apps/web/package.json ./apps/web/package.json
 COPY packages/contracts/package.json ./packages/contracts/package.json
 COPY packages/db/package.json ./packages/db/package.json
+COPY packages/email/package.json ./packages/email/package.json
+COPY packages/env/package.json ./packages/env/package.json
 COPY packages/ui/package.json ./packages/ui/package.json
 COPY tooling/eslint/package.json ./tooling/eslint/package.json
 COPY tooling/typescript/package.json ./tooling/typescript/package.json

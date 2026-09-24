@@ -4,7 +4,7 @@
 import Link from "next/link"
 import { useState, useEffect, useSyncExternalStore } from "react"
 import { toast } from "sonner"
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { subscribeUser, unsubscribeUser, sendNotificationToMe } from "./actions"
 
 // Components

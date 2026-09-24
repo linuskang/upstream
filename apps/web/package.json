@@ -23,6 +23,7 @@
     "@workspace/contracts": "*",
     "@workspace/env": "*",
     "@workspace/db": "*",
+    "@workspace/email": "*",
     "@workspace/ui": "*",
     "better-auth": "^1.6.26",
     "geist": "^1.7.2",
@@ -33,7 +34,6 @@
     "react-hook-form": "^7.83.0",
     "react-syntax-highlighter": "^16.1.1",
     "recharts": "^3.10.1",
-    "resend": "^6.18.1",
     "sonner": "^2.0.8",
     "web-push": "^3.6.7",
     "zod": "^4.6.4"

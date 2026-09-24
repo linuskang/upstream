@@ -1,4 +1,4 @@
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { Button } from "@workspace/ui/components/button"
 import {
   DropdownMenu,

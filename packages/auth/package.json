@@ -1,26 +1,15 @@
 {
   "name": "@workspace/auth",
-  "version": "0.0.0",
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts",
-    "./server": "./src/server.ts"
-  },
-  "scripts": {
-    "format": "prettier --config ../../tooling/prettier/index.js --write \"src/**/*.{ts,tsx}\"",
-    "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "./server": "./src/server.ts",
+    "./client": "./src/client.ts"
   },
   "dependencies": {
     "@workspace/db": "*",
-    "better-auth": "^1.6.26"
-  },
-  "devDependencies": {
-    "@workspace/eslint": "*",
-    "@workspace/typescript": "*",
-    "eslint": "^9",
-    "typescript": "^5"
+    "@workspace/env": "*",
+    "@workspace/email": "*",
+    "better-auth": "^1.7.5"
   }
 }

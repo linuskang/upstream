@@ -1,6 +1,6 @@
 "use client"
 
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import {

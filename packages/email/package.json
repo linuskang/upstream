@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/db",
+  "name": "@workspace/email",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,21 +8,16 @@
   },
   "scripts": {
     "format": "prettier --config ../../tooling/prettier/index.js --write \"src/**/*.{ts,tsx}\"",
-    "generate": "prisma generate",
-    "typecheck": "prisma generate && tsc --noEmit"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@workspace/env": "*",
-    "@prisma/adapter-pg": "^7.10.0",
-    "@prisma/client": "^7.10.0",
-    "dotenv": "^17.4.2",
-    "pg": "^8.22.0"
+    "resend": "^6.18.1"
   },
   "devDependencies": {
-    "@types/node": "^26.5.1",
-    "@types/pg": "^8.20.4",
+    "@workspace/eslint": "*",
     "@workspace/typescript": "*",
-    "prisma": "^7.9.1",
     "typescript": "^5"
   }
 }

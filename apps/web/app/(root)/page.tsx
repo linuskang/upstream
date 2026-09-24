@@ -1,6 +1,6 @@
 "use client"
 
-import { authClient } from "@/client/auth";
+import { authClient } from "@workspace/auth/client";
 import { useEffect, useState } from "react";
 
 export default function Page() {

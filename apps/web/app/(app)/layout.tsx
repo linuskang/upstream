@@ -3,7 +3,7 @@
 // Libraries
 import { useEffect } from "react"
 import Link from "next/link"
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { useRouter } from "next/navigation"
 
 // Components

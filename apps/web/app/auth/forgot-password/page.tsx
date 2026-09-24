@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { useState } from "react"
 
-import { authClient } from "@/client/auth"
+import { authClient } from "@workspace/auth/client"
 import { Form } from "@workspace/ui/components/form"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
