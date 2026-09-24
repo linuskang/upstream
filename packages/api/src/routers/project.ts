@@ -86,7 +86,8 @@ export const projectRouter = router({
       if (projectCount >= getPlan(user.plan).maxProjects) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Project limit reached. Upgrade your plan to create more projects.",
+          message:
+            "Project limit reached. Upgrade your plan to create more projects.",
         })
       }
 

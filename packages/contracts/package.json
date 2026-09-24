@@ -1,16 +1,16 @@
 {
-    "name": "@workspace/contracts",
-    "version": "0.0.0",
-    "private": true,
-    "type": "module",
-    "exports": {
-        ".": "./src/index.ts"
-    },
-    "scripts": {
-        "format": "prettier --config ../../tooling/prettier/index.js --write \"src/**/*.{ts,tsx}\"",
-        "typecheck": "tsc --noEmit"
-    },
-    "devDependencies": {
-        "typescript": "^6.0.3"
-    }
+  "name": "@workspace/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "format": "prettier --config ../../tooling/prettier/index.js --write \"src/**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
 }

@@ -1,19 +1,10 @@
 "use client"
 
-import {
-  BookOpen,
-  Home,
-  LogOut,
-  Settings,
-  Sparkles,
-} from "lucide-react"
+import { BookOpen, Home, LogOut, Settings, Sparkles } from "lucide-react"
 
 import { Github } from "@/components/icons"
 
-import {
-  Avatar,
-  AvatarImage,
-} from "@workspace/ui/components/avatar"
+import { Avatar, AvatarImage } from "@workspace/ui/components/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,11 +49,17 @@ export function NavUser({
             }
           >
             <Avatar className="h-8 w-8">
-              <AvatarImage className="rounded-md" src={user.avatar} alt={user.name} />
+              <AvatarImage
+                className="rounded-md"
+                src={user.avatar}
+                alt={user.name}
+              />
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
-              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+              <span className="truncate text-xs text-muted-foreground">
+                {user.email}
+              </span>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -75,11 +72,19 @@ export function NavUser({
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage className="rounded-md" src={user.avatar} alt={user.name} />
+                    <AvatarImage
+                      className="rounded-md"
+                      src={user.avatar}
+                      alt={user.name}
+                    />
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium text-primary">{user.name}</span>
-                    <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+                    <span className="truncate font-medium text-primary">
+                      {user.name}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {user.email}
+                    </span>
                   </div>
                 </div>
               </DropdownMenuLabel>
@@ -95,7 +100,10 @@ export function NavUser({
                 <Settings />
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive" onClick={() => authClient.signOut()}>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => authClient.signOut()}
+              >
                 <LogOut />
                 Sign Out
               </DropdownMenuItem>
@@ -103,7 +111,11 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuLabel>Resources</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => router.push("https://github.com/linuskang/upstream")}>
+              <DropdownMenuItem
+                onClick={() =>
+                  router.push("https://github.com/linuskang/upstream")
+                }
+              >
                 <Github />
                 GitHub
               </DropdownMenuItem>

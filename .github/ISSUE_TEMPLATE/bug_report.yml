@@ -2,9 +2,9 @@ name: Bug Report
 
 description: Report a bug or unexpected behavior
 
-title: '[Bug]: '
+title: "[Bug]: "
 
-labels: ['bug', 'triage']
+labels: ["bug", "triage"]
 
 body:
   - type: markdown
@@ -17,7 +17,7 @@ body:
     attributes:
       label: Description
       description: A clear and concise description of the bug.
-      placeholder: 'When I try to ...'
+      placeholder: "When I try to ..."
     validations:
       required: true
 
@@ -53,7 +53,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: 'Environment details (OS, browser, Node version, etc.)'
+      description: "Environment details (OS, browser, Node version, etc.)"
       placeholder: |
         - OS: Windows 11 / macOS 14 / Ubuntu 22.04
         - Browser: Chrome 120

@@ -47,24 +47,27 @@ export default function Page() {
             },
           }}
           onSubmit={async (values) => {
-            await authClient.signUp.email({
-              name: values.name,
-              email: values.email,
-              password: values.password,
-            }, {
-              onSuccess: () => {
-                router.replace(getAuthRedirectUri())
+            await authClient.signUp.email(
+              {
+                name: values.name,
+                email: values.email,
+                password: values.password,
               },
+              {
+                onSuccess: () => {
+                  router.replace(getAuthRedirectUri())
+                },
 
-              onError: (ctx) => {
-                setPending(false)
-                setError(ctx.error.message)
-              },
+                onError: (ctx) => {
+                  setPending(false)
+                  setError(ctx.error.message)
+                },
 
-              onRequest: () => {
-                setPending(true)
+                onRequest: () => {
+                  setPending(true)
+                },
               }
-            })
+            )
           }}
         >
           <div className="flex flex-col gap-4">
@@ -116,11 +119,12 @@ export default function Page() {
                 />
               </Form.Field>
 
-              <Form.Error name="password" className="text-xs text-destructive" />
+              <Form.Error
+                name="password"
+                className="text-xs text-destructive"
+              />
 
-              {error && (
-                <p className="text-xs text-destructive">{error}</p>
-              )}
+              {error && <p className="text-xs text-destructive">{error}</p>}
             </div>
 
             <Form.Submit>

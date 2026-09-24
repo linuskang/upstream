@@ -74,11 +74,11 @@ function ProjectHeader({ projectId }: { projectId: string }) {
     <header className="flex min-h-10 shrink-0 items-center gap-2 border-b border-border bg-sidebar px-4">
       <SidebarTrigger className="-ml-1" />
       <div className="flex min-w-0 shrink items-center gap-1 text-sm">
-        <span className="min-w-0 max-w-20 truncate text-muted-foreground sm:max-w-24">
+        <span className="max-w-20 min-w-0 truncate text-muted-foreground sm:max-w-24">
           {owner?.user.name ?? "Owner"}
         </span>
         <span className="text-muted-foreground">/</span>
-        <span className="min-w-0 max-w-20 truncate font-medium sm:max-w-24">
+        <span className="max-w-20 min-w-0 truncate font-medium sm:max-w-24">
           {projectQuery.data?.name ?? "Project"}
         </span>
       </div>

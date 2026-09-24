@@ -25,7 +25,12 @@ export const apiKeyRouter = router({
   list: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "VIEW"
+      )
       const keys = await ctx.db.apiKey.findMany({
         where: { projectId: input.projectId },
         select: apiKeyFields,
@@ -35,9 +40,19 @@ export const apiKeyRouter = router({
     }),
 
   create: protectedProcedure
-    .input(z.object({ projectId: z.string().uuid(), name: z.string().trim().min(1).max(80) }))
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        name: z.string().trim().min(1).max(80),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "EDIT"
+      )
       const secret = `up_${crypto.randomUUID().replace(/-/g, "")}`
       const key = await ctx.db.apiKey.create({
         data: {
@@ -61,12 +76,18 @@ export const apiKeyRouter = router({
   delete: protectedProcedure
     .input(z.object({ projectId: z.string().uuid(), keyId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "EDIT"
+      )
       const key = await ctx.db.apiKey.findFirst({
         where: { id: input.keyId, projectId: input.projectId },
         select: { name: true },
       })
-      if (!key) throw new TRPCError({ code: "NOT_FOUND", message: "API key not found" })
+      if (!key)
+        throw new TRPCError({ code: "NOT_FOUND", message: "API key not found" })
 
       await ctx.db.apiKey.delete({ where: { id: input.keyId } })
       await ctx.db.auditLog.create({
@@ -80,7 +101,9 @@ export const apiKeyRouter = router({
     }),
 })
 
-function serializeApiKey<T extends { createdAt: Date; lastUsed: Date | null }>(key: T) {
+function serializeApiKey<T extends { createdAt: Date; lastUsed: Date | null }>(
+  key: T
+) {
   return {
     ...key,
     createdAt: key.createdAt.toISOString(),

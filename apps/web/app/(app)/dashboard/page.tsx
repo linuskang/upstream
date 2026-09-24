@@ -19,7 +19,5 @@ export default function Page() {
     return <h1>loading...</h1>
   }
 
-  return (
-    <h1>hello {session.user.name}</h1>
-  )
+  return <h1>hello {session.user.name}</h1>
 }

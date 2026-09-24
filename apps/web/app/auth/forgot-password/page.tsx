@@ -29,12 +29,16 @@ export default function Page() {
 
         {sent ? (
           <div className="flex flex-col gap-2">
-            <p className="text-muted-foreground text-center text-xs">
-              If an account exists for that email, we&apos;ve sent you a link
-              to reset your password.
+            <p className="text-center text-xs text-muted-foreground">
+              If an account exists for that email, we&apos;ve sent you a link to
+              reset your password.
             </p>
 
-            <Button type="button" variant="secondary" onClick={() => setSent(false)}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setSent(false)}
+            >
               Resend email
             </Button>
 
@@ -75,11 +79,12 @@ export default function Page() {
                     />
                   </Form.Field>
 
-                  <Form.Error name="email" className="text-xs text-destructive" />
+                  <Form.Error
+                    name="email"
+                    className="text-xs text-destructive"
+                  />
 
-                  {error && (
-                    <p className="text-xs text-destructive">{error}</p>
-                  )}
+                  {error && <p className="text-xs text-destructive">{error}</p>}
                 </div>
 
                 <Form.Submit>

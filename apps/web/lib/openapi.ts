@@ -218,7 +218,8 @@ function schemaToJson(
           typeof child === "string" &&
           child.startsWith("#/$defs/")
         ) {
-          result[key] = `#/components/schemas/${prefix}${child.slice("#/$defs/".length)}`
+          result[key] =
+            `#/components/schemas/${prefix}${child.slice("#/$defs/".length)}`
           continue
         }
 
@@ -321,7 +322,11 @@ function buildTrpcPaths(defs: Record<string, JsonSchema>) {
 }
 
 function buildLegacyPaths(defs: Record<string, JsonSchema>) {
-  const ingestSchema = schemaToJson(IngestEventPayload, "IngestEventPayload_", defs)
+  const ingestSchema = schemaToJson(
+    IngestEventPayload,
+    "IngestEventPayload_",
+    defs
+  )
 
   return {
     "/api/v1/log": {
@@ -391,7 +396,8 @@ export function buildOpenApiSpec() {
   const tags = [...Object.values(routerTags), ...legacyTags]
     .filter((tag) => usedTags.has(tag.name) || legacyTags.includes(tag))
     .filter(
-      (tag, index, all) => all.findIndex((item) => item.name === tag.name) === index
+      (tag, index, all) =>
+        all.findIndex((item) => item.name === tag.name) === index
     )
 
   return {

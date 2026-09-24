@@ -18,7 +18,7 @@ cd up/apps/upstream
 npm i
 ```
 
-Declare ``.env`` inside of ``/apps/upstream``:
+Declare `.env` inside of `/apps/upstream`:
 
 ```bash
 cp .env.example ~/apps/upstream # edit the values to be yours
@@ -42,7 +42,7 @@ Upstream will be available at http://localhost:3001
 ## Packages
 
 1. Clone the repo
-2. ``npm install``
+2. `npm install`
 3. Start tinkering
-4. When your done, run ``npm run build`` and ``npm run lint`` to check for errors.
+4. When your done, run `npm run build` and `npm run lint` to check for errors.
 5. Your done! create a pr if you wish.

@@ -14,7 +14,12 @@ export const webhookRouter = router({
   list: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "VIEW"
+      )
       const webhooks = await ctx.db.webhook.findMany({
         where: { projectId: input.projectId },
         orderBy: { createdAt: "desc" },
@@ -25,7 +30,12 @@ export const webhookRouter = router({
   create: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }).and(webhookInput))
     .mutation(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "EDIT"
+      )
       const webhook = await ctx.db.webhook.create({
         data: {
           projectId: input.projectId,
@@ -34,7 +44,12 @@ export const webhookRouter = router({
           url: input.url,
         },
       })
-      await log(ctx.db, input.projectId, ctx.session.user.id, `Created webhook ${input.name}`)
+      await log(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        `Created webhook ${input.name}`
+      )
       return serializeWebhook(webhook)
     }),
 
@@ -48,11 +63,17 @@ export const webhookRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "EDIT"
+      )
       const webhook = await ctx.db.webhook.findFirst({
         where: { id: input.webhookId, projectId: input.projectId },
       })
-      if (!webhook) throw new TRPCError({ code: "NOT_FOUND", message: "Webhook not found" })
+      if (!webhook)
+        throw new TRPCError({ code: "NOT_FOUND", message: "Webhook not found" })
 
       const updated = await ctx.db.webhook.update({
         where: { id: input.webhookId },
@@ -63,22 +84,40 @@ export const webhookRouter = router({
           enabled: input.enabled,
         },
       })
-      await log(ctx.db, input.projectId, ctx.session.user.id, `Updated webhook ${input.name}`)
+      await log(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        `Updated webhook ${input.name}`
+      )
       return serializeWebhook(updated)
     }),
 
   delete: protectedProcedure
-    .input(z.object({ projectId: z.string().uuid(), webhookId: z.string().uuid() }))
+    .input(
+      z.object({ projectId: z.string().uuid(), webhookId: z.string().uuid() })
+    )
     .mutation(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "EDIT")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "EDIT"
+      )
       const webhook = await ctx.db.webhook.findFirst({
         where: { id: input.webhookId, projectId: input.projectId },
         select: { name: true },
       })
-      if (!webhook) throw new TRPCError({ code: "NOT_FOUND", message: "Webhook not found" })
+      if (!webhook)
+        throw new TRPCError({ code: "NOT_FOUND", message: "Webhook not found" })
 
       await ctx.db.webhook.delete({ where: { id: input.webhookId } })
-      await log(ctx.db, input.projectId, ctx.session.user.id, `Deleted webhook ${webhook.name}`)
+      await log(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        `Deleted webhook ${webhook.name}`
+      )
       return { id: input.webhookId }
     }),
 })
@@ -102,6 +141,11 @@ function serializeWebhook(webhook: {
   }
 }
 
-async function log(db: PrismaClient, projectId: string, userId: string, message: string) {
+async function log(
+  db: PrismaClient,
+  projectId: string,
+  userId: string,
+  message: string
+) {
   await db.auditLog.create({ data: { projectId, userId, message } })
 }

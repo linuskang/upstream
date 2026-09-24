@@ -146,7 +146,9 @@ export default function Page() {
   const projectQuery = trpc.project.get.useQuery({ id: projectId })
   const apiKeysQuery = trpc.apiKey.list.useQuery({ projectId })
   const auditLogsQuery = trpc.projectSettings.auditLogs.useQuery({ projectId })
-  const requestLogsQuery = trpc.projectSettings.requestLogs.useQuery({ projectId })
+  const requestLogsQuery = trpc.projectSettings.requestLogs.useQuery({
+    projectId,
+  })
   const webhooksQuery = trpc.webhook.list.useQuery({ projectId })
   const usageQuery = trpc.usage.stats.useQuery(undefined, {
     enabled: Boolean(session),
@@ -371,9 +373,9 @@ export default function Page() {
     )
   }
 
-  const currentUserRole = project?.members.find(
-    (member) => member.user.id === session.user.id
-  )?.role ?? "MEMBER"
+  const currentUserRole =
+    project?.members.find((member) => member.user.id === session.user.id)
+      ?.role ?? "MEMBER"
   const canEdit = currentUserRole === "OWNER" || currentUserRole === "ADMIN"
   const memberLimit = usageQuery.data?.membersPerProject.limit ?? 3
 
@@ -424,70 +426,70 @@ export default function Page() {
               >
                 Create API Key
               </DialogTrigger>
-            <DialogContent>
-              {createdApiKey ? (
-                <>
-                  <DialogHeader>
-                    <DialogTitle>Your API Key</DialogTitle>
-                    <DialogDescription>
-                      This is the only time we can show the secret for this API
-                      key.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="flex items-center gap-2 rounded-md bg-black/30 p-3 font-mono text-xs break-all">
-                    <span className="flex-1">{createdApiKey}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-6 shrink-0"
-                      onClick={copyCreatedApiKey}
-                    >
-                      {copiedApiKey ? (
-                        <Check className="size-3" />
-                      ) : (
-                        <Copy className="size-3" />
-                      )}
-                    </Button>
-                  </div>
-                  <DialogFooter>
-                    <Button onClick={closeCreateApiKeyDialog}>Got it</Button>
-                  </DialogFooter>
-                </>
-              ) : (
-                <>
-                  <DialogHeader>
-                    <DialogTitle>Create API Key</DialogTitle>
-                    <DialogDescription>
-                      Create a key to send events to this project.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <Form<CreateApiKey>
-                    onSubmit={(data) => {
-                      createApiKeyMutation.mutate({ projectId, ...data })
-                    }}
-                  >
-                    <div className="space-y-3">
-                      <div className="space-y-2">
-                        <Label>Name</Label>
-                        <Form.Field<CreateApiKey> name="name">
-                          <Input placeholder="Hello World" required />
-                        </Form.Field>
-                      </div>
-                      <DialogFooter>
-                        <Form.Submit>
-                          <Button disabled={createApiKeyMutation.isPending}>
-                            {createApiKeyMutation.isPending
-                              ? "Creating..."
-                              : "Create API Key"}
-                          </Button>
-                        </Form.Submit>
-                      </DialogFooter>
+              <DialogContent>
+                {createdApiKey ? (
+                  <>
+                    <DialogHeader>
+                      <DialogTitle>Your API Key</DialogTitle>
+                      <DialogDescription>
+                        This is the only time we can show the secret for this
+                        API key.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center gap-2 rounded-md bg-black/30 p-3 font-mono text-xs break-all">
+                      <span className="flex-1">{createdApiKey}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-6 shrink-0"
+                        onClick={copyCreatedApiKey}
+                      >
+                        {copiedApiKey ? (
+                          <Check className="size-3" />
+                        ) : (
+                          <Copy className="size-3" />
+                        )}
+                      </Button>
                     </div>
-                  </Form>
-                </>
-              )}
-            </DialogContent>
-          </Dialog>
+                    <DialogFooter>
+                      <Button onClick={closeCreateApiKeyDialog}>Got it</Button>
+                    </DialogFooter>
+                  </>
+                ) : (
+                  <>
+                    <DialogHeader>
+                      <DialogTitle>Create API Key</DialogTitle>
+                      <DialogDescription>
+                        Create a key to send events to this project.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form<CreateApiKey>
+                      onSubmit={(data) => {
+                        createApiKeyMutation.mutate({ projectId, ...data })
+                      }}
+                    >
+                      <div className="space-y-3">
+                        <div className="space-y-2">
+                          <Label>Name</Label>
+                          <Form.Field<CreateApiKey> name="name">
+                            <Input placeholder="Hello World" required />
+                          </Form.Field>
+                        </div>
+                        <DialogFooter>
+                          <Form.Submit>
+                            <Button disabled={createApiKeyMutation.isPending}>
+                              {createApiKeyMutation.isPending
+                                ? "Creating..."
+                                : "Create API Key"}
+                            </Button>
+                          </Form.Submit>
+                        </DialogFooter>
+                      </div>
+                    </Form>
+                  </>
+                )}
+              </DialogContent>
+            </Dialog>
           )}
         </div>
 
@@ -574,8 +576,8 @@ export default function Page() {
                             <DialogHeader>
                               <DialogTitle>Are you sure?</DialogTitle>
                               <DialogDescription>
-                                Are you sure you want to delete this API key? This
-                                action cannot be undone.
+                                Are you sure you want to delete this API key?
+                                This action cannot be undone.
                               </DialogDescription>
                             </DialogHeader>
                             <DialogFooter>
@@ -766,50 +768,50 @@ export default function Page() {
               >
                 Create Webhook
               </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create Webhook</DialogTitle>
-                <DialogDescription>
-                  Create a webhook to receive events from this project.
-                </DialogDescription>
-              </DialogHeader>
-              <Form<CreateWebhook>
-                onSubmit={(data) => {
-                  handleCreateWebhook(data)
-                }}
-              >
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label>Webhook Name</Label>
-                    <Form.Field<CreateWebhook> name="name" required>
-                      <Input placeholder="My Webhook" />
-                    </Form.Field>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Webhook</DialogTitle>
+                  <DialogDescription>
+                    Create a webhook to receive events from this project.
+                  </DialogDescription>
+                </DialogHeader>
+                <Form<CreateWebhook>
+                  onSubmit={(data) => {
+                    handleCreateWebhook(data)
+                  }}
+                >
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label>Webhook Name</Label>
+                      <Form.Field<CreateWebhook> name="name" required>
+                        <Input placeholder="My Webhook" />
+                      </Form.Field>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Subscription</Label>
+                      <Form.Field<CreateWebhook> name="subscription" required>
+                        <Input placeholder="event.created" />
+                      </Form.Field>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Webhook URL</Label>
+                      <Form.Field<CreateWebhook> name="url" required>
+                        <Input placeholder="https://example.com/webhook" />
+                      </Form.Field>
+                    </div>
+                    <DialogFooter>
+                      <Form.Submit>
+                        <Button disabled={createWebhookMutation.isPending}>
+                          {createWebhookMutation.isPending
+                            ? "Creating..."
+                            : "Create Webhook"}
+                        </Button>
+                      </Form.Submit>
+                    </DialogFooter>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Subscription</Label>
-                    <Form.Field<CreateWebhook> name="subscription" required>
-                      <Input placeholder="event.created" />
-                    </Form.Field>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Webhook URL</Label>
-                    <Form.Field<CreateWebhook> name="url" required>
-                      <Input placeholder="https://example.com/webhook" />
-                    </Form.Field>
-                  </div>
-                  <DialogFooter>
-                    <Form.Submit>
-                      <Button disabled={createWebhookMutation.isPending}>
-                        {createWebhookMutation.isPending
-                          ? "Creating..."
-                          : "Create Webhook"}
-                      </Button>
-                    </Form.Submit>
-                  </DialogFooter>
-                </div>
-              </Form>
-            </DialogContent>
-          </Dialog>
+                </Form>
+              </DialogContent>
+            </Dialog>
           )}
         </div>
 
@@ -926,27 +928,27 @@ export default function Page() {
                               >
                                 Delete
                               </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Delete Webhook?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This will permanently delete the &quot;
-                                {webhook.name}&quot; webhook.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
-                                onClick={() => deleteWebhook(webhook.id)}
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Delete Webhook?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This will permanently delete the &quot;
+                                    {webhook.name}&quot; webhook.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
+                                    onClick={() => deleteWebhook(webhook.id)}
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </>
                         )}
                       </div>
@@ -1031,8 +1033,13 @@ export default function Page() {
                 </Label>
               </div>
               <DialogFooter>
-                <Button type="submit" disabled={updateWebhookMutation.isPending}>
-                  {updateWebhookMutation.isPending ? "Saving..." : "Save Changes"}
+                <Button
+                  type="submit"
+                  disabled={updateWebhookMutation.isPending}
+                >
+                  {updateWebhookMutation.isPending
+                    ? "Saving..."
+                    : "Save Changes"}
                 </Button>
               </DialogFooter>
             </form>
@@ -1353,7 +1360,8 @@ export default function Page() {
                 <div>
                   <h3 className="text-sm font-semibold">Delete Project</h3>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Deleting this project removes API keys and events permanently.
+                    Deleting this project removes API keys and events
+                    permanently.
                   </p>
                 </div>
 
@@ -1367,8 +1375,8 @@ export default function Page() {
                     <DialogHeader>
                       <DialogTitle>Are you sure?</DialogTitle>
                       <DialogDescription>
-                        This action cannot be undone. This will permanently delete
-                        the project and all associated data.
+                        This action cannot be undone. This will permanently
+                        delete the project and all associated data.
                       </DialogDescription>
                     </DialogHeader>
                     <Form<DeleteProject>

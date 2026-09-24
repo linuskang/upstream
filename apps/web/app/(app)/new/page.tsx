@@ -109,11 +109,11 @@ export default function Page() {
           </CardContent>
 
           <CardFooter className="justify-end gap-2">
-             <Button
-               type="button"
-               variant="secondary"
-               disabled={createProject.isPending}
-             >
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={createProject.isPending}
+            >
               <Link href="/">Cancel</Link>
             </Button>
 

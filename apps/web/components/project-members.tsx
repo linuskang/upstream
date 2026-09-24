@@ -156,7 +156,9 @@ export function ProjectMembers({
 
         {isOwner && (
           <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-            <DialogTrigger render={<Button size="sm" disabled={remainingSeats === 0} />}>
+            <DialogTrigger
+              render={<Button size="sm" disabled={remainingSeats === 0} />}
+            >
               Invite Member
             </DialogTrigger>
             <DialogContent>
@@ -182,7 +184,9 @@ export function ProjectMembers({
                   <Label htmlFor="invite-role">Role</Label>
                   <Select
                     value={inviteRole}
-                    onValueChange={(value) => setInviteRole(value as "ADMIN" | "MEMBER")}
+                    onValueChange={(value) =>
+                      setInviteRole(value as "ADMIN" | "MEMBER")
+                    }
                   >
                     <SelectTrigger id="invite-role">
                       <SelectValue />
@@ -195,7 +199,9 @@ export function ProjectMembers({
                 </div>
                 <DialogFooter>
                   <Button type="submit" disabled={inviteMutation.isPending}>
-                    {inviteMutation.isPending ? "Sending..." : "Send Invitation"}
+                    {inviteMutation.isPending
+                      ? "Sending..."
+                      : "Send Invitation"}
                   </Button>
                 </DialogFooter>
               </form>
@@ -250,23 +256,28 @@ export function ProjectMembers({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={member.role === "OWNER" ? "default" : "secondary"}>
+                    <Badge
+                      variant={
+                        member.role === "OWNER" ? "default" : "secondary"
+                      }
+                    >
                       {member.role}
                     </Badge>
                   </TableCell>
                   <TableCell className="pr-4 text-right">
-                    {member.user.id === currentUserId && member.role !== "OWNER" && (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="h-8"
-                        onClick={() => leaveMutation.mutate({ projectId })}
-                        disabled={leaveMutation.isPending}
-                      >
-                        <LogOut className="mr-1 size-3" />
-                        Leave
-                      </Button>
-                    )}
+                    {member.user.id === currentUserId &&
+                      member.role !== "OWNER" && (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="h-8"
+                          onClick={() => leaveMutation.mutate({ projectId })}
+                          disabled={leaveMutation.isPending}
+                        >
+                          <LogOut className="mr-1 size-3" />
+                          Leave
+                        </Button>
+                      )}
                     {isOwner &&
                       member.user.id !== currentUserId &&
                       member.role !== "OWNER" && (
@@ -315,14 +326,20 @@ export function ProjectMembers({
 
       {invitations.length > 0 && (
         <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-semibold text-foreground">Pending Invitations</h3>
+          <h3 className="text-sm font-semibold text-foreground">
+            Pending Invitations
+          </h3>
           <div className="overflow-hidden rounded-lg bg-card">
             <Table>
               <TableHeader>
                 <TableRow className="border-border/40 hover:bg-transparent">
-                  <TableHead className="pl-4 text-muted-foreground">Email</TableHead>
+                  <TableHead className="pl-4 text-muted-foreground">
+                    Email
+                  </TableHead>
                   <TableHead className="text-muted-foreground">Role</TableHead>
-                  <TableHead className="text-muted-foreground">Expires</TableHead>
+                  <TableHead className="text-muted-foreground">
+                    Expires
+                  </TableHead>
                   <TableHead className="pr-4 text-right text-muted-foreground">
                     Actions
                   </TableHead>

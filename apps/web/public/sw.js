@@ -1,15 +1,15 @@
-const ICON = '/icon.png'
+const ICON = "/icon.png"
 
-self.addEventListener('push', function (event) {
-  console.log('[SW] Push event received:', event)
+self.addEventListener("push", function (event) {
+  console.log("[SW] Push event received:", event)
 
   const showFallback = () =>
-    self.registration.showNotification('Notification', {
-      body: 'You have a new notification.',
+    self.registration.showNotification("Notification", {
+      body: "You have a new notification.",
       badge: ICON,
       vibrate: [100, 50, 100],
       data: {
-        url: '/',
+        url: "/",
       },
     })
 
@@ -28,43 +28,37 @@ self.addEventListener('push', function (event) {
           badge: data.badge || ICON,
           vibrate: [100, 50, 100],
           data: {
-            url: data.url || '/',
+            url: data.url || "/",
             dateOfArrival: Date.now(),
-            primaryKey: '2',
+            primaryKey: "2",
           },
         }
 
-        await self.registration.showNotification(
-          data.title,
-          options
-        )
+        await self.registration.showNotification(data.title, options)
 
-        console.log('[SW] Notification shown')
+        console.log("[SW] Notification shown")
       } catch (error) {
-        console.error('[SW] Failed to show notification:', error)
+        console.error("[SW] Failed to show notification:", error)
         await showFallback()
       }
     })()
   )
 })
 
-self.addEventListener('notificationclick', function (event) {
-  console.log('[SW] Notification click received.')
+self.addEventListener("notificationclick", function (event) {
+  console.log("[SW] Notification click received.")
 
   event.notification.close()
 
   event.waitUntil(
     (async () => {
       try {
-        const notificationUrl = event.notification.data?.url || '/'
+        const notificationUrl = event.notification.data?.url || "/"
 
-        const url = new URL(
-          notificationUrl,
-          self.location.origin
-        )
+        const url = new URL(notificationUrl, self.location.origin)
 
         const windowClients = await self.clients.matchAll({
-          type: 'window',
+          type: "window",
           includeUncontrolled: true,
         })
 
@@ -84,12 +78,9 @@ self.addEventListener('notificationclick', function (event) {
 
         await self.clients.openWindow(url.href)
       } catch (error) {
-        console.error(
-          '[SW] Failed to open notification URL:',
-          error
-        )
+        console.error("[SW] Failed to open notification URL:", error)
 
-        await self.clients.openWindow('/')
+        await self.clients.openWindow("/")
       }
     })()
   )

@@ -11,12 +11,10 @@ export default function Page() {
       fetchOptions: {
         onSuccess: () => {
           router.push("/auth/sign-in")
-        }
-      }
+        },
+      },
     })
   }, [router])
 
-  return (
-    <h1>You will be redirected shortly...</h1>
-  )
+  return <h1>You will be redirected shortly...</h1>
 }

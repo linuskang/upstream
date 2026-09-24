@@ -59,7 +59,12 @@ export const projectMemberRouter = router({
   list: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "VIEW"
+      )
 
       const [members, invitations] = await Promise.all([
         ctx.db.projectMember.findMany({
@@ -127,33 +132,34 @@ export const projectMemberRouter = router({
 
       await requireProjectAccess(ctx.db, input.projectId, userId, "ADMIN")
 
-      const [projectWithMembers, existingUser, existingInvite] = await Promise.all([
-        ctx.db.project.findUnique({
-          where: { id: input.projectId },
-          select: {
-            name: true,
-            members: {
-              select: { id: true },
+      const [projectWithMembers, existingUser, existingInvite] =
+        await Promise.all([
+          ctx.db.project.findUnique({
+            where: { id: input.projectId },
+            select: {
+              name: true,
+              members: {
+                select: { id: true },
+              },
+              invitations: {
+                where: { status: "PENDING" },
+                select: { id: true },
+              },
             },
-            invitations: {
-              where: { status: "PENDING" },
-              select: { id: true },
+          }),
+          ctx.db.user.findUnique({
+            where: { email: normalizedEmail },
+            select: { id: true },
+          }),
+          ctx.db.projectInvitation.findFirst({
+            where: {
+              projectId: input.projectId,
+              email: normalizedEmail,
+              status: "PENDING",
             },
-          },
-        }),
-        ctx.db.user.findUnique({
-          where: { email: normalizedEmail },
-          select: { id: true },
-        }),
-        ctx.db.projectInvitation.findFirst({
-          where: {
-            projectId: input.projectId,
-            email: normalizedEmail,
-            status: "PENDING",
-          },
-          select: { id: true },
-        }),
-      ])
+            select: { id: true },
+          }),
+        ])
 
       const existingMember = existingUser
         ? await ctx.db.projectMember.findUnique({
@@ -196,7 +202,8 @@ export const projectMemberRouter = router({
 
       const plan = getPlan(owner.user.plan)
       const currentSeats =
-        projectWithMembers.members.length + projectWithMembers.invitations.length
+        projectWithMembers.members.length +
+        projectWithMembers.invitations.length
 
       if (currentSeats >= plan.maxMembersPerProject) {
         throw new TRPCError({
@@ -440,7 +447,8 @@ export const projectMemberRouter = router({
       if (member.role === "OWNER") {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "The project owner cannot leave. Transfer ownership or delete the project instead.",
+          message:
+            "The project owner cannot leave. Transfer ownership or delete the project instead.",
         })
       }
 
@@ -484,7 +492,10 @@ export const projectMemberRouter = router({
       })
 
       if (!invitation) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Invitation not found" })
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Invitation not found",
+        })
       }
 
       if (invitation.status !== "PENDING") {
@@ -533,7 +544,10 @@ export const projectMemberRouter = router({
       })
 
       if (!invitation) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Invitation not found" })
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Invitation not found",
+        })
       }
 
       if (invitation.status !== "PENDING") {
@@ -547,10 +561,7 @@ export const projectMemberRouter = router({
           select: { role: true },
         })
 
-        if (
-          invitation.status === "ACCEPTED" &&
-          existingMember
-        ) {
+        if (invitation.status === "ACCEPTED" && existingMember) {
           return {
             projectId: invitation.projectId,
             projectName: invitation.project.name,
@@ -650,7 +661,10 @@ export const projectMemberRouter = router({
       })
 
       if (!invitation) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Invitation not found" })
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Invitation not found",
+        })
       }
 
       if (invitation.status !== "PENDING") {

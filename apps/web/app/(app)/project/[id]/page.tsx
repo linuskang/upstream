@@ -161,8 +161,6 @@ function ProjectPageContent() {
     )
   }, [debouncedQuery, projectId, router, selectedCategory])
 
-  
-
   const filters = useMemo(
     () => parseSearchQuery(debouncedQuery).filters,
     [debouncedQuery]
@@ -204,12 +202,7 @@ function ProjectPageContent() {
   const { fetchNextPage, hasNextPage, isFetchingNextPage } = eventsQuery
 
   useEffect(() => {
-    if (
-      !sentinelRef.current ||
-      !hasNextPage ||
-      isFetchingNextPage
-    )
-      return
+    if (!sentinelRef.current || !hasNextPage || isFetchingNextPage) return
 
     const observer = new IntersectionObserver(
       (entries) => {

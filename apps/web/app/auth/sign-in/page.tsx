@@ -18,7 +18,7 @@ function LastUsedBadge({ show }: { show: boolean }) {
   if (!show) return null
 
   return (
-    <Badge variant="secondary" className="absolute -right-2 -top-2">
+    <Badge variant="secondary" className="absolute -top-2 -right-2">
       Last used
     </Badge>
   )
@@ -33,7 +33,7 @@ export default function Page() {
 
   useEffect(() => {
     const raf = requestAnimationFrame(() =>
-      setLastMethod(authClient.getLastUsedLoginMethod()),
+      setLastMethod(authClient.getLastUsedLoginMethod())
     )
 
     return () => cancelAnimationFrame(raf)
@@ -66,28 +66,31 @@ export default function Page() {
               defaultValues: {
                 email: "",
                 password: "",
-                rememberMe: false
+                rememberMe: false,
               },
             }}
             onSubmit={async (values) => {
-              await authClient.signIn.email({
-                email: values.email,
-                password: values.password,
-                rememberMe: values.rememberMe,
-              }, {
-                onSuccess: () => {
-                  router.replace(getAuthRedirectUri())
+              await authClient.signIn.email(
+                {
+                  email: values.email,
+                  password: values.password,
+                  rememberMe: values.rememberMe,
                 },
+                {
+                  onSuccess: () => {
+                    router.replace(getAuthRedirectUri())
+                  },
 
-                onError: (ctx) => {
-                  setPending(false)
-                  setError(ctx.error.message)
-                },
+                  onError: (ctx) => {
+                    setPending(false)
+                    setError(ctx.error.message)
+                  },
 
-                onRequest: () => {
-                  setPending(true)
-                },
-              })
+                  onRequest: () => {
+                    setPending(true)
+                  },
+                }
+              )
             }}
           >
             <div className="flex flex-col gap-4">
@@ -116,11 +119,12 @@ export default function Page() {
                   />
                 </Form.Field>
 
-                <Form.Error name="password" className="text-xs text-destructive" />
+                <Form.Error
+                  name="password"
+                  className="text-xs text-destructive"
+                />
 
-                {error && (
-                  <p className="text-xs text-destructive">{error}</p>
-                )}
+                {error && <p className="text-xs text-destructive">{error}</p>}
 
                 <a
                   className="self-end text-xs text-link hover:underline"
@@ -146,7 +150,11 @@ export default function Page() {
               </div>
 
               <Form.Submit>
-                <Button variant="default" disabled={pending} className="relative">
+                <Button
+                  variant="default"
+                  disabled={pending}
+                  className="relative"
+                >
                   Sign in
                   <LastUsedBadge show={lastMethod === "email"} />
                 </Button>

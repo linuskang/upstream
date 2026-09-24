@@ -219,7 +219,7 @@ export default function Page() {
         <CardHeader className="p-0">
           <CardTitle className="text-lg font-semibold text-white">
             {isSupported ? (
-              <CircleCheck className="mr-2 inline-block h-5 w-5 text-success" />
+              <CircleCheck className="text-success mr-2 inline-block h-5 w-5" />
             ) : (
               <CircleX className="mr-2 inline-block h-5 w-5 text-destructive" />
             )}
@@ -244,7 +244,7 @@ export default function Page() {
         <CardHeader className="p-0">
           <CardTitle className="text-lg font-semibold text-white">
             {subscription ? (
-              <CircleCheck className="mr-2 inline-block h-5 w-5 text-success" />
+              <CircleCheck className="text-success mr-2 inline-block h-5 w-5" />
             ) : (
               <CircleX className="mr-2 inline-block h-5 w-5 text-destructive" />
             )}
@@ -287,7 +287,7 @@ export default function Page() {
         <CardHeader className="p-0">
           <CardTitle className="text-lg font-semibold text-white">
             {session.user.pushNotificationsEnabled ? (
-              <CircleCheck className="mr-2 inline-block h-5 w-5 text-success" />
+              <CircleCheck className="text-success mr-2 inline-block h-5 w-5" />
             ) : (
               <CircleX className="mr-2 inline-block h-5 w-5 text-destructive" />
             )}

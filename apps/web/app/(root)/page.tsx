@@ -1,11 +1,11 @@
 "use client"
 
-import { authClient } from "@workspace/auth/client";
-import { useEffect, useState } from "react";
+import { authClient } from "@workspace/auth/client"
+import { useEffect, useState } from "react"
 
 export default function Page() {
-  const { data: session, isPending } = authClient.useSession();
-  const [signedIn, setSignedIn] = useState(false);
+  const { data: session, isPending } = authClient.useSession()
+  const [signedIn, setSignedIn] = useState(false)
 
   useEffect(() => {
     if (!isPending && session) {
@@ -14,9 +14,7 @@ export default function Page() {
   }, [isPending, session])
 
   if (isPending) {
-    return (
-      <h1>loading</h1>
-    )
+    return <h1>loading</h1>
   }
 
   return (

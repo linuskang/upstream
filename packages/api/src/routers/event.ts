@@ -11,7 +11,11 @@ export type DashboardEvent = {
   description?: string
   category?: string
   fields?: { title: string; value: string }[]
-  actions?: { title: string; variant: "primary" | "secondary" | "ghost"; url: string }[]
+  actions?: {
+    title: string
+    variant: "primary" | "secondary" | "ghost"
+    url: string
+  }[]
   data?: unknown
   events?: DashboardEvent[]
   contextId?: string
@@ -68,7 +72,12 @@ export const eventRouter = router({
         .extend(eventFilters.shape)
     )
     .query(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "VIEW"
+      )
 
       const fieldConditions: Prisma.EventWhereInput[] = []
 
@@ -158,7 +167,9 @@ export const eventRouter = router({
         serializeEvent(
           event,
           event.contextId
-            ? contextEvents.filter((child) => child.contextId === event.contextId)
+            ? contextEvents.filter(
+                (child) => child.contextId === event.contextId
+              )
             : []
         )
       )
@@ -178,7 +189,12 @@ export const eventRouter = router({
   categories: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      await requireProjectAccess(ctx.db, input.projectId, ctx.session.user.id, "VIEW")
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "VIEW"
+      )
 
       const [total, grouped] = await Promise.all([
         ctx.db.event.count({ where: { projectId: input.projectId } }),
@@ -199,10 +215,7 @@ export const eventRouter = router({
     }),
 })
 
-function serializeEvent(
-  event: RawEvent,
-  children: RawEvent[]
-): DashboardEvent {
+function serializeEvent(event: RawEvent, children: RawEvent[]): DashboardEvent {
   return {
     id: event.id,
     title: event.title,

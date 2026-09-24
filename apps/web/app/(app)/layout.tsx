@@ -51,10 +51,13 @@ function EmailVerificationBanner() {
   return (
     <div className="sticky top-0 z-50 flex w-full flex-wrap items-center justify-center gap-x-1 bg-amber-200 px-4 py-1 text-center text-sm font-medium text-primary-foreground">
       <span>
-        Please {" "}
-        <Link href="/settings/profile" className="font-semibold underline underline-offset-2 hover:opacity-80">
+        Please{" "}
+        <Link
+          href="/settings/profile"
+          className="font-semibold underline underline-offset-2 hover:opacity-80"
+        >
           verify your email
-        </Link> {" "}
+        </Link>{" "}
         to get started.
       </span>
     </div>

@@ -2,9 +2,9 @@ name: Feature Request
 
 description: Suggest a new feature or enhancement
 
-title: '[Feature]: '
+title: "[Feature]: "
 
-labels: ['enhancement', 'triage']
+labels: ["enhancement", "triage"]
 
 body:
   - type: markdown
@@ -17,7 +17,7 @@ body:
     attributes:
       label: Description
       description: A clear and concise description of the feature request.
-      placeholder: 'I would like to be able to ...'
+      placeholder: "I would like to be able to ..."
     validations:
       required: true
 
@@ -26,7 +26,7 @@ body:
     attributes:
       label: Problem Statement
       description: Is your feature request related to a problem? Please describe.
-      placeholder: 'I am facing an issue where ...'
+      placeholder: "I am facing an issue where ..."
     validations:
       required: false
 

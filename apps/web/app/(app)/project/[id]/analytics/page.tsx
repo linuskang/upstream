@@ -181,7 +181,7 @@ export default function AnalyticsPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                  <BreadcrumbLink href={`/project/${projectId}`}>
+                <BreadcrumbLink href={`/project/${projectId}`}>
                   {project?.name}
                 </BreadcrumbLink>
               </BreadcrumbItem>

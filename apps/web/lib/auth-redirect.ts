@@ -1,7 +1,7 @@
 export const DEFAULT_AUTH_REDIRECT = "/dashboard"
 
 export function getAuthRedirectUri(
-  fallback: string = DEFAULT_AUTH_REDIRECT,
+  fallback: string = DEFAULT_AUTH_REDIRECT
 ): string {
   if (typeof window === "undefined") return fallback
 

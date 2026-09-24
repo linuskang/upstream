@@ -90,7 +90,9 @@ export default function Page() {
   const projectsQuery = trpc.project.list.useQuery(undefined, { enabled })
   const usageQuery = trpc.usage.stats.useQuery(undefined, { enabled })
   const activityQuery = trpc.account.activity.useQuery(undefined, { enabled })
-  const invitesQuery = trpc.projectMember.myInvites.useQuery(undefined, { enabled })
+  const invitesQuery = trpc.projectMember.myInvites.useQuery(undefined, {
+    enabled,
+  })
 
   const utils = trpc.useUtils()
 
@@ -220,7 +222,8 @@ export default function Page() {
                       <Badge variant="secondary">{invite.role}</Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Invited by {invite.invitedBy.name} ({invite.invitedBy.email})
+                      Invited by {invite.invitedBy.name} (
+                      {invite.invitedBy.email})
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Expires {new Date(invite.expiresAt).toLocaleDateString()}

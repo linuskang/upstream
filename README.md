@@ -25,41 +25,43 @@ A demo of the application is available at https://up.linus.my
 
 1. Go to https://up.linus.my and register an API key for your project.
 2. Install the sdk
+
 ```bash
 npm i @uplabs/sdk
 ```
+
 3. Start ingesting events, below is an example.
 
 ```ts
-import { Upstream } from '@uplabs/sdk'
+import { Upstream } from "@uplabs/sdk"
 
 const up = new Upstream({
-  apiKey: "YOUR_API_KEY"
+  apiKey: "YOUR_API_KEY",
 })
 
 up.events.ingest({
-    title: "Hello, World!",
-    icon: "😁",
-});
+  title: "Hello, World!",
+  icon: "😁",
+})
 ```
 
 ## Running locally for development
 
 Pretty straightforward:
 
-1. ``git clone https://github.com/linuskang/up && cd up``
+1. `git clone https://github.com/linuskang/up && cd up`
 
-2. ``npm install``
+2. `npm install`
 
-3. ``cd packages/db && npx prisma generate``
+3. `cd packages/db && npx prisma generate`
 
-4. Add your ``.env`` into ``/apps/web``
+4. Add your `.env` into `/apps/web`
 
-4. Run db migrations ``npx prisma migrate dev``
+5. Run db migrations `npx prisma migrate dev`
 
-Finally, run the development server using ``cd apps/web && npm run dev``
+Finally, run the development server using `cd apps/web && npm run dev`
 
-After, go to ``http://localhost:3000`` and start editing!
+After, go to `http://localhost:3000` and start editing!
 
 ## Selfhost (Docker)
 
@@ -119,7 +121,7 @@ networks:
     driver: bridge
 ```
 
-Run ``docker compose up -d`` and access Upstream at port ``3000`` to create your account. By default, the first account created will receive full administrative privileges on the instance.
+Run `docker compose up -d` and access Upstream at port `3000` to create your account. By default, the first account created will receive full administrative privileges on the instance.
 
 ## Some notes
 

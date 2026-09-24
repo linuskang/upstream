@@ -50,7 +50,7 @@ export default function Page() {
         <CardHeader className="p-0">
           <CardTitle className="text-lg font-semibold text-white">
             {session.user.emailNotificationsEnabled ? (
-              <CircleCheck className="mr-2 inline-block h-5 w-5 text-success" />
+              <CircleCheck className="text-success mr-2 inline-block h-5 w-5" />
             ) : (
               <CircleX className="mr-2 inline-block h-5 w-5 text-destructive" />
             )}

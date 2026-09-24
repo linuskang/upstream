@@ -23,7 +23,7 @@ function ResetPasswordForm() {
   if (done) {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-center text-xs">
+        <p className="text-center text-xs text-muted-foreground">
           Your password has been reset. You can now sign in with your new
           password.
         </p>
@@ -84,11 +84,12 @@ function ResetPasswordForm() {
               />
             </Form.Field>
 
-            <Form.Error name="newPassword" className="text-xs text-destructive" />
+            <Form.Error
+              name="newPassword"
+              className="text-xs text-destructive"
+            />
 
-            {error && (
-              <p className="text-xs text-destructive">{error}</p>
-            )}
+            {error && <p className="text-xs text-destructive">{error}</p>}
           </div>
 
           <Form.Submit>
@@ -103,7 +104,7 @@ function ResetPasswordForm() {
 function InvalidLink() {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-muted-foreground text-center text-xs">
+      <p className="text-center text-xs text-muted-foreground">
         This reset link is invalid or has expired. Request a new one below.
       </p>
 
@@ -136,7 +137,7 @@ export default function Page() {
 
         <Suspense
           fallback={
-            <p className="text-muted-foreground text-center text-xs">
+            <p className="text-center text-xs text-muted-foreground">
               Checking your reset link…
             </p>
           }
