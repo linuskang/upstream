@@ -1,0 +1,20 @@
+name: Retention Cleanup
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    name: Trigger retention cleanup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger retention cleanup
+        run: |
+          curl --fail-with-body \
+            -X POST \
+            -H "x-api-key: ${{ secrets.CRON_CLEANUP_SECRET }}" \
+            -H "x-cf-bypass-key: ${{ secrets.CF_BYPASS_KEY }}" \
+            "${{ secrets.UPSTREAM_CLEANUP_URL }}"
