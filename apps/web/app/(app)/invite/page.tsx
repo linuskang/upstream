@@ -18,7 +18,7 @@ export default function Page() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-svh items-center justify-center py-6">
+        <div className="flex min-h-full items-center justify-center py-6">
           <div className="text-sm text-muted-foreground">Loading...</div>
         </div>
       }
@@ -63,7 +63,7 @@ function InviteContent() {
 
   if (!token) {
     return (
-      <div className="flex min-h-svh items-center justify-center py-6">
+      <div className="flex min-h-full items-center justify-center py-6">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle>Invitation failed</CardTitle>
@@ -82,7 +82,7 @@ function InviteContent() {
 
   if (inviteQuery.isLoading) {
     return (
-      <div className="flex min-h-svh items-center justify-center py-6">
+      <div className="flex min-h-full items-center justify-center py-6">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle>Project Invitation</CardTitle>
@@ -98,7 +98,7 @@ function InviteContent() {
 
   if (inviteQuery.isError || actionError) {
     return (
-      <div className="flex min-h-svh items-center justify-center py-6">
+      <div className="flex min-h-full items-center justify-center py-6">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle>Invitation failed</CardTitle>
@@ -121,7 +121,7 @@ function InviteContent() {
 
   if (decision === "accept" || acceptMutation.isSuccess) {
     return (
-      <div className="flex min-h-svh items-center justify-center py-6">
+      <div className="flex min-h-full items-center justify-center py-6">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle>You&apos;re in!</CardTitle>
@@ -134,7 +134,9 @@ function InviteContent() {
             <Button
               className="w-full"
               onClick={() =>
-                router.push(invite?.projectId ? `/project/${invite.projectId}` : "/")
+                router.push(
+                  invite?.projectId ? `/project/${invite.projectId}` : "/"
+                )
               }
             >
               Go to project
@@ -167,7 +169,7 @@ function InviteContent() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center py-6">
+    <div className="flex min-h-full items-center justify-center py-6">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>Project Invitation</CardTitle>
@@ -187,7 +189,10 @@ function InviteContent() {
               <Badge variant="secondary">{invite?.role}</Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              Expires {invite?.expiresAt ? new Date(invite.expiresAt).toLocaleDateString() : "soon"}
+              Expires{" "}
+              {invite?.expiresAt
+                ? new Date(invite.expiresAt).toLocaleDateString()
+                : "soon"}
             </p>
           </div>
 
