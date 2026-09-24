@@ -13,7 +13,7 @@
   "devDependencies": {
     "@workspace/eslint": "*",
     "@workspace/typescript": "*",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.8",
     "tsx": "^4.23.13",
     "turbo": "^2.10.9",
     "typescript": "^5"
