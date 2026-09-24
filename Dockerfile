@@ -24,7 +24,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN SKIP_ENV_VALIDATION=true \
     npm exec --workspace=@workspace/db prisma generate
 RUN SKIP_ENV_VALIDATION=true \
-    npm run build --workspace=web
+    npm run build --workspace=@workspace/app
 
 FROM node:26-alpine AS runner
 

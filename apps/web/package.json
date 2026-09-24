@@ -22,6 +22,7 @@
     "@workspace/api": "*",
     "@workspace/auth": "*",
     "@workspace/contracts": "*",
+    "@workspace/env": "*",
     "@workspace/db": "*",
     "@workspace/ui": "*",
     "better-auth": "^1.6.26",
