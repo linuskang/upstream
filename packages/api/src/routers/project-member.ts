@@ -125,7 +125,7 @@ export const projectMemberRouter = router({
       const userId = ctx.session.user.id
       const normalizedEmail = input.email.toLowerCase().trim()
 
-      await requireProjectAccess(ctx.db, input.projectId, userId, "OWNER")
+      await requireProjectAccess(ctx.db, input.projectId, userId, "ADMIN")
 
       const [projectWithMembers, existingUser, existingInvite] = await Promise.all([
         ctx.db.project.findUnique({
@@ -261,7 +261,7 @@ export const projectMemberRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id
-      await requireProjectAccess(ctx.db, input.projectId, userId, "OWNER")
+      await requireProjectAccess(ctx.db, input.projectId, userId, "ADMIN")
 
       const invitation = await ctx.db.projectInvitation.findFirst({
         where: {
@@ -305,7 +305,14 @@ export const projectMemberRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const actorId = ctx.session.user.id
-      await requireProjectAccess(ctx.db, input.projectId, actorId, "OWNER")
+      await requireProjectAccess(ctx.db, input.projectId, actorId, "ADMIN")
+
+      if (input.userId === actorId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You cannot change your own role",
+        })
+      }
 
       const member = await ctx.db.projectMember.findUnique({
         where: {
@@ -358,7 +365,14 @@ export const projectMemberRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const actorId = ctx.session.user.id
-      await requireProjectAccess(ctx.db, input.projectId, actorId, "OWNER")
+      await requireProjectAccess(ctx.db, input.projectId, actorId, "ADMIN")
+
+      if (input.userId === actorId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Use leave project to remove yourself",
+        })
+      }
 
       const member = await ctx.db.projectMember.findUnique({
         where: {
