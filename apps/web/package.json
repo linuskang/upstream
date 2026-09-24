@@ -24,7 +24,7 @@
     "@workspace/env": "*",
     "@workspace/db": "*",
     "@workspace/ui": "*",
-    "better-auth": "^1.6.26",
+    "better-auth": "^1.7.5",
     "geist": "^1.7.2",
     "lucide-react": "^1.45.0",
     "next": "^16.3.4",

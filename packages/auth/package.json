@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@workspace/db": "*",
-    "better-auth": "^1.6.26"
+    "better-auth": "^1.7.5"
   },
   "devDependencies": {
     "@workspace/eslint": "*",
