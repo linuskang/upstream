@@ -46,19 +46,17 @@ import { NavUser } from "@/components/sidebar/footer"
 import { Plus } from "lucide-react"
 import { general, NavLink } from "@/components/sidebar/links"
 
-type SidebarHeaderContextValue = {
-  setHeader: (header: ReactNode) => void
+type TopBarContextValue = {
+  setTopBar: (topBar: ReactNode) => void
 }
 
-const SidebarHeaderContext = createContext<SidebarHeaderContextValue | null>(
-  null
-)
+const TopBarContext = createContext<TopBarContextValue | null>(null)
 
-export function useSidebarHeader() {
-  const context = useContext(SidebarHeaderContext)
+export function useTopBar() {
+  const context = useContext(TopBarContext)
 
   if (!context) {
-    throw new Error("useSidebarHeader must be used inside SidebarInsetLayout")
+    throw new Error("useTopBar must be used inside SidebarInsetLayout")
   }
 
   return context
@@ -73,9 +71,9 @@ export function SidebarInsetLayout({
   contentClassName?: string
 }>) {
   const { data: session } = authClient.useSession()
-  const [header, setHeaderState] = useState<ReactNode>(null)
-  const setHeader = useCallback(
-    (nextHeader: ReactNode) => setHeaderState(() => nextHeader),
+  const [topBar, setTopBarState] = useState<ReactNode>(null)
+  const setTopBar = useCallback(
+    (nextTopBar: ReactNode) => setTopBarState(() => nextTopBar),
     []
   )
 
@@ -120,11 +118,11 @@ export function SidebarInsetLayout({
         </SidebarFooter>
       </Sidebar>
 
-      <SidebarHeaderContext.Provider value={{ setHeader }}>
+      <TopBarContext.Provider value={{ setTopBar }}>
         <SidebarInset
           className={`min-h-0 overflow-hidden border border-border md:h-[calc(100svh-1rem)] md:peer-data-[variant=inset]:peer-data-[state=collapsed]:m-0 md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0 md:peer-data-[variant=inset]:peer-data-[state=collapsed]:h-svh md:peer-data-[variant=inset]:peer-data-[state=collapsed]:rounded-none ${className ?? ""}`}
         >
-          {header ?? (
+          {topBar ?? (
             <header className="flex h-10 shrink-0 items-center gap-2 border-b border-border bg-sidebar">
               <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger className="-ml-1" />
@@ -137,7 +135,7 @@ export function SidebarInsetLayout({
             {children}
           </div>
         </SidebarInset>
-      </SidebarHeaderContext.Provider>
+      </TopBarContext.Provider>
     </SidebarProvider>
   )
 }

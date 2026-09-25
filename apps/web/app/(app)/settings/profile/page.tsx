@@ -1,29 +1,12 @@
 "use client"
 
-// Libraries
 import { authClient } from "@workspace/auth/client"
-import Link from "next/link"
 import { toast } from "sonner"
 import Image from "next/image"
 
-// Components
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@workspace/ui/components/breadcrumb"
+import { Form } from "@workspace/ui/components/form"
 import { Input } from "@workspace/ui/components/input"
 import { Button } from "@workspace/ui/components/button"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@workspace/ui/components/card"
-import { Form } from "@workspace/ui/components/form"
 
 type FormData = {
   name: string
@@ -38,96 +21,82 @@ export default function Page() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <Breadcrumb>
-          <BreadcrumbList className="text-sm">
-            <BreadcrumbItem>
-              <BreadcrumbLink render={<Link href="/settings" />}>
-                Settings
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Profile</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
+    <div>
+      <h1 className="text-2xl font-semibold">Profile</h1>
+      <p className="text-sm text-muted-foreground">
+        Manage your profile information
+      </p>
 
-      <Card className="bg-card ring-0">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-white">
-            Your Profile
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Form<FormData>
-            key={session.user.id}
-            id="profile"
-            formOptions={{
-              defaultValues: {
-                name: session.user.name,
-                image: session.user.image || "",
-              },
-            }}
-            onSubmit={async (data) => {
-              await authClient.updateUser({
-                name: data.name,
-                image: data.image,
-              })
-              await refetch()
-              toast.success("Profile updated successfully!")
-            }}
-          >
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <Form.Label name="name" className="font-semibold">
-                  Display Name
-                </Form.Label>
-                <Form.Field name="name">
-                  <Input placeholder="Your display name" />
-                </Form.Field>
-              </div>
+      <div className="mt-4">
+        <Form<FormData>
+          onSubmit={async (d) => {
+            await authClient.updateUser({
+              name: d.name,
+              image: d.image,
+            })
 
-              <div className="space-y-1.5">
-                <Form.Label name="image" className="font-semibold">
-                  Profile Image URL
-                </Form.Label>
-                <Form.Field name="image">
-                  <Input placeholder="https://example.com/avatar.png" />
-                </Form.Field>
-              </div>
+            await refetch()
+            toast.success("Success")
+          }}
 
-              {session.user.image && (
-                <div className="flex items-center gap-2">
-                  <div className="relative size-12 overflow-hidden rounded-md border border-border/60 bg-secondary">
-                    <Image
-                      key={session.user.image}
-                      src={session.user.image}
-                      alt="Avatar preview"
-                      fill
-                      unoptimized
-                      className="object-cover"
-                    />
-                  </div>
+          formOptions={{
+            defaultValues: {
+              name: session.user.name,
+              image: session.user.image || "",
+            },
+          }}
+        >
+          <div>
+            <Form.Label name="name">
+              <h1 className="mb-1 text-sm font-semibold">Display Name</h1>
+            </Form.Label>
+            <Form.Field name="name" required>
+              <Input placeholder="Display Name" />
+            </Form.Field>
+            <p className="mt-1 text-xs text-muted-foreground">
+              This name is shown to other users.
+            </p>
+            <Form.Error name="name" />
+          </div>
+
+          <div className="mt-4">
+            <Form.Label name="image">
+              <h1 className="mb-1 text-sm font-semibold">Profile Image</h1>
+            </Form.Label>
+
+            <Form.Field name="image">
+              <Input placeholder="https://your-profile-image.com" />
+            </Form.Field>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Must start with https://
+            </p>
+
+            {session.user.image && (
+              <>
+                <div className="relative mt-2 size-12 overflow-hidden rounded-md">
+                  <Image
+                    key={session.user.image}
+                    src={session.user.image}
+                    alt="Avatar preview"
+                    fill
+                    unoptimized
+                    className="rounded-md object-cover"
+                  />
                 </div>
-              )}
 
-              <div className="space-y-1.5">
-                <Form.Label name="email" className="font-semibold">
-                  Email
-                </Form.Label>
-                <Input value={session.user.email} disabled />
-              </div>
+                <p className="mt-1 text-xs text-muted-foreground">Preview</p>
+              </>
+            )}
+          </div>
 
-              <Form.Submit>
-                <Button size="sm">Save Changes</Button>
-              </Form.Submit>
-            </div>
-          </Form>
-        </CardContent>
-      </Card>
+          <div className="mt-4">
+            <Form.Submit>
+              <Button variant="primary">Save Profile</Button>
+            </Form.Submit>
+          </div>
+        </Form>
+      </div>
     </div>
   )
 }

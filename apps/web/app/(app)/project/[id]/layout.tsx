@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react"
 
-import { useSidebarHeader } from "@/components/sidebar"
+import { useTopBar } from "@/components/sidebar"
 import { trpc } from "@/lib/trpc"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
@@ -24,13 +24,13 @@ export default function ProjectLayout({
 }>) {
   const params = useParams()
   const projectId = String(params.id)
-  const { setHeader } = useSidebarHeader()
+  const { setTopBar } = useTopBar()
 
   useEffect(() => {
-    setHeader(<ProjectHeader projectId={projectId} />)
+    setTopBar(<ProjectHeader projectId={projectId} />)
 
-    return () => setHeader(null)
-  }, [projectId, setHeader])
+    return () => setTopBar(null)
+  }, [projectId, setTopBar])
 
   return children
 }
