@@ -123,6 +123,22 @@ export const auth = betterAuth({
         type: "boolean",
         defaultValue: true,
       },
+      bio: {
+        type: "string",
+        defaultValue: "",
+      },
+      company: {
+        type: "string",
+        defaultValue: "",
+      },
+      location: {
+        type: "string",
+        defaultValue: "",
+      },
+      website: {
+        type: "string",
+        defaultValue: "",
+      },
     },
   },
   plugins: [lastLoginMethod()],

@@ -42,16 +42,20 @@ enum ProjectInvitationStatus {
 }
 
 model User {
-  id                        String             @id
+  id                        String              @id
   name                      String
+  bio                       String?
+  company                   String?
+  location                  String?
+  website                   String?
   email                     String
-  emailVerified             Boolean            @default(false)
+  emailVerified             Boolean             @default(false)
   image                     String
-  pushNotificationsEnabled  Boolean            @default(true)
-  emailNotificationsEnabled Boolean            @default(true)
-  plan                      Plan               @default(FREE)
-  createdAt                 DateTime           @default(now())
-  updatedAt                 DateTime           @updatedAt
+  pushNotificationsEnabled  Boolean             @default(true)
+  emailNotificationsEnabled Boolean             @default(true)
+  plan                      Plan                @default(FREE)
+  createdAt                 DateTime            @default(now())
+  updatedAt                 DateTime            @updatedAt
   sessions                  Session[]
   accounts                  Account[]
   projectMembers            ProjectMember[]
@@ -65,7 +69,7 @@ model User {
 }
 
 model Project {
-  id          String            @id @default(uuid())
+  id          String              @id @default(uuid())
   name        String
   members     ProjectMember[]
   invitations ProjectInvitation[]
@@ -92,17 +96,17 @@ model ProjectMember {
 }
 
 model ProjectInvitation {
-  id          String                @id @default(uuid())
+  id          String                  @id @default(uuid())
   projectId   String
-  project     Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project     Project                 @relation(fields: [projectId], references: [id], onDelete: Cascade)
   email       String
   role        ProjectMemberRole
-  token       String                @unique
+  token       String                  @unique
   status      ProjectInvitationStatus @default(PENDING)
   invitedById String
-  invitedBy   User                  @relation("SentInvitations", fields: [invitedById], references: [id], onDelete: Cascade)
+  invitedBy   User                    @relation("SentInvitations", fields: [invitedById], references: [id], onDelete: Cascade)
   expiresAt   DateTime
-  createdAt   DateTime              @default(now())
+  createdAt   DateTime                @default(now())
   acceptedAt  DateTime?
 
   @@index([projectId])
