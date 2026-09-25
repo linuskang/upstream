@@ -45,7 +45,7 @@ function ProjectHeader({ projectId }: { projectId: string }) {
   const [indicator, setIndicator] = useState({ left: 0, width: 0 })
   const value = pathname.endsWith("/analytics")
     ? "analytics"
-    : pathname.endsWith("/api-logs")
+    : pathname.endsWith("/logs")
       ? "api-logs"
       : pathname.endsWith("/activity")
         ? "activity"

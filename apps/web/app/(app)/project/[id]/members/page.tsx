@@ -183,6 +183,7 @@ export default function Page() {
                     <div className="flex items-center gap-3">
                       <Avatar size="sm">
                         <AvatarImage
+                          className="rounded-sm"
                           src={member.user.image ?? undefined}
                           alt={member.user.name}
                         />

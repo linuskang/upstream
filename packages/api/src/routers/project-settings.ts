@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { router, protectedProcedure } from "../trpc"
 import { requireProjectAccess } from "../permissions"
@@ -109,6 +108,52 @@ export const projectSettingsRouter = router({
         responseBody: stringifyBody(log.responseBody),
         createdAt: log.createdAt.toISOString(),
       }))
+    }),
+
+  requestLogsPage: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(50).default(20),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      await requireProjectAccess(
+        ctx.db,
+        input.projectId,
+        ctx.session.user.id,
+        "VIEW"
+      )
+
+      const where = { projectId: input.projectId }
+      const [total, logs] = await Promise.all([
+        ctx.db.requestLog.count({ where }),
+        ctx.db.requestLog.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          skip: (input.page - 1) * input.pageSize,
+          take: input.pageSize,
+          select: {
+            id: true,
+            endpoint: true,
+            method: true,
+            status: true,
+            createdAt: true,
+          },
+        }),
+      ])
+
+      return {
+        items: logs.map((log) => ({
+          ...log,
+          createdAt: log.createdAt.toISOString(),
+        })),
+        page: input.page,
+        pageSize: input.pageSize,
+        total,
+        totalPages: Math.ceil(total / input.pageSize),
+      }
     }),
 })
 
