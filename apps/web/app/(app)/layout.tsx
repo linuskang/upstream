@@ -4,7 +4,7 @@
 import { useEffect } from "react"
 import Link from "next/link"
 import { authClient } from "@workspace/auth/client"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 // Components
 import { SidebarInsetLayout } from "@/components/sidebar"
@@ -16,6 +16,8 @@ export default function RootLayout({
 }>) {
   const { data: session, isPending } = authClient.useSession()
   const router = useRouter()
+  const pathname = usePathname()
+  const fullBleed = /^\/project\/[^/]+\/settings(\/|$)/.test(pathname)
 
   useEffect(() => {
     if (isPending || session) return
@@ -40,8 +42,12 @@ export default function RootLayout({
     <>
       {!session.user.emailVerified && <EmailVerificationBanner />}
 
-      <SidebarInsetLayout>
-        <div className="mx-auto w-full max-w-4xl px-4">{children}</div>
+      <SidebarInsetLayout contentClassName={fullBleed ? "" : undefined}>
+        {fullBleed ? (
+          children
+        ) : (
+          <div className="mx-auto w-full max-w-4xl px-4">{children}</div>
+        )}
       </SidebarInsetLayout>
     </>
   )

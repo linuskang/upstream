@@ -51,7 +51,7 @@ function ProjectHeader({ projectId }: { projectId: string }) {
         ? "activity"
         : pathname.endsWith("/members")
           ? "members"
-          : pathname.endsWith("/settings")
+          : pathname.includes("/settings")
             ? "settings"
             : "events"
 

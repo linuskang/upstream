@@ -67,7 +67,11 @@ export function useSidebarHeader() {
 export function SidebarInsetLayout({
   children,
   className,
-}: React.PropsWithChildren<{ className?: string }>) {
+  contentClassName,
+}: React.PropsWithChildren<{
+  className?: string
+  contentClassName?: string
+}>) {
   const { data: session } = authClient.useSession()
   const [header, setHeaderState] = useState<ReactNode>(null)
   const setHeader = useCallback(
@@ -127,7 +131,11 @@ export function SidebarInsetLayout({
               </div>
             </header>
           )}
-          <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
+          <div
+            className={`min-h-0 flex-1 overflow-y-auto ${contentClassName ?? "p-4"}`}
+          >
+            {children}
+          </div>
         </SidebarInset>
       </SidebarHeaderContext.Provider>
     </SidebarProvider>
