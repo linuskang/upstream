@@ -17,7 +17,9 @@ export default function RootLayout({
   const { data: session, isPending } = authClient.useSession()
   const router = useRouter()
   const pathname = usePathname()
-  const fullBleed = /^\/project\/[^/]+\/settings(\/|$)/.test(pathname)
+  const fullBleed = /^\/project\/[^/]+\/(settings|members|activity|logs)(\/|$)/.test(
+    pathname
+  )
 
   useEffect(() => {
     if (isPending || session) return

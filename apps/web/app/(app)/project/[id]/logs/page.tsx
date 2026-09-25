@@ -79,64 +79,57 @@ export default function ApiLogsPage() {
   const { items, total, totalPages } = logsQuery.data
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-5xl flex-col gap-6 py-6">
-      <header>
-        <h1 className="text-2xl font-semibold">API logs</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Inspect requests received by this project.
-        </p>
+    <>
+      <header className="flex h-12 items-center border-b border-border px-6">
+        <span className="text-base font-medium">API logs</span>
       </header>
 
-      <section className="overflow-hidden rounded-lg border border-border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-border hover:bg-transparent">
-              <TableHead>Endpoint</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead className="text-right">Created</TableHead>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-border hover:bg-transparent">
+            <TableHead className="pl-6">Endpoint</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Method</TableHead>
+            <TableHead className="pr-6 text-right">Created</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {items.length === 0 ? (
+            <TableRow className="border-border">
+              <TableCell
+                colSpan={4}
+                className="py-12 text-center text-sm text-muted-foreground"
+              >
+                No API requests recorded yet.
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.length === 0 ? (
-              <TableRow className="border-border">
-                <TableCell
-                  colSpan={4}
-                  className="py-12 text-center text-sm text-muted-foreground"
-                >
-                  No API requests recorded yet.
+          ) : (
+            items.map((log) => (
+              <TableRow
+                key={log.id}
+                className="cursor-pointer border-border"
+                onClick={() => setSelectedLogId(log.id)}
+              >
+                <TableCell className="max-w-[28rem] truncate pl-6 font-medium">
+                  {log.endpoint}
+                </TableCell>
+                <TableCell className={`font-medium ${statusClass(log.status)}`}>
+                  {log.status}
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {log.method}
+                </TableCell>
+                <TableCell className="pr-6 text-right text-sm whitespace-nowrap text-muted-foreground">
+                  {new Date(log.createdAt).toLocaleString()}
                 </TableCell>
               </TableRow>
-            ) : (
-              items.map((log) => (
-                <TableRow
-                  key={log.id}
-                  className="cursor-pointer border-border"
-                  onClick={() => setSelectedLogId(log.id)}
-                >
-                  <TableCell className="max-w-[28rem] truncate font-medium">
-                    {log.endpoint}
-                  </TableCell>
-                  <TableCell
-                    className={`font-medium ${statusClass(log.status)}`}
-                  >
-                    {log.status}
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {log.method}
-                  </TableCell>
-                  <TableCell className="text-right text-sm whitespace-nowrap text-muted-foreground">
-                    {new Date(log.createdAt).toLocaleString()}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </section>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-3">
           <span className="text-sm text-muted-foreground">
             Page {page} of {totalPages} · {total} total
           </span>
@@ -224,6 +217,6 @@ export default function ApiLogsPage() {
           </div>
         </SheetContent>
       </Sheet>
-    </div>
+    </>
   )
 }

@@ -83,94 +83,84 @@ export default function ActivityPage() {
   const totalPages = logsQuery.data.totalPages
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-5xl flex-col gap-6 py-6">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">Activity</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            A record of changes and actions taken in this project.
-          </p>
+    <>
+      <header className="flex h-12 items-center justify-between gap-4 border-b border-border px-6">
+        <span className="text-base font-medium">Activity</span>
+        <div className="flex items-center gap-3">
+          <span className="shrink-0 text-sm text-muted-foreground">
+            {logsQuery.data.total}{" "}
+            {logsQuery.data.total === 1 ? "entry" : "entries"}
+          </span>
+          <Input
+            placeholder="Search activity..."
+            value={search}
+            onChange={(value) => {
+              setSearch(value.target.value)
+              setPage(1)
+            }}
+            className="w-64"
+          />
         </div>
       </header>
 
-      <div className="flex items-center justify-between gap-3">
-        <Input
-          placeholder="Search activity..."
-          value={search}
-          onChange={(value) => {
-            setSearch(value.target.value)
-            setPage(1)
-          }}
-          className="w-full max-w-md"
-        />
-        <span className="shrink-0 text-sm text-muted-foreground">
-          {logsQuery.data.total}{" "}
-          {logsQuery.data.total === 1 ? "entry" : "entries"}
-        </span>
-      </div>
-
-      <section className="overflow-hidden rounded-lg border border-border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-border hover:bg-transparent">
-              <TableHead>User</TableHead>
-              <TableHead>Activity</TableHead>
-              <TableHead className="text-right">When</TableHead>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-border hover:bg-transparent">
+            <TableHead className="pl-6">User</TableHead>
+            <TableHead>Activity</TableHead>
+            <TableHead className="pr-6 text-right">When</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {logs.length === 0 ? (
+            <TableRow className="border-border">
+              <TableCell
+                colSpan={3}
+                className="py-12 text-center text-sm text-muted-foreground"
+              >
+                {query ? "No activity matches your search." : "No activity yet."}
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {logs.length === 0 ? (
-              <TableRow className="border-border">
-                <TableCell
-                  colSpan={3}
-                  className="py-12 text-center text-sm text-muted-foreground"
-                >
-                  {query
-                    ? "No activity matches your search."
-                    : "No activity yet."}
+          ) : (
+            logs.map((log, index) => (
+              <TableRow
+                key={`${log.createdAt}-${index}`}
+                className="border-border"
+              >
+                <TableCell className="pl-6">
+                  {log.user ? (
+                    <div className="flex items-center gap-3">
+                      <Avatar size="sm">
+                        <AvatarImage
+                          className="rounded-sm"
+                          src={log.user.image ?? undefined}
+                          alt={log.user.name}
+                        />
+                      </Avatar>
+                      <span className="truncate font-medium">
+                        {log.user.name}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">
+                      System
+                    </span>
+                  )}
+                </TableCell>
+                <TableCell className="max-w-[32rem] font-medium">
+                  {log.message}
+                </TableCell>
+                <TableCell className="pr-6 text-right text-sm whitespace-nowrap text-muted-foreground">
+                  {formatTimestamp(log.createdAt)}
                 </TableCell>
               </TableRow>
-            ) : (
-              logs.map((log, index) => (
-                <TableRow
-                  key={`${log.createdAt}-${index}`}
-                  className="border-border"
-                >
-                  <TableCell>
-                    {log.user ? (
-                      <div className="flex items-center gap-3">
-                        <Avatar size="sm">
-                          <AvatarImage
-                            className="rounded-sm"
-                            src={log.user.image ?? undefined}
-                            alt={log.user.name}
-                          />
-                        </Avatar>
-                        <span className="truncate font-medium">
-                          {log.user.name}
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-sm text-muted-foreground">
-                        System
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell className="max-w-[32rem] font-medium">
-                    {log.message}
-                  </TableCell>
-                  <TableCell className="text-right text-sm whitespace-nowrap text-muted-foreground">
-                    {formatTimestamp(log.createdAt)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </section>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-3">
           <span className="text-sm text-muted-foreground">
             Page {page} of {totalPages}
           </span>
@@ -194,6 +184,6 @@ export default function ActivityPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

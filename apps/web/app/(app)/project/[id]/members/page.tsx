@@ -65,7 +65,7 @@ export default function Page() {
 
   if (!session || membersQuery.isLoading) {
     return (
-      <div className="flex min-h-svh items-center justify-center">
+      <div className="flex min-h-full items-center justify-center py-10">
         <span className="text-sm text-muted-foreground">
           Loading members...
         </span>
@@ -75,7 +75,7 @@ export default function Page() {
 
   if (membersQuery.isError || !membersQuery.data) {
     return (
-      <div className="flex min-h-svh items-center justify-center">
+      <div className="flex min-h-full items-center justify-center py-10">
         <span className="text-sm text-destructive">
           Unable to load project members.
         </span>
@@ -99,47 +99,104 @@ export default function Page() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 py-6">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">Project members</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage who can access this project
-          </p>
-        </div>
+    <>
+      <header className="flex h-12 items-center justify-between gap-4 border-b border-border px-6">
+        <span className="text-base font-medium">Members</span>
         {canManage && <InviteMemberPopup />}
       </header>
 
-      <section className="overflow-hidden rounded-lg border border-border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-border hover:bg-transparent">
-              <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-border hover:bg-transparent">
+            <TableHead className="pl-6">User</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead className="pr-6 text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {invitations.map((invitation) => (
+            <TableRow
+              key={`invitation-${invitation.id}`}
+              className="border-border"
+            >
+              <TableCell className="pl-6">
+                <div className="flex flex-col">
+                  <span className="font-medium">{invitation.email}</span>
+                  <span className="text-xs text-muted-foreground">
+                    Pending (Expires{" "}
+                    {new Date(invitation.expiresAt).toLocaleDateString()})
+                  </span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <span className="text-sm text-muted-foreground">
+                  {invitation.role.toLowerCase()}
+                </span>
+              </TableCell>
+              <TableCell className="pr-6 text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 text-foreground"
+                        aria-label={`Actions for ${invitation.email}`}
+                      />
+                    }
+                  >
+                    <MoreHorizontal className="size-5" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="min-w-48">
+                    {canManage && (
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() =>
+                          cancelInvite.mutate({
+                            projectId,
+                            invitationId: invitation.id,
+                          })
+                        }
+                      >
+                        <Ban /> Revoke
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {invitations.map((invitation) => (
-              <TableRow
-                key={`invitation-${invitation.id}`}
-                className="border-border"
-              >
-                <TableCell>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{invitation.email}</span>
-                    <span className="text-xs text-muted-foreground">
-                      Pending (Expires{" "}
-                      {new Date(invitation.expiresAt).toLocaleDateString()})
-                    </span>
+          ))}
+          {members.map((member) => {
+            const isCurrentUser = member.user.id === session.user.id
+            const isOwner = member.role === "OWNER"
+            const canManageMember = canManage && !isOwner && !isCurrentUser
+
+            return (
+              <TableRow key={member.user.id} className="border-border">
+                <TableCell className="pl-6">
+                  <div className="flex items-center gap-3">
+                    <Avatar size="sm">
+                      <AvatarImage
+                        className="rounded-sm"
+                        src={member.user.image ?? undefined}
+                        alt={member.user.name}
+                      />
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">
+                        {member.user.name}
+                        {isCurrentUser && " (You)"}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {member.user.email}
+                      </p>
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm text-muted-foreground">
-                    {invitation.role.toLowerCase()}
-                  </span>
+                  <span className="text-sm">{member.role.toLowerCase()}</span>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="pr-6 text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       render={
@@ -147,121 +204,57 @@ export default function Page() {
                           variant="ghost"
                           size="icon"
                           className="size-8 text-foreground"
-                          aria-label={`Actions for ${invitation.email}`}
+                          aria-label={`Actions for ${member.user.name}`}
                         />
                       }
                     >
                       <MoreHorizontal className="size-5" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="min-w-48">
-                      {canManage && (
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={() =>
-                            cancelInvite.mutate({
-                              projectId,
-                              invitationId: invitation.id,
-                            })
-                          }
-                        >
-                          <Ban /> Revoke
-                        </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => copyUserId(member.user.id)}
+                      >
+                        <Copy className="size-4" />
+                        Copy user ID
+                      </DropdownMenuItem>
+                      {canManageMember && (
+                        <>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              updateRole.mutate({
+                                projectId,
+                                userId: member.user.id,
+                                role:
+                                  member.role === "ADMIN"
+                                    ? "MEMBER"
+                                    : "ADMIN",
+                              })
+                            }
+                          >
+                            <Lock /> Make{" "}
+                            {member.role === "ADMIN" ? "member" : "admin"}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onClick={() =>
+                              remove.mutate({
+                                projectId,
+                                userId: member.user.id,
+                              })
+                            }
+                          >
+                            <Ban /> Remove
+                          </DropdownMenuItem>
+                        </>
                       )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
-            ))}
-            {members.map((member) => {
-              const isCurrentUser = member.user.id === session.user.id
-              const isOwner = member.role === "OWNER"
-              const canManageMember = canManage && !isOwner && !isCurrentUser
-
-              return (
-                <TableRow key={member.user.id} className="border-border">
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar size="sm">
-                        <AvatarImage
-                          className="rounded-sm"
-                          src={member.user.image ?? undefined}
-                          alt={member.user.name}
-                        />
-                      </Avatar>
-                      <div className="min-w-0">
-                        <p className="truncate font-medium">
-                          {member.user.name}
-                          {isCurrentUser && " (You)"}
-                        </p>
-                        <p className="truncate text-xs text-muted-foreground">
-                          {member.user.email}
-                        </p>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm">{member.role.toLowerCase()}</span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 text-foreground"
-                            aria-label={`Actions for ${member.user.name}`}
-                          />
-                        }
-                      >
-                        <MoreHorizontal className="size-5" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="min-w-48">
-                        <DropdownMenuItem
-                          onClick={() => copyUserId(member.user.id)}
-                        >
-                          <Copy className="size-4" />
-                          Copy user ID
-                        </DropdownMenuItem>
-                        {canManageMember && (
-                          <>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateRole.mutate({
-                                  projectId,
-                                  userId: member.user.id,
-                                  role:
-                                    member.role === "ADMIN"
-                                      ? "MEMBER"
-                                      : "ADMIN",
-                                })
-                              }
-                            >
-                              <Lock /> Make{" "}
-                              {member.role === "ADMIN" ? "member" : "admin"}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              variant="destructive"
-                              onClick={() =>
-                                remove.mutate({
-                                  projectId,
-                                  userId: member.user.id,
-                                })
-                              }
-                            >
-                              <Ban /> Remove
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </section>
-    </div>
+            )
+          })}
+        </TableBody>
+      </Table>
+    </>
   )
 }
