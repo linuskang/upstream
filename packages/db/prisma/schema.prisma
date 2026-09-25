@@ -64,8 +64,24 @@ model User {
   userUsages                UserUsage[]
   auditLogs                 AuditLog[]
   pushSubscriptions         PushSubscription[]
+  emailChangeRequest        EmailChangeRequest?
 
   @@unique([email])
+}
+
+model EmailChangeRequest {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  newEmail    String
+  oldToken    String   @unique
+  newToken    String   @unique
+  oldVerified Boolean  @default(false)
+  expiresAt   DateTime
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Project {
