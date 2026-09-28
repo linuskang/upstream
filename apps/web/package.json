@@ -15,7 +15,7 @@
   "dependencies": {
     "@scalar/api-reference": "^1.43.17",
     "@scalar/nextjs-api-reference": "^0.11.14",
-    "@tanstack/react-query": "^5.102.8",
+    "@tanstack/react-query": "^5.103.2",
     "@trpc/client": "^11.18.0",
     "@trpc/react-query": "^11.18.0",
     "@workspace/api": "*",
