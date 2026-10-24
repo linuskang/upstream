@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@scalar/api-reference": "^1.43.17",
+    "@scalar/api-reference": "^1.76.0",
     "@scalar/nextjs-api-reference": "^0.12.11",
     "@tanstack/react-query": "^5.103.2",
     "@trpc/client": "^11.19.0",
