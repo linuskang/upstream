@@ -10,6 +10,6 @@
     "@workspace/db": "*",
     "@workspace/env": "*",
     "@workspace/email": "*",
-    "better-auth": "^1.7.5"
+    "better-auth": "^1.7.14"
   }
 }
