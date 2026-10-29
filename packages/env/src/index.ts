@@ -6,13 +6,18 @@ import { createEnv } from "@t3-oss/env-core"
 import { z } from "zod"
 
 config({
-  path: resolve(dirname(fileURLToPath(import.meta.url)), "../../../.env"),
+  path: [
+    resolve(dirname(fileURLToPath(import.meta.url)), "../../../apps/web/.env"),
+    resolve(dirname(fileURLToPath(import.meta.url)), "../../../.env"),
+  ],
 })
 
 export const env = createEnv({
   server: {
     DATABASE_URL: z.url(),
     BASE_URL: z.url(),
+
+    API_KEY_SECRET: z.string().min(1),
 
     VAPID_PUBLIC_KEY: z.string(),
     VAPID_PRIVATE_KEY: z.string(),

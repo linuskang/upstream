@@ -1,9 +1,17 @@
 import { TRPCError } from "@trpc/server"
 import type { PrismaClient } from "@workspace/db"
+import { env } from "@workspace/env"
 import crypto from "node:crypto"
 import { z } from "zod"
 import { router, protectedProcedure } from "../trpc"
 import { requireProjectAccess } from "../permissions"
+
+export function hashApiKey(apiKey: string): string {
+  return crypto
+    .createHmac("sha256", env.API_KEY_SECRET)
+    .update(apiKey)
+    .digest("hex")
+}
 
 const apiKeyFields = {
   id: true,
@@ -57,7 +65,7 @@ export const apiKeyRouter = router({
       const key = await ctx.db.apiKey.create({
         data: {
           name: input.name,
-          key: crypto.createHash("sha256").update(secret).digest("hex"),
+          key: hashApiKey(secret),
           addedById: ctx.session.user.id,
           projectId: input.projectId,
         },

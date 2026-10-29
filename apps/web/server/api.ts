@@ -1,7 +1,11 @@
-import crypto from "crypto"
 import { prisma } from "@workspace/db"
+import { hashApiKey } from "@workspace/api"
 
 export class Api {
+  static hashKey(apiKey: string): string {
+    return hashApiKey(apiKey)
+  }
+
   static async validateKey(
     apiKey: string
   ): Promise<{ valid: boolean; projectId?: string }> {
@@ -9,7 +13,7 @@ export class Api {
       return { valid: false }
     }
 
-    const hash = crypto.createHash("sha256").update(apiKey).digest("hex")
+    const hash = hashApiKey(apiKey)
 
     const key = await prisma.apiKey.findUnique({
       where: {
