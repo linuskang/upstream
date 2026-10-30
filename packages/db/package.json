@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@workspace/env": "*",
-    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "dotenv": "^18.0.2",
     "pg": "^8.22.0"
